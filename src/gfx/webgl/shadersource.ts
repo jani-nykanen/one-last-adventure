@@ -1,3 +1,11 @@
+//
+// Project title: "A Tower for Nightmares"
+// Author: Jani Nykänen
+//
+// Module: gfx/webgl
+// File: shadersource.ts
+// Comment: Sources for WebGL shaders
+//
 
 
 export const VertexSource = {

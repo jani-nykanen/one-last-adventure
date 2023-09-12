@@ -70,8 +70,8 @@ export interface Canvas {
         sw? : number, sh? : number,
         dw? : number, dh? : number) : void;
     drawText(font : Bitmap | undefined, text : string, 
-        dx : number, dy : number, xoff : number, yoff : number, 
-        align? : Align) : void;
+        dx : number, dy : number, xoff? : number, yoff? : number, 
+        align? : Align, scalex? : number, scaley? : number) : void;
 
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
 }   

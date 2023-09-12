@@ -9,8 +9,10 @@
 //
 
 
+import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
 import { Canvas, Renderer, TransformTarget } from "../interface.js";
+import { WebGLBitmap } from "./bitmap.js";
 import { WebGLCanvas } from "./canvas.js";
 import { Mesh } from "./mesh.js";
 import { Shader } from "./shader.js";
@@ -60,6 +62,24 @@ const createRectangleMesh = (gl : WebGLRenderingContext) : Mesh =>
     ]));
 
 
+const initGL = (gl : WebGLRenderingContext) : void => {
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFuncSeparate(gl.SRC_ALPHA, 
+        gl.ONE_MINUS_SRC_ALPHA, gl.ONE, 
+        gl.ONE_MINUS_SRC_ALPHA);
+
+    // TODO: Useless? (leftover from an older project)
+    gl.enableVertexAttribArray(0);
+    gl.enableVertexAttribArray(1);
+
+    // gl.stencilMask(0xff);
+    // gl.disable(gl.STENCIL_TEST);
+}
+
+
 export enum ShaderType {
 
     Textured = 0,
@@ -88,6 +108,10 @@ export class WebGLRenderer implements Renderer {
     private shaders : Map<ShaderType, Shader>;
     private activeShader : Shader | undefined = undefined;
 
+    private activeMesh : Mesh | undefined = undefined;
+    private activeBitmap : WebGLBitmap | undefined = undefined;
+    private activeColor : RGBA;
+
 
     constructor(screenWidth : number, screenHeight : number) {
 
@@ -100,11 +124,13 @@ export class WebGLRenderer implements Renderer {
         this.htmlCanvas = hcanvas;
         this.gl = gl;
 
-        this.canvas = new WebGLCanvas(this, screenWidth, screenHeight, this.gl);
+        initGL(gl);
 
         this.meshRect = createRectangleMesh(gl);
         this.transform = new WebGLTransform();
         this.transform.setTarget(TransformTarget.Camera);
+
+        this.canvas = new WebGLCanvas(this, screenWidth, screenHeight, this.transform, this.gl);
 
         this.shaders = new Map<ShaderType, Shader> ();
         this.shaders.set(ShaderType.Textured, 
@@ -117,6 +143,8 @@ export class WebGLRenderer implements Renderer {
 
         this.canvasPos = new Vector();
         this.canvasScale = new Vector(1, 1);
+
+        this.activeColor = new RGBA();
 
         this.resize(window.innerWidth, window.innerHeight);
         window.addEventListener("resize", () => this.resize(window.innerWidth, window.innerHeight));
@@ -147,10 +175,76 @@ export class WebGLRenderer implements Renderer {
     }
 
 
-    public useShader(type : ShaderType) : void {
+    public changeShader(type : ShaderType) : void {
 
-        this.activeShader = this.shaders.get(type);
-        this.activeShader?.use();
+        const shader = this.shaders.get(type);
+        if (shader === undefined || this.activeShader === shader)
+            return;
+
+        this.activeShader = shader;
+        shader.use();
+        this.transform.use(shader);
+    }
+
+
+    public clear(r : number, g : number, b : number) : void {
+
+        const gl = this.gl;
+        gl.clearColor(r, g, b, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+
+    public bindTexture(bmp : WebGLBitmap | undefined) : void {
+
+        if (this.activeBitmap === bmp)
+            return;
+
+        this.activeBitmap = bmp;
+        bmp?.bind(this.gl);
+    }   
+
+
+    public drawMesh(mesh? : Mesh) : void {
+
+        mesh = mesh ?? this.meshRect;
+
+        if (this.activeMesh !== mesh) {
+
+            this.activeMesh = mesh;
+            mesh.bind(this.gl);
+        }
+
+        mesh.draw(this.gl);
+    }
+
+
+    public setColor(r : number, g : number, b : number, a : number) : void {
+
+        this.activeColor = new RGBA(r, g, b, a);
+
+        this.activeShader?.setColor(r, g, b, a);
+    }
+
+
+    public applyTransform(transform : WebGLTransform) : void {
+
+        if (this.activeShader === undefined)
+            return;
+
+        transform.use(this.activeShader);
+    }
+
+
+    public setVertexTransform(x : number = 0, y : number = 0, w : number = 1, h : number = 1) : void {
+
+        this.activeShader?.setVertexTransform(x, y, w, h);
+    }
+
+
+    public setFragmenTransform(x : number = 0, y : number = 0, w : number = 1, h : number = 1) : void {
+
+        this.activeShader?.setFragTransform(x, y, w, h);
     }
 
 
@@ -166,6 +260,7 @@ export class WebGLRenderer implements Renderer {
 
     public refresh() : void {
 
+        const gl = this.gl;
         const shader = this.shaders.get(ShaderType.Textured);
         if (shader === undefined)
             return;
@@ -175,6 +270,7 @@ export class WebGLRenderer implements Renderer {
             shader.use();
         }
 
+        // TODO: Compute in the resize event?
         this.transform.view(this.screenWidth, this.screenHeight);
         this.transform.use(shader);
 
@@ -182,13 +278,26 @@ export class WebGLRenderer implements Renderer {
             this.canvasPos.x, this.canvasPos.y, 
             this.canvasScale.x, this.canvasScale.y);
         shader.setFragTransform(0, 0, 1, 1);
+        shader.setColor(1, 1, 1, 1);
+        
+        this.meshRect.bind(gl);
+        this.canvas.bind(gl);
+        this.meshRect.draw(gl);
 
-        // TODO: Something...?
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         if (shader !== this.activeShader) {
 
             this.activeShader?.use();
         }
+
+        this.activeMesh?.bind(gl);
+        this.activeBitmap?.bind(gl);
+        shader.setColor(
+            this.activeColor.r, 
+            this.activeColor.g, 
+            this.activeColor.b, 
+            this.activeColor.a);
     }
 
 }

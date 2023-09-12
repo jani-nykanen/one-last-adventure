@@ -1,3 +1,13 @@
+//
+// Project title: "A Tower for Nightmares"
+// Author: Jani Nykänen
+//
+// Module: gfx/webgl
+// File: shader.ts
+// Comment: WebGL shader type
+//
+
+
 import { Matrix } from "../../math/matrix.js";
 
 
