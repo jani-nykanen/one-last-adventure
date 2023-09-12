@@ -41,7 +41,7 @@ export interface Bitmap {
 
 export interface Transform2D {
 
-    setTarget(target? : TransformTarget) : void;
+    setTarget(target : TransformTarget) : void;
 
     loadIdentity() : void;
     translate(x : number, y : number) : void;

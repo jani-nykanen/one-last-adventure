@@ -11,7 +11,10 @@
 export class Matrix {
 
 
-    private m : Float32Array;
+    // This is public to make it possible to pass
+    // data to the shader without having to make
+    // a copy of it
+    public m : Float32Array;
 
 
     constructor(
@@ -101,13 +104,6 @@ export class Matrix {
             }
         }
         return out;
-    }
-
-
-    public passToShader(gl : WebGLRenderingContext, uniform : WebGLUniformLocation | null) : void {
-        
-        // TODO: Modify the code to get rid of transpose
-        gl.uniformMatrix4fv(uniform, false, Matrix.transpose(this).m);        
     }
 
 
