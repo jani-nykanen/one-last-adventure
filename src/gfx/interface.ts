@@ -83,4 +83,6 @@ export interface Renderer {
 
     drawToCanvas(cb : (canvas : Canvas) => void) : void;
     refresh() : void;
+
+    createBitmap(img : HTMLImageElement) : Bitmap;
 }       

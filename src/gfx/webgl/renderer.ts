@@ -11,7 +11,7 @@
 
 import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
-import { Canvas, Renderer, TransformTarget } from "../interface.js";
+import { Bitmap, Canvas, Renderer, TransformTarget } from "../interface.js";
 import { WebGLBitmap } from "./bitmap.js";
 import { WebGLCanvas } from "./canvas.js";
 import { Mesh } from "./mesh.js";
@@ -299,5 +299,12 @@ export class WebGLRenderer implements Renderer {
             this.activeColor.b, 
             this.activeColor.a);
     }
+    
 
+    public createBitmap(img : HTMLImageElement) : Bitmap {
+
+        const gl = this.gl;
+
+        return new WebGLBitmap(gl, img, false);
+    }
 }
