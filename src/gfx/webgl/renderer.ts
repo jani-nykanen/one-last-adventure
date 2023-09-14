@@ -112,6 +112,20 @@ export class WebGLRenderer implements Renderer {
     private activeBitmap : WebGLBitmap | undefined = undefined;
     private activeColor : RGBA;
 
+    private fetchBitmapCallback : ((name : string) => Bitmap | undefined) | undefined = undefined;
+
+
+    public get width() : number {
+
+        return this.canvas.width;
+    }
+
+
+    public get height() : number {
+
+        return this.canvas.height;
+    }
+
 
     constructor(screenWidth : number, screenHeight : number) {
 
@@ -140,6 +154,7 @@ export class WebGLRenderer implements Renderer {
         this.shaders.set(ShaderType.FixedColorTextured, 
             new Shader(gl, VertexSource.Textured, FragmentSource.TexturedFixedColor));
         this.activeShader = this.shaders.get(ShaderType.Textured);
+        this.activeShader.use();
 
         this.canvasPos = new Vector();
         this.canvasScale = new Vector(1, 1);
@@ -252,9 +267,13 @@ export class WebGLRenderer implements Renderer {
 
         const gl = this.gl;
 
+        gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
         this.canvas.setRenderTarget(gl);
         cb(this.canvas);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        gl.viewport(0, 0, this.screenWidth, this.screenHeight);
     }
 
 
@@ -280,6 +299,8 @@ export class WebGLRenderer implements Renderer {
         shader.setFragTransform(0, 0, 1, 1);
         shader.setColor(1, 1, 1, 1);
         
+        this.clear(0, 0, 0);
+
         this.meshRect.bind(gl);
         this.canvas.bind(gl);
         this.meshRect.draw(gl);
@@ -306,5 +327,17 @@ export class WebGLRenderer implements Renderer {
         const gl = this.gl;
 
         return new WebGLBitmap(gl, img, false);
+    }
+
+
+    public getBitmap(name : string) : Bitmap | undefined {
+
+        return this.fetchBitmapCallback?.(name);
+    }
+
+
+    public setFetchBitmapCallback(cb : (name : string) => Bitmap | undefined) : void {
+
+        this.fetchBitmapCallback = cb;
     }
 }

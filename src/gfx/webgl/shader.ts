@@ -36,7 +36,7 @@ export class Shader {
 
         this.gl = gl;
 
-        this.uniforms = new  Map<string, WebGLUniformLocation | null> ();
+        this.uniforms = new Map<string, WebGLUniformLocation | null> ();
         this.program = this.buildShader(vertexSource, fragmentSource);
 
         this.getUniformLocations();
@@ -98,9 +98,11 @@ export class Shader {
 
     private getUniformLocations() : void {
 
+        const gl = this.gl;
+
         for (let s of UNIFORM_NAMES) {  
 
-            this.uniforms.set(s, this.gl.getUniformLocation(this.program, s));
+            this.uniforms.set(s, gl.getUniformLocation(this.program, s));
         }
     }
 
@@ -149,7 +151,7 @@ export class Shader {
     public setTransformMatrix(matrix : Matrix) : void {
 
         const gl = this.gl;
+
         gl.uniformMatrix4fv(this.uniforms.get("transform") ?? null, false, matrix.m);      
     }
-
 }

@@ -74,15 +74,22 @@ export interface Canvas {
         align? : Align, scalex? : number, scaley? : number) : void;
 
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
+
+    getBitmap(name : string) : Bitmap | undefined;
 }   
 
 
 export interface Renderer {
     
+    get width() : number;
+    get height() : number;
+
     resize(width : number, height : number) : void;
 
     drawToCanvas(cb : (canvas : Canvas) => void) : void;
     refresh() : void;
 
     createBitmap(img : HTMLImageElement) : Bitmap;
+
+    setFetchBitmapCallback(cb : (name : string) => Bitmap | undefined) : void;
 }       

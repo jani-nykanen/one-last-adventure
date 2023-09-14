@@ -32,7 +32,7 @@ export class WebGLCanvas implements Canvas {
 
     get height() : number {
 
-        throw this.framebuffer.height;
+        return this.framebuffer.height;
     }
 
 
@@ -156,4 +156,7 @@ export class WebGLCanvas implements Canvas {
 
         this.framebuffer.bind(gl);
     }
+
+
+    public getBitmap = (name : string) : Bitmap | undefined => this.renderer.getBitmap(name);
 }

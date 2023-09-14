@@ -17,7 +17,7 @@ export const VertexSource = {
     attribute vec2 vertexPos;
     attribute vec2 vertexUV;
     
-    uniform mat3 transform;
+    uniform mat4 transform;
     
     uniform vec2 pos;
     uniform vec2 scale;
@@ -27,7 +27,7 @@ export const VertexSource = {
     
     void main() {
     
-        gl_Position = vec4(transform * vec3(vertexPos * scale + pos, 1), 1);
+        gl_Position = transform*vec4(vertexPos*scale + pos, 0, 1);
         uv = vertexUV;
     }`,
     
@@ -37,7 +37,7 @@ export const VertexSource = {
     `
     attribute vec2 vertexPos;
     
-    uniform mat3 transform;
+    uniform mat4 transform;
     
     uniform vec2 pos;
     uniform vec2 scale;
@@ -45,7 +45,7 @@ export const VertexSource = {
 
     void main() {
     
-        gl_Position = vec4(transform * vec3(vertexPos * scale + pos, 1), 1);
+        gl_Position = transform*vec4(vertexPos*scale + pos, 0, 1);
     }`,
 };
     

@@ -106,9 +106,7 @@ export class WebGLTransform implements Transform2D {
 
     public view(width : number, height : number) : void {
         
-        this.activeTarget.matrix = Matrix.multiply(
-            this.activeTarget.matrix,
-            Matrix.view(0, width, height, 0));
+        this.activeTarget.matrix = Matrix.view(0, width, height, 0);
         
         this.productComputed = false;
     }

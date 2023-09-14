@@ -8,7 +8,7 @@
 //
 
 
-import { AudioSample } from "./sample";
+import { AudioSample } from "./sample.js";
 
 
 export class AudioPlayer {
