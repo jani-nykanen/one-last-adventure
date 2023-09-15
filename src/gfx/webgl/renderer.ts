@@ -242,12 +242,12 @@ export class WebGLRenderer implements Renderer {
     }
 
 
-    public applyTransform(transform : WebGLTransform) : void {
+    public applyTransform() : void {
 
         if (this.activeShader === undefined)
             return;
 
-        transform.use(this.activeShader);
+        this.transform.use(this.activeShader);
     }
 
 
@@ -289,13 +289,18 @@ export class WebGLRenderer implements Renderer {
             shader.use();
         }
 
-        // TODO: Compute in the resize event?
+        this.transform.setTarget(TransformTarget.Model);
+        this.transform.loadIdentity();
+
+        this.transform.setTarget(TransformTarget.Camera);
+        this.transform.loadIdentity();
         this.transform.view(this.screenWidth, this.screenHeight);
+        
         this.transform.use(shader);
 
         shader.setVertexTransform(
-            this.canvasPos.x, this.canvasPos.y, 
-            this.canvasScale.x, this.canvasScale.y);
+            this.canvasPos.x, this.canvasPos.y + this.canvasScale.y, 
+            this.canvasScale.x, -this.canvasScale.y);
         shader.setFragTransform(0, 0, 1, 1);
         shader.setColor(1, 1, 1, 1);
         
@@ -314,7 +319,7 @@ export class WebGLRenderer implements Renderer {
 
         this.activeMesh?.bind(gl);
         this.activeBitmap?.bind(gl);
-        shader.setColor(
+        this.activeShader?.setColor(
             this.activeColor.r, 
             this.activeColor.g, 
             this.activeColor.b, 

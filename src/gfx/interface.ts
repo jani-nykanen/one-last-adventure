@@ -76,6 +76,8 @@ export interface Canvas {
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
 
     getBitmap(name : string) : Bitmap | undefined;
+
+    applyTransform() : void;
 }   
 
 

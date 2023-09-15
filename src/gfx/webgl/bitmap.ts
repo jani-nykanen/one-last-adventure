@@ -16,8 +16,6 @@ export class WebGLBitmap implements Bitmap {
     private texture : WebGLTexture | null = null;
     private framebuffer : WebGLFramebuffer | null = null;
 
-    private readonly gl : WebGLRenderingContext;
-
     public readonly width : number;
     public readonly height : number;
 
@@ -27,7 +25,6 @@ export class WebGLBitmap implements Bitmap {
         makeFramebuffer = false, width = 256, height = 256) {
 
         this.texture = gl.createTexture();
-        this.gl = gl;
 
         const filter = linearFilter ? gl.LINEAR : gl.NEAREST;
 

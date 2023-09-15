@@ -26,10 +26,15 @@ export class Game implements Scene {
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
 
+        canvas.applyTransform();
+
         canvas.clear(170, 170, 170);
 
-        canvas.setColor(255, 0, 0);
+        canvas.setColor(255, 0, 0, 1.0);
         canvas.fillRect(0, 0, 32, 32);
+
+        canvas.setColor(255, 170, 0, 1.0);
+        canvas.fillRect(16, 16, 32, 32);
     }
 
 

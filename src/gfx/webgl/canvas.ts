@@ -58,6 +58,8 @@ export class WebGLCanvas implements Canvas {
 
         this.renderer.changeShader(ShaderType.NoTexture);
         this.renderer.setVertexTransform(dx, dy, dw, dh);
+
+        this.renderer.drawMesh();
     }
 
 
@@ -159,4 +161,10 @@ export class WebGLCanvas implements Canvas {
 
 
     public getBitmap = (name : string) : Bitmap | undefined => this.renderer.getBitmap(name);
+
+
+    public applyTransform() : void {
+
+        this.renderer.applyTransform();
+    }
 }
