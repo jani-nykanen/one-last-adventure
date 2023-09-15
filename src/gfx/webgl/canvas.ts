@@ -114,12 +114,12 @@ export class WebGLCanvas implements Canvas {
 
         if (align == Align.Center) {
 
-            dx -= ((text.length+1) * (cw + xoff)) * scalex / 2.0 ;
+            dx -= ((text.length + 1)*(cw + xoff))*scalex / 2.0 ;
             x = dx;
         }
         else if (align == Align.Right) {
             
-            dx -= ((text.length) * (cw + xoff)) * scalex;
+            dx -= ((text.length)*(cw + xoff))*scalex;
             x = dx;
         }
 
@@ -142,7 +142,7 @@ export class WebGLCanvas implements Canvas {
     }
 
 
-    public setColor(r : number = 255, g : number = 255, b : number = 255, a : number = 1.0) : void {
+    public setColor(r : number = 255, g : number = r, b : number = g, a : number = 1.0) : void {
 
         this.renderer.setColor(r/255.0, g/255.0, b/255.0, a);
     }

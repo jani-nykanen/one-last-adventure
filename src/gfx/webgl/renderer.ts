@@ -103,7 +103,8 @@ export class WebGLRenderer implements Renderer {
     private canvasScale : Vector;
 
     private meshRect : Mesh;
-    private transform : WebGLTransform;
+    private internalTransform : WebGLTransform;
+    private canvasTransform : WebGLTransform;
 
     private shaders : Map<ShaderType, Shader>;
     private activeShader : Shader | undefined = undefined;
@@ -141,10 +142,11 @@ export class WebGLRenderer implements Renderer {
         initGL(gl);
 
         this.meshRect = createRectangleMesh(gl);
-        this.transform = new WebGLTransform();
-        this.transform.setTarget(TransformTarget.Camera);
+        this.internalTransform = new WebGLTransform();
+        this.internalTransform.setTarget(TransformTarget.Camera);
 
-        this.canvas = new WebGLCanvas(this, screenWidth, screenHeight, this.transform, this.gl);
+        this.canvasTransform = new WebGLTransform();
+        this.canvas = new WebGLCanvas(this, screenWidth, screenHeight, this.canvasTransform, this.gl);
 
         this.shaders = new Map<ShaderType, Shader> ();
         this.shaders.set(ShaderType.Textured, 
@@ -187,6 +189,8 @@ export class WebGLRenderer implements Renderer {
 
         this.canvasPos.x = width/2 - this.canvasScale.x/2;
         this.canvasPos.y = height/2 - this.canvasScale.y/2;
+
+        this.internalTransform.view(this.screenWidth, this.screenHeight);
     }
 
 
@@ -198,7 +202,13 @@ export class WebGLRenderer implements Renderer {
 
         this.activeShader = shader;
         shader.use();
-        this.transform.use(shader);
+
+        this.canvasTransform.use(shader);
+        shader.setColor(
+            this.activeColor.r, 
+            this.activeColor.g, 
+            this.activeColor.b, 
+            this.activeColor.a);
     }
 
 
@@ -247,7 +257,7 @@ export class WebGLRenderer implements Renderer {
         if (this.activeShader === undefined)
             return;
 
-        this.transform.use(this.activeShader);
+        this.canvasTransform.use(this.activeShader);
     }
 
 
@@ -288,15 +298,7 @@ export class WebGLRenderer implements Renderer {
 
             shader.use();
         }
-
-        this.transform.setTarget(TransformTarget.Model);
-        this.transform.loadIdentity();
-
-        this.transform.setTarget(TransformTarget.Camera);
-        this.transform.loadIdentity();
-        this.transform.view(this.screenWidth, this.screenHeight);
-        
-        this.transform.use(shader);
+        this.internalTransform.use(shader);
 
         shader.setVertexTransform(
             this.canvasPos.x, this.canvasPos.y + this.canvasScale.y, 

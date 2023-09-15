@@ -42,5 +42,7 @@ export class ProgramEvent {
 
         this.screenWidth = renderer.width;
         this.screenHeight = renderer.height;
+
+        renderer.setFetchBitmapCallback((name : string) => this.assets.getBitmap(name));
     }
 }

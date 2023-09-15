@@ -7,6 +7,8 @@ import { Game } from "./game/game.js";
 const initialEvent = (event : ProgramEvent) : void => {
 
     event.scenes.addScene("game", new Game())
+
+    event.assets.parseIndexFile("assets/index.json");
 }
 
 
