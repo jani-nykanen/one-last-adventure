@@ -18,7 +18,7 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
         
-        this.playerSprite.animate(2, 0, 5, 4, event.tick);
+        this.playerSprite.animate(0, 1, 6, 8, event.tick);
     }
 
 
