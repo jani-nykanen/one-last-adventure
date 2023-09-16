@@ -1,20 +1,24 @@
 import { ProgramEvent } from "../core/event.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
+import { Sprite } from "../gfx/sprite.js";
 
 
 export class Game implements Scene {
 
 
+    private playerSprite : Sprite
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        // ...
+        this.playerSprite = new Sprite(16, 16);
     }
 
 
     public update(event : ProgramEvent) : void {
         
-        // ...
+        this.playerSprite.animate(0, 1, 6, 12, event.tick);
     }
 
 
@@ -41,6 +45,9 @@ export class Game implements Scene {
 
         canvas.setColor(0, 0, 0);
         canvas.drawText(canvas.getBitmap("font"), "Hello world?", 8, 96, -1, 0);
+
+        canvas.setColor();
+        this.playerSprite.draw(canvas, canvas.getBitmap("player"), 160, 32, Flip.None, 64, 64);
     }
 
 

@@ -1,7 +1,8 @@
 {
     "bitmapPath": "assets/bitmaps/",
     "bitmaps": [
-        {"name": "font", "path": "font.png"}
+        {"name": "font", "path": "font.png"},
+        {"name": "player", "path": "player.png"}
     ],
 
     "tilemapPath": "assets/tilemaps/",
