@@ -72,6 +72,8 @@ export class Program {
         let firstFrame = true;
         for (; this.timeSum >= FRAME_TIME; this.timeSum -= FRAME_TIME) {
 
+            this.event.input.updateStick();
+
             if (loaded) {
 
                 this.event.scenes.update(this.event);

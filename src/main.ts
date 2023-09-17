@@ -9,6 +9,8 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.scenes.addScene("game", new Game())
 
     event.assets.parseIndexFile("assets/index.json");
+
+    event.input.addAction("jump", ["Space", "KeyZ"], [0]);
 }
 
 

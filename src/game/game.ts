@@ -2,6 +2,7 @@ import { ProgramEvent } from "../core/event.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { Sprite } from "../gfx/sprite.js";
+import { GameObjectManager } from "./gameobjectmanager.js";
 
 
 export class Game implements Scene {
@@ -9,20 +10,28 @@ export class Game implements Scene {
 
     private playerSprite : Sprite
 
+    private objects : GameObjectManager | undefined = undefined;
+
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.playerSprite = new Sprite(16, 16);
+
+        this.objects = new GameObjectManager(event);
     }
 
 
     public update(event : ProgramEvent) : void {
         
         this.playerSprite.animate(0, 1, 6, 8, event.tick);
+
+        this.objects?.update(event);
     }
 
 
     public redraw(canvas : Canvas) : void {
+
+        canvas.setColor();
         
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
@@ -34,20 +43,11 @@ export class Game implements Scene {
 
         canvas.clear(170, 170, 170);
 
-        canvas.setColor(255, 0, 0, 1.0);
-        canvas.fillRect(0, 0, 32, 32);
-
-        canvas.setColor();
-        canvas.drawBitmap(canvas.getBitmap("font"), Flip.None);
-
-        canvas.setColor(255, 170, 0, 0.33);
-        canvas.fillRect(16, 16, 32, 32);
+        this.objects?.draw(canvas);
 
         canvas.setColor(0, 0, 0);
-        canvas.drawText(canvas.getBitmap("font"), "Hello world?", 8, 96, -1, 0);
+        canvas.drawText(canvas.getBitmap("font"), "Alpha 0.0.1", 2, 2, -1, 0);
 
-        canvas.setColor();
-        this.playerSprite.draw(canvas, canvas.getBitmap("player"), 160, 32, Flip.None, 64, 64);
     }
 
 
