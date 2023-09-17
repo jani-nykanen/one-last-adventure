@@ -4,6 +4,7 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
 import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
+import { TILE_WIDTH, TILE_HEIGHT } from "./tilesize.js";
 
 
 const enum Collision {
@@ -18,38 +19,21 @@ const enum Collision {
 }
 
 
-const TILE_WIDTH = 16;
-const TILE_HEIGHT = 16;
-
-
 export class MapLayer {
 
 
     private layers : number[][];
     private collisionData : number[];
 
-    // TODO: Unused?
-    private readonly baseMap : Tilemap;
-    private readonly baseCollision : Tilemap;
 
     public readonly width : number;
     public readonly height : number;
 
 
-    constructor(mapName : string, event : ProgramEvent) {
+    constructor(baseMap : Tilemap, baseCollision : Tilemap, event : ProgramEvent) {
 
         const LAYER_NAMES = ["bottom", "middle", "top"];
 
-        const baseMap = event.assets.getTilemap(mapName);
-        const baseCollision = event.assets.getTilemap("collisions_" + mapName);
-
-        if (baseMap === undefined || baseCollision === undefined) {
-
-            throw new Error("Could not create map layer: missing tilemap and/or collision layer: " + mapName + "!");
-        }
-
-        this.baseMap = baseMap;
-        this.baseCollision = baseCollision;
 
         this.width = baseMap.width;
         this.height = baseMap.height;

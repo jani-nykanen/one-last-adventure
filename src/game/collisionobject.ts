@@ -42,8 +42,8 @@ export class CollisionObject extends GameObject {
 
         const border = this.pos.y + this.collisionBox.y + this.collisionBox.h/2*dir;
 
-        if (border*dir >= (y - NEAR_MARGIN)*dir && 
-            border*dir < (y + FAR_MARGIN + Math.abs(this.speed.y)*event.tick)*dir) {
+        if (border*dir >= (y - dir*NEAR_MARGIN)*dir && 
+            border*dir < (y + dir*FAR_MARGIN + Math.abs(this.speed.y)*event.tick)*dir) {
 
             this.pos.y = y - this.collisionBox.y - this.collisionBox.h/2*dir;
             this.speed.y = 0;
@@ -67,10 +67,12 @@ export class CollisionObject extends GameObject {
         const NEAR_MARGIN = 1;
         const FAR_MARGIN = 4;
 
+        const TINY_OFFSET = 1;
+
         if (!this.exist || this.dying || 
             this.speed.x*dir < 0 || 
-            this.pos.y + this.collisionBox.y + this.collisionBox.h/2 < y ||
-            this.pos.y + this.collisionBox.y - this.collisionBox.h/2 > y + h)
+            this.pos.y + this.collisionBox.y + this.collisionBox.h/2 < y + TINY_OFFSET ||
+            this.pos.y + this.collisionBox.y - this.collisionBox.h/2 > y + h - TINY_OFFSET)
             return false;
 
         const border = this.pos.x + this.collisionBox.x + this.collisionBox.w/2*dir;

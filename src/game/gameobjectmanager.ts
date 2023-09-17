@@ -1,7 +1,9 @@
 import { ProgramEvent } from "../core/event.js";
 import { Canvas } from "../gfx/interface.js";
+import { Camera } from "./camera.js";
 import { Player } from "./player.js";
 import { Stage } from "./stage.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
 export class GameObjectManager {
@@ -12,19 +14,21 @@ export class GameObjectManager {
 
     constructor(event : ProgramEvent) {
 
-        this.player = new Player(event.screenWidth/2, 32);
+        // this.player = new Player(event.screenWidth/2, 32);
     }
 
 
-    public update(stage : Stage | undefined, event : ProgramEvent) : void {
+    public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
+
+        if (camera.isMoving()) {
+
+            this.player?.cameraCollision(camera, event);
+            return;
+        }
 
         this.player?.update(event);
         this.player?.updateCollisionFlags();
-
-        // Test collisions
-        this.player?.verticalCollision(0, event.screenHeight - 32, event.screenWidth, 1, event);
-        this.player?.horizontalCollision(0, 0, event.screenHeight, -1, event);
-        this.player?.horizontalCollision(event.screenWidth, 0, event.screenHeight, 1, event);
+        this.player?.cameraCollision(camera, event);
 
         stage?.objectCollision(this.player, event);
     }
@@ -33,5 +37,11 @@ export class GameObjectManager {
     public draw(canvas : Canvas) : void {
 
         this.player?.draw(canvas);
+    }
+
+
+    public addPlayer(x : number, y : number) : void {
+
+        this.player = this.player ?? new Player((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
     }
 }

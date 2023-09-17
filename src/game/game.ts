@@ -22,7 +22,8 @@ export class Game implements Scene {
         this.playerSprite = new Sprite(16, 16);
 
         this.objects = new GameObjectManager(event);
-        this.stage = new Stage(event);
+        this.stage = new Stage("void", event);
+        this.stage.parseObjects(this.objects);
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
     }
@@ -32,7 +33,7 @@ export class Game implements Scene {
         
         this.playerSprite.animate(0, 1, 6, 8, event.tick);
 
-        this.objects?.update(this.stage, event);
+        this.objects?.update(this.camera, this.stage, event);
         this.camera?.update(event);
     }
 
@@ -49,10 +50,14 @@ export class Game implements Scene {
 
         this.camera.use(canvas);
 
-        canvas.clear(170, 170, 170);
+        canvas.clear(255, 255, 255);
         
         this.stage?.draw(canvas, this.camera);
         this.objects?.draw(canvas);
+
+        canvas.transform.setTarget(TransformTarget.Camera);
+        canvas.transform.view(canvas.width, canvas.height);
+        canvas.applyTransform();
 
         canvas.setColor(0, 0, 0);
         canvas.drawText(canvas.getBitmap("font"), "Alpha 0.0.1", 2, 2, -1, 0);

@@ -87,6 +87,7 @@ export class Vector {
     );
 
 
+	// Reminder to self: direction FROM a TO b
 	static direction = (a : Vector, b : Vector) : Vector => Vector.normalize(
         new Vector(b.x - a.x, b.y - a.y, b.z - a.z, b.w - a.w), true);
 	

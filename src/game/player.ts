@@ -5,6 +5,7 @@ import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { Canvas, Flip } from "../gfx/interface.js";
 import { InputState } from "../core/inputstate.js";
+import { Camera } from "./camera.js";
 
 
 export class Player extends CollisionObject {
@@ -53,7 +54,7 @@ export class Player extends CollisionObject {
     private control(event : ProgramEvent) : void {
 
         const BASE_GRAVITY = 4.0;
-        const WALK_SPEED = 1.5;
+        const WALK_SPEED = 1.0;
         const EPS = 0.1;
 
         const stick = event.input.stick;
@@ -90,7 +91,7 @@ export class Player extends CollisionObject {
                 return;
             }
 
-            animSpeed = Math.round(12 - Math.abs(this.speed.x)*4);
+            animSpeed = Math.round(10 - Math.abs(this.speed.x)*4);
 
             this.spr.animate(0, 1, 6, animSpeed, event.tick);
         }
@@ -159,5 +160,74 @@ export class Player extends CollisionObject {
         const dy = Math.round(this.pos.y) - 7;
 
         this.spr.draw(canvas, bmp, dx, dy, this.flip);
+    }
+
+
+    public cameraCollision(camera : Camera | undefined, event : ProgramEvent) : void {
+
+        const CAMERA_MOVE_SPEED = 1.0/20.0;
+
+        const H_MARGIN = 8;
+        const V_MARGIN = 6;
+
+        const SPEED_X = 1.0;
+        const SPEED_Y = SPEED_X*(event.screenHeight/event.screenWidth);
+
+        let dir : Vector;
+
+        if (camera === undefined)
+            return;
+
+        if (camera.isMoving()) {
+
+            dir = camera.moveDirection();
+
+            this.pos.x += dir.x*SPEED_X*event.tick;
+            this.pos.y += dir.y*SPEED_Y*event.tick;
+            
+            return;
+        }
+
+        let dx : number = 0;
+        let dy : number = 0;
+
+        const topCorner = camera.getTopCorner();
+
+        const left = topCorner.x;
+        const top = topCorner.y;
+        const right = left + camera.width;
+        const bottom = top + camera.height;
+
+        if (this.pos.x + H_MARGIN >= right) {
+
+            dx = 1;
+        }
+        else if (this.pos.x - H_MARGIN <= left) {
+
+            dx = -1;
+        }
+        else if (this.pos.y + V_MARGIN >= bottom) {
+
+            dy = 1;
+        }
+        else if (this.pos.y - V_MARGIN <= top) {
+
+            dy = -1;
+        }
+
+        if (dx != 0 || dy != 0) {
+
+            camera.move(dx, dy, CAMERA_MOVE_SPEED);
+
+            if (dx != 0) {
+
+                this.speed.y = 0;
+                this.jumpTimer = 0;
+            }
+            else if (dy != 0) {
+
+                this.speed.x = 0;
+            }
+        }
     }
 }
