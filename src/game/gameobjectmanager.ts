@@ -1,6 +1,7 @@
 import { ProgramEvent } from "../core/event.js";
 import { Canvas } from "../gfx/interface.js";
 import { Player } from "./player.js";
+import { Stage } from "./stage.js";
 
 
 export class GameObjectManager {
@@ -15,7 +16,7 @@ export class GameObjectManager {
     }
 
 
-    public update(event : ProgramEvent) : void {
+    public update(stage : Stage | undefined, event : ProgramEvent) : void {
 
         this.player?.update(event);
         this.player?.updateCollisionFlags();
@@ -24,6 +25,8 @@ export class GameObjectManager {
         this.player?.verticalCollision(0, event.screenHeight - 32, event.screenWidth, 1, event);
         this.player?.horizontalCollision(0, 0, event.screenHeight, -1, event);
         this.player?.horizontalCollision(event.screenWidth, 0, event.screenHeight, 1, event);
+
+        stage?.objectCollision(this.player, event);
     }
 
 

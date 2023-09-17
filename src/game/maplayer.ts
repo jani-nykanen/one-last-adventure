@@ -1,5 +1,9 @@
 import { Tilemap } from "../tilemap/tilemap.js";
 import { ProgramEvent } from "../core/event.js";
+import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
+import { Camera } from "./camera.js";
+import { Vector } from "../math/vector.js";
+import { CollisionObject } from "./collisionobject.js";
 
 
 const enum Collision {
@@ -14,6 +18,9 @@ const enum Collision {
 }
 
 
+const TILE_WIDTH = 16;
+const TILE_HEIGHT = 16;
+
 
 export class MapLayer {
 
@@ -21,8 +28,12 @@ export class MapLayer {
     private layers : number[][];
     private collisionData : number[];
 
+    // TODO: Unused?
     private readonly baseMap : Tilemap;
     private readonly baseCollision : Tilemap;
+
+    public readonly width : number;
+    public readonly height : number;
 
 
     constructor(mapName : string, event : ProgramEvent) {
@@ -39,6 +50,9 @@ export class MapLayer {
 
         this.baseMap = baseMap;
         this.baseCollision = baseCollision;
+
+        this.width = baseMap.width;
+        this.height = baseMap.height;
 
         let data : number[] | undefined;
 
@@ -65,13 +79,122 @@ export class MapLayer {
             layers[i] = baseCollision.cloneLayer(String(i + 1)) ?? [];
         }
 
+
+        let v : number;
         for (let j = 0; j < 256; ++ j) {
 
             for (let i = 0; i < 4; ++ i) {
 
-                this.collisionData[j] |= layers[i][j];
+                v = layers[i][j] ?? 0;
+                if (v < 257)
+                    continue;
+
+                v -= 257;
+
+                this.collisionData[j] |= ((1 << v) ?? 0);
             }
         }
     }
 
+
+    private getTile(x : number, y : number, layer : number, def = 0) : number {
+
+        if (x < 0 || y < 0 || x >= this.width || y >= this.height ||
+            layer < 0 || layer >= this.layers.length)
+            return def;
+
+        return this.layers[layer][y*this.width + x];
+    }
+
+
+    public draw(canvas : Canvas, bmp : Bitmap | undefined, camera : Camera | undefined) : void {
+
+        const camPos = camera?.getTopCorner() ?? new Vector();
+
+        const startx = Math.round(camPos.x/TILE_WIDTH) - 1;
+        const starty = Math.round(camPos.y/TILE_HEIGHT) - 1;
+
+        const endx = startx + Math.round(canvas.width/TILE_WIDTH) + 2;
+        const endy = starty + Math.round(canvas.height/TILE_HEIGHT) + 2;
+
+        let tileID : number;
+        let sx : number;
+        let sy : number;
+
+        for (let layer = 0; layer < this.layers.length; ++ layer) {
+
+            for (let y = starty; y < endy; ++ y) {
+
+                for (let x = startx; x < endx; ++ x) {
+
+                    tileID = this.getTile(x, y, layer);
+                    if (tileID <= 0)
+                        continue;
+
+                    sy = ((tileID - 1) / 16) | 0;
+                    sx = (tileID - 1) % 16;
+
+                    canvas.drawBitmap(bmp, Flip.None, 
+                        x*TILE_WIDTH, y*TILE_HEIGHT, 
+                        sx*TILE_WIDTH, sy*TILE_HEIGHT, 
+                        TILE_WIDTH, TILE_HEIGHT);
+                }
+            }
+        }
+    }
+
+
+    public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
+
+        const MARGIN = 1;
+
+        const opos = o.getPosition();
+
+        const startx = Math.round(opos.x/TILE_WIDTH) - MARGIN;
+        const starty = Math.round(opos.y/TILE_HEIGHT) - MARGIN;
+
+        const endx = startx + MARGIN*2;
+        const endy = starty + MARGIN*2;
+
+        let collisionID : number;
+        let tileID : number;
+
+        let dx : number;
+        let dy : number;
+
+        for (let layer = 0; layer < this.layers.length; ++ layer) {
+
+            for (let y = starty; y <= endy; ++ y) {
+
+                for (let x = startx; x <= endx; ++ x) {
+
+                    tileID = this.getTile(x, y, layer);
+                    if (tileID <= 0)
+                        continue;
+
+                    dx = x*TILE_WIDTH;
+                    dy = y*TILE_HEIGHT;
+
+                    collisionID = this.collisionData[tileID - 1];
+
+                    if ((collisionID & Collision.Top) != 0) {
+
+                        o.verticalCollision(dx, dy, TILE_WIDTH, 1, event);
+                    }
+                    if ((collisionID & Collision.Bottom) != 0) {
+
+                        o.verticalCollision(dx, dy + TILE_HEIGHT, TILE_WIDTH, -1, event);
+                    }
+                    if ((collisionID & Collision.Right) != 0) {
+
+                        o.horizontalCollision(dx + TILE_WIDTH, dy, TILE_HEIGHT, -1, event);
+                    }
+                    if ((collisionID & Collision.Left) != 0) {
+
+                        o.horizontalCollision(dx, dy, TILE_HEIGHT, 1, event);
+                    }
+                }
+            }
+        }
+    }
 }

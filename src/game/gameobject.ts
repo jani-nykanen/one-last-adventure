@@ -78,4 +78,7 @@ export class GameObject {
 
 
     public draw?(canvas : Canvas, bmp? : Bitmap) : void;
+
+
+    public getPosition = () : Vector => this.pos.clone();
 }

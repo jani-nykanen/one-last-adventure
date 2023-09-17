@@ -31,7 +31,7 @@ export class Player extends CollisionObject {
 
     private checkJump(event : ProgramEvent) : void {
 
-        const JUMP_TIME = 16;
+        const JUMP_TIME = 12;
 
         const jumpButton = event.input.getAction("jump");
 
@@ -110,7 +110,7 @@ export class Player extends CollisionObject {
 
     private updateTimers(event : ProgramEvent) : void {
 
-        const JUMP_SPEED = -2.5;
+        const JUMP_SPEED = -2.25;
 
         if (this.ledgeTimer > 0) {
 
@@ -126,11 +126,17 @@ export class Player extends CollisionObject {
     }
 
 
-    protected verticalCollisionEvent(event: ProgramEvent): void {
+    protected verticalCollisionEvent(dir : -1 | 1, event: ProgramEvent): void {
         
         const LEDGE_TIME = 8;
 
-        this.ledgeTimer = LEDGE_TIME;
+        if (dir == 1) {
+            
+            this.ledgeTimer = LEDGE_TIME;
+            return;
+        }
+
+        this.jumpTimer = 0;
     }
 
 
