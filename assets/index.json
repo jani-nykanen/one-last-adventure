@@ -8,5 +8,7 @@
     "tilemapPath": "assets/tilemaps/",
     "tilemaps": [
 
+        {"name": "void", "path": "void.tmx"},
+        {"name": "collisions_void", "path": "collisions_void.tmx"}
     ]
 }

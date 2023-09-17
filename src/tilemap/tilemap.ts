@@ -11,7 +11,7 @@
 export class Tilemap {
 
 
-    private tileLayers : Map<number, number[]>;
+    private tileLayers : Map<string, number[]>;
     private properties : Map<string, string>;
 
     public readonly width : number;
@@ -33,7 +33,7 @@ export class Tilemap {
 
     private parseLayerData(root : HTMLMapElement) : void {
 
-        this.tileLayers = new Map<number, number[]> ();
+        this.tileLayers = new Map<string, number[]> ();
 
         const data = root.getElementsByTagName("layer");
         if (data === null) {
@@ -53,7 +53,7 @@ export class Tilemap {
             if (content === undefined)
                 continue;
 
-            this.tileLayers.set(Number(data[i].id), content.map((v : string) => Number(v)));
+            this.tileLayers.set(data[i].getAttribute("name"), content.map((v : string) => Number(v)));
         }
     }   
 
@@ -84,9 +84,9 @@ export class Tilemap {
     }
 
 
-    public getTile(layerIndex : number, x : number, y : number, def = -1) : number {
+    public getTile(layerName : string, x : number, y : number, def = -1) : number {
 
-        const layer = this.tileLayers.get(layerIndex);
+        const layer = this.tileLayers.get(layerName);
         if (layer === undefined || 
             x < 0 || y < 0 || x >= this.width || y >= this.height)
             return def;
@@ -95,13 +95,13 @@ export class Tilemap {
     }
 
 
-    public getIndexedTile = (layerIndex : number, i : number, def = -1) : number => 
-        this.getTile(layerIndex, i % this.width, (i / this.width) | 0, def);
+    public getIndexedTile = (layerName : string, i : number, def = -1) : number => 
+        this.getTile(layerName, i % this.width, (i / this.width) | 0, def);
 
 
-    public cloneLayer(layerIndex : number) : Array<number> | null {
+    public cloneLayer(layerName : string) : Array<number> | undefined {
 
-        const layer = this.tileLayers.get(layerIndex);
+        const layer = this.tileLayers.get(layerName);
         if (layer === undefined)
             return null;
 
@@ -109,14 +109,14 @@ export class Tilemap {
     }
 
 
-    public getProperty(name : string) : string | null {
+    public getProperty(name : string) : string | undefined {
 
         for (let [key, value] of this.properties) {
 
             if (key == name)
                 return value;
         }
-        return null;
+        return undefined;
     }
     
 }
