@@ -4,10 +4,14 @@ import { Rectangle } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { Canvas, Flip } from "../gfx/interface.js";
+import { InputState } from "../core/inputstate.js";
 
 
 export class Player extends CollisionObject {
 
+
+    private jumpTimer : number = 0;
+    private ledgeTimer : number = 0;
 
     private spr : Sprite;
     private flip : Flip = Flip.None;
@@ -25,6 +29,27 @@ export class Player extends CollisionObject {
     } 
 
 
+    private checkJump(event : ProgramEvent) : void {
+
+        const JUMP_TIME = 16;
+
+        const jumpButton = event.input.getAction("jump");
+
+        if (this.ledgeTimer > 0 && 
+            jumpButton == InputState.Pressed) {
+
+            this.jumpTimer = JUMP_TIME;
+            this.ledgeTimer = 0;
+            this.touchSurface = false;
+        }
+        else if (this.jumpTimer > 0 &&
+            (jumpButton & InputState.DownOrPressed) == 0) {
+
+            this.jumpTimer = 0;
+        }
+    }
+
+
     private control(event : ProgramEvent) : void {
 
         const BASE_GRAVITY = 4.0;
@@ -40,15 +65,20 @@ export class Player extends CollisionObject {
 
             this.flip = stick.x > 0 ? Flip.None : Flip.Horizontal;
         }
+
+        this.checkJump(event);
     }
 
 
     private animate(event : ProgramEvent) : void {
 
-        const RUN_EPS = 0.01;
+        // TODO: Split to smaller functions?
 
+        const RUN_EPS = 0.01;
+        const JUMP_EPS = 0.5;
 
         let animSpeed : number;
+        let frame : number;
 
         // Running
         if (this.touchSurface) {
@@ -64,6 +94,43 @@ export class Player extends CollisionObject {
 
             this.spr.animate(0, 1, 6, animSpeed, event.tick);
         }
+        // Jumping
+        else {
+
+            frame = 1;
+            if (this.speed.y < -JUMP_EPS)
+                frame = 0;
+            else if (this.speed.y > JUMP_EPS)
+                frame = 2;
+
+            this.spr.setFrame(frame, 1);
+        }
+    }
+
+
+    private updateTimers(event : ProgramEvent) : void {
+
+        const JUMP_SPEED = -2.5;
+
+        if (this.ledgeTimer > 0) {
+
+            this.ledgeTimer -= event.tick;
+        }
+
+        if (this.jumpTimer > 0) {
+
+            this.jumpTimer -= event.tick;
+            this.speed.y = JUMP_SPEED;
+            this.target.y = this.speed.y;
+        }
+    }
+
+
+    protected verticalCollisionEvent(event: ProgramEvent): void {
+        
+        const LEDGE_TIME = 8;
+
+        this.ledgeTimer = LEDGE_TIME;
     }
 
 
@@ -71,6 +138,7 @@ export class Player extends CollisionObject {
 
         this.control(event);
         this.animate(event);
+        this.updateTimers(event);
     }   
 
 

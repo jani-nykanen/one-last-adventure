@@ -25,6 +25,10 @@ export class CollisionObject extends GameObject {
     }
 
 
+    protected verticalCollisionEvent?(event : ProgramEvent) : void;
+    protected horizontalCollisionEvent?(event : ProgramEvent) : void;
+
+
     public verticalCollision(x : number, y : number, w : number, dir : -1 | 1, event : ProgramEvent) : boolean {
 
         const NEAR_MARGIN = 2;
@@ -45,6 +49,8 @@ export class CollisionObject extends GameObject {
             this.speed.y = 0;
 
             this.touchSurface ||= dir == 1;
+
+            this.verticalCollisionEvent?.(event);
 
             return true;
         }
@@ -77,6 +83,8 @@ export class CollisionObject extends GameObject {
 
             this.pos.x = x - this.collisionBox.x - this.collisionBox.w/2*dir;
             this.speed.x = 0;
+
+            this.horizontalCollisionEvent?.(event);
 
             return true;
         }

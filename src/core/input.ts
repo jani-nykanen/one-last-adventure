@@ -113,5 +113,29 @@ export class Input {
     }
 
 
+    public getAction(name : string) : InputState {
+
+        let action = this.actions.get(name);
+        if (action === undefined)
+            return InputState.Up;
+
+        let state = InputState.Up;
+        for (let k of action.keys) {
+
+            state = this.keyboard.getKeyState(k);
+            if (state != InputState.Up)
+                return state;
+        }
+
+        for (let b of action.gamepadButtons) {
+
+            state = this.gamepad.getButtonState(b);
+            if (state != InputState.Up)
+                return state;
+        }
+        return state;
+    }
+
+
     public anyPressed = () : boolean => this.keyboard.isAnyPressed() || this.gamepad.isAnyPressed();
 }
