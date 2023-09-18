@@ -5,6 +5,7 @@ import { Sprite } from "../gfx/sprite.js";
 import { GameObjectManager } from "./gameobjectmanager.js";
 import { Stage } from "./stage.js";
 import { Camera } from "./camera.js";
+import { BackgroundType } from "./background.js";
 
 
 export class Game implements Scene {
@@ -22,7 +23,7 @@ export class Game implements Scene {
         this.playerSprite = new Sprite(16, 16);
 
         this.objects = new GameObjectManager(event);
-        this.stage = new Stage("void", event);
+        this.stage = new Stage("void", BackgroundType.Void, event);
         this.stage.parseObjects(this.objects);
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
@@ -35,6 +36,7 @@ export class Game implements Scene {
 
         this.objects?.update(this.camera, this.stage, event);
         this.camera?.update(event);
+        this.stage?.update(this.camera, event);
     }
 
 
@@ -47,17 +49,20 @@ export class Game implements Scene {
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
+        canvas.applyTransform();
+        
+        this.stage?.drawBackground(canvas, this.camera);
 
         this.camera.use(canvas);
 
-        canvas.clear(255, 255, 255);
-        
         this.stage?.draw(canvas, this.camera);
         this.objects?.draw(canvas);
 
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
         canvas.applyTransform();
+
+        this.stage?.drawForeground(canvas);
 
         canvas.setColor(0, 0, 0);
         canvas.drawText(canvas.getBitmap("font"), "Alpha 0.0.1", 2, 2, -1, 0);

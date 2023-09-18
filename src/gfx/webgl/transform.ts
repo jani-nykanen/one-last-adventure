@@ -88,7 +88,7 @@ export class WebGLTransform implements Transform2D {
         
         this.activeTarget.matrix = Matrix.multiply(
             this.activeTarget.matrix,
-            Matrix.translate(sx, sy));
+            Matrix.scale(sx, sy));
         
         this.productComputed = false;
     }

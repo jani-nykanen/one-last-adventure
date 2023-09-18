@@ -3,9 +3,10 @@ import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
+import { ExistingObject } from "./existingobject.js";
 
 
-export class GameObject {
+export class GameObject implements ExistingObject {
 
 
     protected pos : Vector;

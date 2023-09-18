@@ -4,6 +4,8 @@ import { Camera } from "./camera.js";
 import { CollisionObject } from "./collisionobject.js";
 import { GameObjectManager } from "./gameobjectmanager.js";
 import { MapLayer } from "./maplayer.js";
+import { Background, BackgroundType } from "./background.js";
+
 
 
 
@@ -12,12 +14,14 @@ export class Stage {
 
     private mapLayer : MapLayer;
     private objectLayer : number[] | undefined;
+
+    private background : Background;
     
     public readonly width : number;
     public readonly height : number;
 
 
-    constructor(mapName : string, event : ProgramEvent) {
+    constructor(mapName : string, backgroundType : BackgroundType, event : ProgramEvent) {
 
         const baseMap = event.assets.getTilemap(mapName);
         const baseCollision = event.assets.getTilemap("collisions_" + mapName);
@@ -33,6 +37,14 @@ export class Stage {
         this.height = baseMap.height;
 
         this.objectLayer = baseMap.cloneLayer("objects");
+
+        this.background = new Background(backgroundType, event);
+    }
+
+
+    public update(camera : Camera, event : ProgramEvent) : void {
+
+        this.background.update(camera, event);
     }
 
 
@@ -41,6 +53,18 @@ export class Stage {
         const bmp = canvas.getBitmap("tileset_void");
 
         this.mapLayer.draw(canvas, bmp, camera);
+    }
+
+
+    public drawBackground(canvas : Canvas, camera : Camera | undefined) : void {
+
+        this.background.draw(canvas);
+    }
+
+
+    public drawForeground(canvas : Canvas) : void {
+
+        this.background.drawForegorund(canvas);
     }
 
 

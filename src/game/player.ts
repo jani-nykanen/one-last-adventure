@@ -91,7 +91,7 @@ export class Player extends CollisionObject {
                 return;
             }
 
-            animSpeed = Math.round(10 - Math.abs(this.speed.x)*4);
+            animSpeed = Math.round(10 - Math.abs(this.speed.x)*5);
 
             this.spr.animate(0, 1, 6, animSpeed, event.tick);
         }

@@ -89,4 +89,9 @@ export class Camera {
 
 
     public moveDirection = () : Vector => Vector.direction(this.pos, this.target);
+
+
+    public moveDelta = () : Vector => new Vector(
+        (this.target.x - this.pos.x)*this.width*this.moveSpeed,
+        (this.target.y - this.pos.y)*this.height*this.moveSpeed);
 }
