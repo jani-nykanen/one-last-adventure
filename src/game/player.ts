@@ -19,7 +19,10 @@ export class Player extends CollisionObject {
     private touchLadderTop : boolean = false;
     private ladderX : number = 0;
 
+    private attacking : boolean = false;
+
     private spr : Sprite;
+    private sprWeapon : Sprite;
     private flip : Flip = Flip.None;
 
 
@@ -32,6 +35,7 @@ export class Player extends CollisionObject {
         this.friction = new Vector(0.15, 0.15);
 
         this.spr = new Sprite(16, 16);
+        this.sprWeapon = new Sprite(32, 32);
     } 
 
 
@@ -120,11 +124,67 @@ export class Player extends CollisionObject {
     }
 
 
+    private attack(event : ProgramEvent) : void {
+
+        if (this.attacking)
+            return;
+
+        if (event.input.getAction("attack") == InputState.Pressed) {
+
+            this.attacking = true;
+            this.spr.setFrame(0, 2);
+            this.sprWeapon.setFrame(0, 0);
+        }
+    }
+
+
+    private updateAttacking(event : ProgramEvent) : boolean {
+
+        const FRAME_TIME : number = 4;
+
+        if (!this.attacking)
+            return false;
+
+        if (this.touchSurface) {
+
+            this.target.x = 0.0;
+        }
+
+        if (this.climbing) {
+
+            this.target.y = 0.0;
+        }
+
+        this.sprWeapon.animate(0, 0, 5, FRAME_TIME, event.tick);
+        this.spr.animate(2, 0, 3, 
+            this.spr.getColumn() == 2 ? (FRAME_TIME*3) : FRAME_TIME, 
+            event.tick);
+        if (this.spr.getColumn() == 3) {
+
+            this.spr.setFrame(2, 2);
+            this.attacking = false;
+            return false;
+        }
+        return true;
+    }
+
+
     private control(event : ProgramEvent) : void {
 
         const BASE_GRAVITY = 4.0;
         const WALK_SPEED = 1.0;
         const EPS = 0.1;
+
+        if (!this.climbing) {
+
+            this.target.y = BASE_GRAVITY;
+        }
+
+        this.attack(event);
+        if (this.updateAttacking(event)) {
+
+            return;
+        }
 
         const stick = event.input.stick;
         if (Math.abs(stick.x) >= EPS) {
@@ -139,7 +199,6 @@ export class Player extends CollisionObject {
         }
 
         this.target.x = WALK_SPEED*stick.x;
-        this.target.y = BASE_GRAVITY;
 
         this.checkJump(event);
     }
@@ -155,6 +214,8 @@ export class Player extends CollisionObject {
         let animSpeed : number;
         let frame : number;
 
+        if (this.attacking)
+            return;
 
         // Climbing
         if (this.climbing) {
@@ -268,17 +329,25 @@ export class Player extends CollisionObject {
 
     public draw(canvas : Canvas) : void {
 
+        const WEAPON_XOFF : number[] = [2, -18];
+
         if (!this.exist)
             return;
 
         const bmp = canvas.getBitmap("player");
+        const bmpWeapons = canvas.getBitmap("weapons");
 
         const dx = Math.round(this.pos.x) - 8;
         const dy = Math.round(this.pos.y) - 7;
 
-        const flip = this.climbing ? Flip.None : this.flip;
+        const flip = (this.climbing && !this.attacking) ? Flip.None : this.flip;
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
+
+        if (this.attacking && this.sprWeapon.getColumn() < 5) {
+
+            this.sprWeapon.draw(canvas, bmpWeapons, dx + WEAPON_XOFF[flip], dy - 8, flip);
+        }
     }
 
 

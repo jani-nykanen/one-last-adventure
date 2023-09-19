@@ -88,6 +88,8 @@ export class Sprite {
 
         this.column = column;
         this.row = row;
+
+        this.timer = 0.0;
     }
 
 

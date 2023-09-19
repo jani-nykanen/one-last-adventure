@@ -5,6 +5,7 @@
         {"name": "player", "path": "player.png"},
         {"name": "vortex", "path": "vortex.png"},
         {"name": "snowflakes", "path": "snowflakes.png"},
+        {"name": "weapons", "path": "weapons.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 
