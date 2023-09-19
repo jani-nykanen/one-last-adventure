@@ -3,7 +3,7 @@ import { negMod } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 import { GameObject } from "./gameobject.js";
 import { Camera } from "./camera.js";
-import { Canvas } from "../gfx/interface.js";
+import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { next } from "./existingobject.js";
 import { RGBA } from "../math/rgba.js";
 
@@ -65,15 +65,14 @@ class Snowflake extends GameObject {
     }
 
 
-    public draw(canvas : Canvas) : void {
+    public draw(canvas : Canvas, bmp : Bitmap) : void {
 
         if (!this.exist) return;      
     
-        const px = Math.round(this.pos.x) - this.size/2;
-        const py = Math.round(this.pos.y) - this.size/2;
+        const px = Math.round(this.pos.x) - 2;
+        const py = Math.round(this.pos.y) - 2;
 
-        // TODO: Use a sprite instead
-        canvas.fillRect(px, py, this.size, this.size);
+        canvas.drawBitmap(bmp, Flip.None, px, py, (this.size - 1)*4, 0, 4, 4);
     }
 }
 
@@ -112,7 +111,7 @@ export class SnowflakeGenerator {
 
     private generateFlake(event : ProgramEvent, pos? : Vector) {
 
-        const MAX_SIZE = 3;
+        const MAX_SIZE = 2; // 3;
 
         const MIN_SPEED_X : number  = 0.25;
         const MAX_SPEED_X : number  = 1.25;
@@ -159,10 +158,12 @@ export class SnowflakeGenerator {
 
     public draw(canvas : Canvas, color : RGBA, alpha : number = 0.67) : void {
 
+        const bmp = canvas.getBitmap("snowflakes");
+
         canvas.setColor(color.r, color.g, color.b, alpha);
         for (let o of this.snowflakes) {
 
-            o.draw(canvas);
+            o.draw(canvas, bmp);
         }
         canvas.setColor();
     }

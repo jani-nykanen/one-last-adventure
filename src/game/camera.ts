@@ -57,18 +57,26 @@ export class Camera {
     }
 
 
-    public move(dx : number, dy : number, moveSpeed : number) : void {
+    public move(dx : number, dy : number, moveSpeed : number) : boolean {
 
         if (this.moving)
-            return;
+            return false;
 
-        this.target.x = this.pos.x + dx;
-        this.target.y = this.pos.y + dy;
+        const tx = this.pos.x + dx;
+        const ty = this.pos.y + dy;
+
+        if (tx < 0 || ty < 0)
+            return false;
+
+        this.target.x = tx;
+        this.target.y = ty;
 
         this.moveSpeed = moveSpeed;
         this.moveTimer = 1.0;
 
         this.moving = true;
+
+        return true;
     }
 
 

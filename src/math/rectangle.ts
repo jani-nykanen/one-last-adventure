@@ -9,6 +9,8 @@
 // rectangles
 //
 
+import { Vector } from "./vector";
+
 export class Rectangle {
 
 
@@ -30,3 +32,10 @@ export class Rectangle {
     public clone = () : Rectangle => new Rectangle(this.x, this.y, this.w, this.h);
 
 }
+
+
+export const overlayRect = (ashift : Vector, A : Rectangle, bshift : Vector, B : Rectangle) : boolean => 
+    ashift.x + A.x + A.w/2 >= bshift.x + B.x - B.w/2 &&
+    ashift.x + A.x - A.w/2 <= bshift.x + B.x + B.w/2 &&
+    ashift.y + A.y + A.h/2 >= bshift.y + B.y - B.h/2 &&
+    ashift.y + A.y - A.h/2 <= bshift.y + B.y + B.h/2;

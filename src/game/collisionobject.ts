@@ -28,6 +28,9 @@ export class CollisionObject extends GameObject {
     protected verticalCollisionEvent?(dir : -1 | 1, event : ProgramEvent) : void;
     protected horizontalCollisionEvent?(dir : -1 | 1, event : ProgramEvent) : void;
 
+    public ladderCollision?(x : number, y : number, w : number, h : number, 
+        ladderTop : boolean, event : ProgramEvent) : boolean;
+
 
     public verticalCollision(x : number, y : number, w : number, dir : -1 | 1, event : ProgramEvent) : boolean {
 

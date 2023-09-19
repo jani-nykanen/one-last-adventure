@@ -161,6 +161,7 @@ export class MapLayer {
 
                     collisionID = this.collisionData[tileID - 1];
 
+                    // Walls
                     if ((collisionID & Collision.Top) != 0) {
 
                         o.verticalCollision(dx, dy, TILE_WIDTH, 1, event);
@@ -176,6 +177,16 @@ export class MapLayer {
                     if ((collisionID & Collision.Left) != 0) {
 
                         o.horizontalCollision(dx, dy, TILE_HEIGHT, 1, event);
+                    }
+
+                    // Ladder
+                    if ((collisionID & Collision.LadderBase) != 0) {
+
+                        o.ladderCollision?.(dx + 4, dy + 2, 8, 12, false, event);
+                    }
+                    if ((collisionID & Collision.LadderTop) != 0) {
+
+                        o.ladderCollision?.(dx + 4, dy + 14, 8, 2, true, event);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 import { CollisionObject } from "./collisionobject.js";
 import { Sprite } from "../gfx/sprite.js";
-import { Rectangle } from "../math/rectangle.js";
+import { Rectangle, overlayRect } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { Canvas, Flip } from "../gfx/interface.js";
@@ -13,6 +13,11 @@ export class Player extends CollisionObject {
 
     private jumpTimer : number = 0;
     private ledgeTimer : number = 0;
+
+    private touchLadder : boolean = false;
+    private climbing : boolean = false;
+    private touchLadderTop : boolean = false;
+    private ladderX : number = 0;
 
     private spr : Sprite;
     private flip : Flip = Flip.None;
@@ -51,6 +56,70 @@ export class Player extends CollisionObject {
     }
 
 
+    private startClimbing(event : ProgramEvent) : boolean {
+
+        const SHIFT_DOWN : number = 8;
+
+        if (this.climbing)
+            return false;
+
+        if ( (this.touchLadder && !this.touchLadderTop && event.input.upPress()) ||
+             (!this.touchLadder && this.touchLadderTop && event.input.downPress())) {
+
+            this.climbing = true;
+            this.speed.zeros();
+            this.target.zeros();
+
+            this.pos.x = this.ladderX;
+
+            if (this.touchLadderTop) {
+
+                this.touchLadder = true;
+                this.pos.y += SHIFT_DOWN;
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    private updateClimbing(event : ProgramEvent) : boolean {
+
+        const CLIMB_SPEED : number = 0.75;
+        const CLIMB_JUMP_TIME : number = 8;
+        const JUMP_STICK_EPS = 0.05;
+
+        if (!this.climbing)
+            return false;
+
+        if (this.climbing && !this.touchLadder) {
+
+            this.climbing = false;
+            return false;
+        }
+
+        const stick = event.input.stick;
+
+        if (event.input.getAction("jump") == InputState.Pressed) {
+
+            this.climbing = false;
+            if (stick.y < JUMP_STICK_EPS) {
+
+                this.jumpTimer = CLIMB_JUMP_TIME;
+            }
+
+            return;
+        }
+
+        this.speed.x = 0;
+        this.target.x = 0;
+
+        this.target.y = CLIMB_SPEED*stick.y;
+
+        return true;
+    }
+
+
     private control(event : ProgramEvent) : void {
 
         const BASE_GRAVITY = 4.0;
@@ -58,14 +127,19 @@ export class Player extends CollisionObject {
         const EPS = 0.1;
 
         const stick = event.input.stick;
-
-        this.target.x = WALK_SPEED*stick.x;
-        this.target.y = BASE_GRAVITY;
-
         if (Math.abs(stick.x) >= EPS) {
 
             this.flip = stick.x > 0 ? Flip.None : Flip.Horizontal;
         }
+
+        this.startClimbing(event);
+        if (this.updateClimbing(event)) {
+
+            return;
+        }
+
+        this.target.x = WALK_SPEED*stick.x;
+        this.target.y = BASE_GRAVITY;
 
         this.checkJump(event);
     }
@@ -75,17 +149,32 @@ export class Player extends CollisionObject {
 
         // TODO: Split to smaller functions?
 
-        const RUN_EPS = 0.01;
+        const ANIM_EPS = 0.01;
         const JUMP_EPS = 0.5;
 
         let animSpeed : number;
         let frame : number;
 
+
+        // Climbing
+        if (this.climbing) {
+
+            if (Math.abs(this.target.y) < ANIM_EPS &&
+                Math.abs(this.target.y) < ANIM_EPS) {
+
+                this.spr.setFrame(4, 1);
+                return;
+            }
+
+            this.spr.animate(1, 3, 6, 6, event.tick);
+            return;
+        }
+
         // Running
         if (this.touchSurface) {
 
-            if (Math.abs(this.speed.x) < RUN_EPS &&
-                Math.abs(this.target.x) < RUN_EPS) {
+            if (Math.abs(this.speed.x) < ANIM_EPS &&
+                Math.abs(this.target.x) < ANIM_EPS) {
 
                 this.spr.setFrame(0, 0);
                 return;
@@ -127,17 +216,44 @@ export class Player extends CollisionObject {
     }
 
 
-    protected verticalCollisionEvent(dir : -1 | 1, event: ProgramEvent): void {
+    private updateFlags() : void {
+
+        this.touchLadder = false;
+        this.touchLadderTop = false;
+    }
+
+
+    protected verticalCollisionEvent(dir : -1 | 1, event : ProgramEvent) : void {
         
         const LEDGE_TIME = 8;
 
         if (dir == 1) {
             
             this.ledgeTimer = LEDGE_TIME;
+            this.climbing = false;
             return;
         }
 
         this.jumpTimer = 0;
+    }
+
+
+    public ladderCollision(x : number, y : number, w : number, h : number, 
+        ladderTop : boolean, event : ProgramEvent) : boolean {
+
+        if (!this.exist || this.dying)
+            return false;
+
+        if (overlayRect(this.pos, this.collisionBox, new Vector(), new Rectangle(x + w/2, y + h/2, w, h))) {
+
+            this.touchLadder ||= !ladderTop;
+            this.touchLadderTop ||= ladderTop;
+
+            this.ladderX = x + w/2;
+
+            return true;
+        }
+        return false;
     }
 
 
@@ -146,6 +262,7 @@ export class Player extends CollisionObject {
         this.control(event);
         this.animate(event);
         this.updateTimers(event);
+        this.updateFlags();
     }   
 
 
@@ -159,7 +276,9 @@ export class Player extends CollisionObject {
         const dx = Math.round(this.pos.x) - 8;
         const dy = Math.round(this.pos.y) - 7;
 
-        this.spr.draw(canvas, bmp, dx, dy, this.flip);
+        const flip = this.climbing ? Flip.None : this.flip;
+
+        this.spr.draw(canvas, bmp, dx, dy, flip);
     }
 
 
@@ -198,26 +317,29 @@ export class Player extends CollisionObject {
         const right = left + camera.width;
         const bottom = top + camera.height;
 
-        if (this.pos.x + H_MARGIN >= right) {
+        if (this.speed.x > 0 && this.pos.x + H_MARGIN >= right) {
 
             dx = 1;
         }
-        else if (this.pos.x - H_MARGIN <= left) {
+        else if (this.speed.x < 0 && this.pos.x - H_MARGIN <= left) {
 
             dx = -1;
         }
-        else if (this.pos.y + V_MARGIN >= bottom) {
+        else if (this.speed.y > 0 && this.pos.y + V_MARGIN >= bottom) {
 
             dy = 1;
         }
-        else if (this.pos.y - V_MARGIN <= top) {
+        else if (this.speed.y <0 && this.pos.y - V_MARGIN <= top) {
 
             dy = -1;
         }
 
         if (dx != 0 || dy != 0) {
 
-            camera.move(dx, dy, CAMERA_MOVE_SPEED);
+            if (!camera.move(dx, dy, CAMERA_MOVE_SPEED)) {
+
+                return;
+            }
 
             if (dx != 0) {
 
