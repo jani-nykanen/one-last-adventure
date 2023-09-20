@@ -6,6 +6,7 @@
         {"name": "vortex", "path": "vortex.png"},
         {"name": "snowflakes", "path": "snowflakes.png"},
         {"name": "weapons", "path": "weapons.png"},
+        {"name": "crate", "path": "crate.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 

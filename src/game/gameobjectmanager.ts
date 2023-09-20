@@ -4,17 +4,28 @@ import { Camera } from "./camera.js";
 import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
+import { Crate } from "./crate.js";
 
 
 export class GameObjectManager {
     
     
     private player : Player | undefined = undefined;
+    private crates : Crate[];
 
 
     constructor(event : ProgramEvent) {
 
-        // this.player = new Player(event.screenWidth/2, 32);
+        this.crates = new Array<Crate> ();
+    }
+
+
+    private cameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        for (let c of this.crates) {
+
+            c.cameraCheck(camera, event);
+        }
     }
 
 
@@ -23,18 +34,32 @@ export class GameObjectManager {
         if (camera.isMoving()) {
 
             this.player?.cameraCollision(camera, event);
+            this.cameraCheck(camera, event);
+
             return;
         }
 
         this.player?.update(event);
         this.player?.updateCollisionFlags();
         this.player?.cameraCollision(camera, event);
-
         stage?.objectCollision(this.player, event);
+
+        for (let c of this.crates) {
+
+            c.cameraCheck(camera, event);
+            c.update(event);
+        }
     }
 
 
     public draw(canvas : Canvas) : void {
+
+        const bmpCrate = canvas.getBitmap("crate");
+
+        for (let c of this.crates) {
+
+            c.draw(canvas, bmpCrate);
+        }
 
         this.player?.draw(canvas);
     }
@@ -43,5 +68,11 @@ export class GameObjectManager {
     public addPlayer(x : number, y : number) : void {
 
         this.player = this.player ?? new Player((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
+    }
+
+
+    public addCrate(x : number, y : number) : void {
+
+        this.crates.push(new Crate((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT));
     }
 }

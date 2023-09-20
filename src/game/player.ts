@@ -36,6 +36,8 @@ export class Player extends CollisionObject {
 
         this.spr = new Sprite(16, 16);
         this.sprWeapon = new Sprite(32, 32);
+
+        this.inCamera = true;
     } 
 
 

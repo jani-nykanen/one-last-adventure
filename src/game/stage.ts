@@ -102,7 +102,7 @@ export class Stage {
                 // Crate
                 case 2:
 
-                    // TODO: This
+                    objects.addCrate(x, y);
                     break;
 
                 default:

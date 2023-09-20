@@ -4,6 +4,7 @@ import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { ExistingObject } from "./existingobject.js";
+import { Camera } from "./camera.js";
 
 
 export class GameObject implements ExistingObject {
@@ -17,7 +18,10 @@ export class GameObject implements ExistingObject {
     protected hitbox : Rectangle;
 
     protected exist : boolean;
-    protected dying = false;
+    protected dying : boolean = false;
+    protected inCamera : boolean = false;
+
+    protected cameraCheckArea : Vector;
 
 
     constructor(x : number = 0, y : number = 0, exist : boolean = false) {
@@ -29,12 +33,16 @@ export class GameObject implements ExistingObject {
 
         this.hitbox = new Rectangle();
 
+        this.cameraCheckArea = new Vector(16, 16);
+
         this.exist = exist;
     }
 
 
     protected updateEvent?(event : ProgramEvent) : void;
     protected die?(event : ProgramEvent) : boolean;
+
+    protected cameraEvent?(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void;
 
 
     protected updateMovement(event : ProgramEvent) : void {
@@ -48,6 +56,16 @@ export class GameObject implements ExistingObject {
 
 
     public update(event : ProgramEvent) : void {
+
+        if (!this.inCamera) {
+
+            if (this.dying) {
+
+                this.exist = false;
+                this.dying = false;
+            }
+            return;
+        }
 
         if (!this.exist) {
 
@@ -81,5 +99,23 @@ export class GameObject implements ExistingObject {
     public draw?(canvas : Canvas, bmp? : Bitmap) : void;
 
 
+    public cameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        if (!this.exist) 
+            return;
+        
+        const wasInCamera = this.inCamera;
+
+        this.inCamera = camera.isObjectInCamera(this.pos, this.cameraCheckArea);
+        if (this.inCamera != wasInCamera) {
+
+            this.cameraEvent?.(this.inCamera, camera, event);
+        }
+    }
+
+
     public getPosition = () : Vector => this.pos.clone();
+
+
+    public isInCamera = () : boolean => this.inCamera;
 }

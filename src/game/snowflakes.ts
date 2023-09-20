@@ -23,6 +23,8 @@ class Snowflake extends GameObject {
 
         this.speedFactor = new Vector();
         this.friction = new Vector(0.1, 0.1);
+
+        this.inCamera = true;
     }
 
 
@@ -56,7 +58,7 @@ class Snowflake extends GameObject {
     }
 
 
-    public cameraEvent(camera : Camera) : void {
+    public cameraCheck(camera : Camera, event : ProgramEvent) : void {
 
         const delta = camera.moveDelta();
 
@@ -143,7 +145,7 @@ export class SnowflakeGenerator {
 
             for (let o of this.snowflakes) {
 
-                o.cameraEvent(camera);
+                o.cameraCheck(camera, event);
             }
         }
         else {

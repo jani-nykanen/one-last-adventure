@@ -102,4 +102,13 @@ export class Camera {
     public moveDelta = () : Vector => new Vector(
         (this.target.x - this.pos.x)*this.width*this.moveSpeed,
         (this.target.y - this.pos.y)*this.height*this.moveSpeed);
+
+
+    public isObjectInCamera(pos : Vector, size : Vector) : boolean {
+
+        return pos.x + size.x/2 >= this.interpolatedPos.x &&
+               pos.x - size.x/2 <= this.interpolatedPos.x + this.width &&
+               pos.y + size.y/2 >= this.interpolatedPos.y &&
+               pos.y - size.y/2 <= this.interpolatedPos.y + this.height;
+    }
 }
