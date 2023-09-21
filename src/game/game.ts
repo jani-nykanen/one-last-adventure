@@ -24,9 +24,11 @@ export class Game implements Scene {
 
         this.objects = new GameObjectManager(event);
         this.stage = new Stage("void", BackgroundType.Void, event);
-        this.stage.parseObjects(this.objects);
+        this.stage.createInitialObjects(this.objects);
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
+
+        this.stage.cameraCheck(this.camera, this.objects);
     }
 
 

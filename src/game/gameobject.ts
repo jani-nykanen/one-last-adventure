@@ -118,4 +118,7 @@ export class GameObject implements ExistingObject {
 
 
     public isInCamera = () : boolean => this.inCamera;
+
+
+    public isActive = () : boolean => this.exist && !this.dying && this.inCamera;
 }

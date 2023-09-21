@@ -11,7 +11,7 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.assets.parseIndexFile("assets/index.json");
 
     event.input.addAction("jump", ["Space", "KeyZ"], [0]);
-    event.input.addAction("attack", ["LeftControl", "KeyX"], [2]);
+    event.input.addAction("attack", ["ControlLeft", "KeyX"], [2]);
 }
 
 

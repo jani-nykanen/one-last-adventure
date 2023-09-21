@@ -5,8 +5,11 @@ import { CollisionObject } from "./collisionobject.js";
 import { GameObjectManager } from "./gameobjectmanager.js";
 import { MapLayer } from "./maplayer.js";
 import { Background, BackgroundType } from "./background.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
+const CREATABLE_OBJECTS = [2];
+const OBJECT_LAYER_START = 256;
 
 
 export class Stage {
@@ -14,6 +17,7 @@ export class Stage {
 
     private mapLayer : MapLayer;
     private objectLayer : number[] | undefined;
+    private objectCreationWaiting : boolean[];
 
     private background : Background;
     
@@ -37,8 +41,33 @@ export class Stage {
         this.height = baseMap.height;
 
         this.objectLayer = baseMap.cloneLayer("objects");
+        this.objectCreationWaiting = this.objectLayer.map((v : number) => CREATABLE_OBJECTS.includes(v - OBJECT_LAYER_START));
 
         this.background = new Background(backgroundType, event);
+    }
+
+
+    private createObject(tileID : number, x : number, y : number, objects : GameObjectManager) : void {
+
+        console.log("Created object with index: " + tileID);
+
+        switch (tileID) {
+
+        // Player
+        case 1:
+
+            objects.addPlayer(x, y);
+            break;
+
+        // Crate
+        case 2:
+
+            objects.addCrate(x, y);
+            break;
+
+        default:
+            break;
+        }
     }
 
 
@@ -74,7 +103,37 @@ export class Stage {
     }
 
 
-    public parseObjects(objects : GameObjectManager) : void {
+    public cameraCheck(camera : Camera, objects : GameObjectManager) : void {
+
+        const MARGIN = 2;
+
+        const camPos = camera?.getTopCorner();
+
+        const startx = Math.max(0, Math.round(camPos.x/TILE_WIDTH) - MARGIN);
+        const starty = Math.max(0, Math.round(camPos.y/TILE_HEIGHT) - MARGIN);
+
+        const endx = Math.min(this.width, startx + Math.round(camera.width/TILE_WIDTH) + MARGIN*2);
+        const endy = Math.min(this.height, starty + Math.round(camera.height/TILE_HEIGHT) + MARGIN*2);
+
+        let index : number;
+
+        for (let y = starty; y < endy; ++ y) {
+
+            for (let x = startx; x < endx; ++ x) {
+
+                index = y*this.width + x;
+
+                if (!this.objectCreationWaiting[index]) 
+                    continue;
+
+                this.createObject(this.objectLayer[index] - OBJECT_LAYER_START, x, y, objects);
+                this.objectCreationWaiting[index] = false;
+            }
+        }
+    }
+
+
+    public createInitialObjects(objects : GameObjectManager) : void {
 
         if (this.objectLayer === undefined)
             return;
@@ -86,10 +145,10 @@ export class Stage {
             for (let x = 0; x < this.mapLayer.width; ++ x) {
 
                 tileID = this.objectLayer[y*this.width + x];
-                if (tileID <= 256)
+                if (tileID <= OBJECT_LAYER_START)
                     continue;
 
-                tileID -= 256;
+                tileID -= OBJECT_LAYER_START;
 
                 switch (tileID) {
 
@@ -97,12 +156,6 @@ export class Stage {
                 case 1:
 
                     objects.addPlayer(x, y);
-                    break;
-
-                // Crate
-                case 2:
-
-                    objects.addCrate(x, y);
                     break;
 
                 default:

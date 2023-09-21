@@ -31,6 +31,8 @@ export class CollisionObject extends GameObject {
     public ladderCollision?(x : number, y : number, w : number, h : number, 
         ladderTop : boolean, event : ProgramEvent) : boolean;
 
+    public collisionObjectCollision?(o : CollisionObject, event : ProgramEvent) : void;
+
 
     public verticalCollision(x : number, y : number, w : number, dir : -1 | 1, event : ProgramEvent) : boolean {
 

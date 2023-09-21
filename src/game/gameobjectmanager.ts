@@ -31,7 +31,9 @@ export class GameObjectManager {
 
     public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
 
-        if (camera.isMoving()) {
+        if (camera?.isMoving()) {
+
+            stage.cameraCheck(camera, this);
 
             this.player?.cameraCollision(camera, event);
             this.cameraCheck(camera, event);
@@ -48,6 +50,9 @@ export class GameObjectManager {
 
             c.cameraCheck(camera, event);
             c.update(event);
+
+            if (this.player !== undefined)
+                c.collisionObjectCollision(this.player, event);
         }
     }
 
