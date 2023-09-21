@@ -3,6 +3,7 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Rectangle } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
+import { Player } from "./player.js";
 
 
 export class Crate extends CollisionObject {
@@ -16,6 +17,14 @@ export class Crate extends CollisionObject {
         this.collisionBox = this.hitbox.clone();
 
         this.friction = new Vector(0, 0.25);
+    }
+
+
+    protected updateEvent(event : ProgramEvent) : void {
+        
+        const GRAVITY = 4.0;
+
+        this.target.y = GRAVITY;
     }
 
 
@@ -44,5 +53,17 @@ export class Crate extends CollisionObject {
         o.verticalCollision(this.pos.x - 7, this.pos.y + 8, 14, -1, event);
         o.horizontalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event);
         o.horizontalCollision(this.pos.x + 8, this.pos.y - 8, 16, -1, event);
+    }
+
+
+    public playerCollision(player : Player, event : ProgramEvent) : void {
+
+        if (!this.isActive() || !player.isActive())
+            return;
+
+        if (player.doesOverlaySword(this, -1)) {
+            
+            this.exist = false;
+        }
     }
 }

@@ -46,13 +46,36 @@ export class GameObjectManager {
         this.player?.cameraCollision(camera, event);
         stage?.objectCollision(this.player, event);
 
-        for (let c of this.crates) {
+        let c1 : Crate;
+        let c2 : Crate;
 
-            c.cameraCheck(camera, event);
-            c.update(event);
+        for (let i = 0; i < this.crates.length; ++ i) {
 
-            if (this.player !== undefined)
-                c.collisionObjectCollision(this.player, event);
+            c1 = this.crates[i];
+
+            c1.cameraCheck(camera, event);
+            c1.update(event);
+
+            stage.objectCollision(c1, event);
+
+            if (this.player !== undefined) {
+
+                c1.collisionObjectCollision(this.player, event);
+                c1.playerCollision(this.player, event);
+            }
+
+            if (!c1.doesExist()) {
+
+                this.crates.splice(i, 1);
+            }
+            else {
+
+                for (let j = i; j < this.crates.length; ++ j) {
+
+                    c2 = this.crates[j];
+                    c2.collisionObjectCollision(c1, event);
+                }
+            }
         }
     }
 

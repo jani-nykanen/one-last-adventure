@@ -6,6 +6,7 @@ import { ProgramEvent } from "../core/event.js";
 import { Canvas, Flip } from "../gfx/interface.js";
 import { InputState } from "../core/inputstate.js";
 import { Camera } from "./camera.js";
+import { GameObject } from "./gameobject.js";
 
 
 export class Player extends CollisionObject {
@@ -24,6 +25,10 @@ export class Player extends CollisionObject {
     private spr : Sprite;
     private sprWeapon : Sprite;
     private flip : Flip = Flip.None;
+    private dir : -1 | 1 = 1;
+
+    private swordHitId : number = 0;
+    private swordHitArea : Rectangle;
 
 
     constructor(x : number = 0, y : number = 0) {
@@ -33,6 +38,8 @@ export class Player extends CollisionObject {
         this.hitbox = new Rectangle(0, 4, 8, 8);
         this.collisionBox = new Rectangle(0, 2, 8, 12);
         this.friction = new Vector(0.15, 0.15);
+
+        this.swordHitArea = new Rectangle();
 
         this.spr = new Sprite(16, 16);
         this.sprWeapon = new Sprite(32, 32);
@@ -136,11 +143,16 @@ export class Player extends CollisionObject {
             this.attacking = true;
             this.spr.setFrame(0, 2);
             this.sprWeapon.setFrame(0, 0);
+
+            ++ this.swordHitId;
         }
     }
 
 
     private updateAttacking(event : ProgramEvent) : boolean {
+
+        const SWORDHIT_WIDTH = 14;
+        const SWORDHIT_HEIGHT = 16;
 
         const FRAME_TIME : number = 4;
 
@@ -167,6 +179,12 @@ export class Player extends CollisionObject {
             this.attacking = false;
             return false;
         }
+
+        this.swordHitArea.x = this.pos.x + 14*this.dir;
+        this.swordHitArea.y = this.pos.y;
+        this.swordHitArea.w = SWORDHIT_WIDTH;
+        this.swordHitArea.h = SWORDHIT_HEIGHT;
+
         return true;
     }
 
@@ -192,6 +210,7 @@ export class Player extends CollisionObject {
         if (Math.abs(stick.x) >= EPS) {
 
             this.flip = stick.x > 0 ? Flip.None : Flip.Horizontal;
+            this.dir = stick.x > 0 ? 1 : -1;
         }
 
         this.startClimbing(event);
@@ -422,5 +441,15 @@ export class Player extends CollisionObject {
                 this.speed.x = 0;
             }
         }
+    }
+
+
+    public doesOverlaySword(o : GameObject, targetSwordId : number) : boolean {
+
+        if (targetSwordId == this.swordHitId ||
+            this.sprWeapon.getColumn() > 2)
+            return false;
+
+        return o.overlayRect(new Vector(), this.swordHitArea);
     }
 }

@@ -99,6 +99,9 @@ export class Stage {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
+        if (!o.isActive())
+            return;
+
         this.mapLayer.objectCollision(o, event);
     }
 

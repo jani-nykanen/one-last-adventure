@@ -1,4 +1,4 @@
-import { Rectangle } from "../math/rectangle.js";
+import { Rectangle, overlayRect } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
@@ -121,4 +121,7 @@ export class GameObject implements ExistingObject {
 
 
     public isActive = () : boolean => this.exist && !this.dying && this.inCamera;
+
+
+    public overlayRect = (shift : Vector, hitbox : Rectangle) : boolean => overlayRect(this.pos, this.hitbox, shift, hitbox);
 }

@@ -68,7 +68,6 @@ export class Game implements Scene {
 
         canvas.setColor(0, 0, 0);
         canvas.drawText(canvas.getBitmap("font"), "Alpha 0.0.1", 2, 2, -1, 0);
-
     }
 
 
