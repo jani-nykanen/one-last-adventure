@@ -58,23 +58,22 @@ export class GameObjectManager {
 
             stage.objectCollision(c1, event);
 
+            if (!c1.doesExist()) {
+
+                this.crates.splice(i, 1);
+                continue;
+            }
+           
+            for (let j = i; j < this.crates.length; ++ j) {
+
+                c2 = this.crates[j];
+                c2.collisionObjectCollision(c1, event);
+            }
+
             if (this.player !== undefined) {
 
                 c1.collisionObjectCollision(this.player, event);
                 c1.playerCollision(this.player, event);
-            }
-
-            if (!c1.doesExist()) {
-
-                this.crates.splice(i, 1);
-            }
-            else {
-
-                for (let j = i; j < this.crates.length; ++ j) {
-
-                    c2 = this.crates[j];
-                    c2.collisionObjectCollision(c1, event);
-                }
             }
         }
     }

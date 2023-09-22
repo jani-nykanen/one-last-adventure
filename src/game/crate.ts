@@ -49,7 +49,7 @@ export class Crate extends CollisionObject {
         // making four function calls (that will check the same thing, anyway,
         // though)?
 
-        o.verticalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event);
+        o.verticalCollision(this.pos.x - 7, this.pos.y - 8, 14, 1, event);
         o.verticalCollision(this.pos.x - 7, this.pos.y + 8, 14, -1, event);
         o.horizontalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event);
         o.horizontalCollision(this.pos.x + 8, this.pos.y - 8, 16, -1, event);
@@ -63,6 +63,7 @@ export class Crate extends CollisionObject {
 
         if (player.doesOverlaySword(this, -1)) {
             
+            player.downAttackBounce();
             this.exist = false;
         }
     }

@@ -21,6 +21,8 @@ export class Player extends CollisionObject {
     private ladderX : number = 0;
 
     private attacking : boolean = false;
+    private downAttacking : boolean = false;
+    private downAttackWait : number = 0;
 
     private spr : Sprite;
     private sprWeapon : Sprite;
@@ -135,15 +137,32 @@ export class Player extends CollisionObject {
 
     private attack(event : ProgramEvent) : void {
 
+        const EPS : number = 0.25;
+        const DOWN_ATTACK_JUMP : number = -1.5;
+
         if (this.attacking)
             return;
 
         if (event.input.getAction("attack") == InputState.Pressed) {
 
-            this.attacking = true;
-            this.spr.setFrame(0, 2);
-            this.sprWeapon.setFrame(0, 0);
+            if (!this.climbing &&
+                !this.touchSurface &&
+                event.input.stick.y > EPS) {
 
+                this.downAttacking = true;
+                this.downAttackWait = 0;
+
+                this.speed.y = DOWN_ATTACK_JUMP;
+
+                // Required to get the sword hitbox right
+                this.updateDownAttack();
+            }
+            else {
+
+                this.attacking = true;
+                this.spr.setFrame(0, 2);
+                this.sprWeapon.setFrame(0, 0);
+            }
             ++ this.swordHitId;
         }
     }
@@ -189,11 +208,46 @@ export class Player extends CollisionObject {
     }
 
 
+    private updateDownAttack() : void {
+
+        const SWORDHIT_WIDTH : number = 8;
+        const SWORDHIT_HEIGHT : number = 12;
+
+        const DOWN_ATTACK_FRICTION : number = 0.50;
+        const DOWN_ATTACK_GRAVITY : number = 8.0;
+
+        this.target.x = 0;
+        this.speed.x = 0;
+
+        this.target.y = DOWN_ATTACK_GRAVITY;
+        this.friction.y = DOWN_ATTACK_FRICTION;
+
+        this.swordHitArea.x = this.pos.x;
+        this.swordHitArea.y = this.pos.y + 12;
+        this.swordHitArea.w = SWORDHIT_WIDTH;
+        this.swordHitArea.h = SWORDHIT_HEIGHT;
+    }
+
+
     private control(event : ProgramEvent) : void {
 
         const BASE_GRAVITY = 4.0;
         const WALK_SPEED = 1.0;
         const EPS = 0.1;
+        const BASE_FRICTION = 0.15;
+
+        if (this.downAttackWait > 0) {
+
+            this.speed.x = 0;
+            return;
+        }
+
+        this.friction.y = BASE_FRICTION;
+        if (this.downAttacking) {
+
+            this.updateDownAttack();
+            return;
+        }
 
         if (!this.climbing) {
 
@@ -295,6 +349,11 @@ export class Player extends CollisionObject {
             this.speed.y = JUMP_SPEED;
             this.target.y = this.speed.y;
         }
+
+        if (this.downAttackWait > 0) {
+
+            this.downAttackWait -= event.tick;
+        }
     }
 
 
@@ -307,12 +366,19 @@ export class Player extends CollisionObject {
 
     protected verticalCollisionEvent(dir : -1 | 1, event : ProgramEvent) : void {
         
-        const LEDGE_TIME = 8;
+        const LEDGE_TIME : number = 8;
+        const DOWN_ATTACK_WAIT : number = 15;
 
         if (dir == 1) {
             
             this.ledgeTimer = LEDGE_TIME;
             this.climbing = false;
+
+            if (this.downAttacking) {
+
+                this.downAttackWait = DOWN_ATTACK_WAIT;
+                this.downAttacking = false;
+            }
             return;
         }
 
@@ -362,6 +428,12 @@ export class Player extends CollisionObject {
         const dy = Math.round(this.pos.y) - 7;
 
         const flip = (this.climbing && !this.attacking) ? Flip.None : this.flip;
+
+        if (this.downAttacking || this.downAttackWait > 0) {
+
+            canvas.drawBitmap(bmp, flip, dx, dy, 96, 32, 16, 32);
+            return;
+        }
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
 
@@ -446,10 +518,30 @@ export class Player extends CollisionObject {
 
     public doesOverlaySword(o : GameObject, targetSwordId : number) : boolean {
 
-        if (targetSwordId == this.swordHitId ||
-            this.sprWeapon.getColumn() > 2)
+        const DOWN_ATTACK_SPEED_EPS : number = -0.25;
+
+        const downAttack = (this.downAttacking && this.speed.y >= DOWN_ATTACK_SPEED_EPS) || 
+            this.downAttackWait > 0;
+        const baseAttack = this.attacking && 
+            targetSwordId != this.swordHitId &&
+            this.sprWeapon.getColumn() <= 2;
+
+        if (!downAttack && !baseAttack)
             return false;
 
         return o.overlayRect(new Vector(), this.swordHitArea);
+    }
+
+
+    public downAttackBounce() : void {
+
+        const BOUNCE_SPEED : number = -2.0;
+
+        if (!this.downAttacking && this.downAttackWait <= 0)
+            return;
+
+        this.speed.y = BOUNCE_SPEED;
+        this.downAttacking = false;
+        this.downAttackWait = 0;
     }
 }
