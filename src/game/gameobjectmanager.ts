@@ -5,6 +5,7 @@ import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Crate } from "./crate.js";
+import { ParticleGenerator } from "./particlegenerator.js";
 
 
 export class GameObjectManager {
@@ -12,15 +13,20 @@ export class GameObjectManager {
     
     private player : Player | undefined = undefined;
     private crates : Crate[];
+    private particles : ParticleGenerator;
 
 
     constructor(event : ProgramEvent) {
 
         this.crates = new Array<Crate> ();
+        this.particles = new ParticleGenerator();
     }
 
 
-    private cameraCheck(camera : Camera, event : ProgramEvent) : void {
+    private movingCameraCheck(camera : Camera, stage : Stage, event : ProgramEvent) : void {
+
+        stage.cameraCheck(camera, this);
+        this.player?.cameraCollision(camera, event);
 
         for (let c of this.crates) {
 
@@ -29,22 +35,7 @@ export class GameObjectManager {
     }
 
 
-    public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
-
-        if (camera?.isMoving()) {
-
-            stage.cameraCheck(camera, this);
-
-            this.player?.cameraCollision(camera, event);
-            this.cameraCheck(camera, event);
-
-            return;
-        }
-
-        this.player?.update(event);
-        this.player?.updateCollisionFlags();
-        this.player?.cameraCollision(camera, event);
-        stage?.objectCollision(this.player, event);
+    private updateCrates(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
         let c1 : Crate;
         let c2 : Crate;
@@ -79,6 +70,28 @@ export class GameObjectManager {
     }
 
 
+    public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
+
+        if (camera === undefined || stage === undefined)
+            return;
+
+        if (camera?.isMoving()) {
+
+            this.movingCameraCheck(camera, stage, event);
+            return;
+        }
+
+        this.player?.update(event);
+        this.player?.updateCollisionFlags();
+        this.player?.cameraCollision(camera, event);
+        stage?.objectCollision(this.player, event);
+
+        this.updateCrates(camera, stage, event);
+        this.particles.update(stage, camera, event);
+        this.particles.crateCollision(this.crates, event);
+    }
+
+
     public draw(canvas : Canvas) : void {
 
         const bmpCrate = canvas.getBitmap("crate");
@@ -87,6 +100,7 @@ export class GameObjectManager {
 
             c.draw(canvas, bmpCrate);
         }
+        this.particles.draw(canvas);
 
         this.player?.draw(canvas);
     }
@@ -100,6 +114,12 @@ export class GameObjectManager {
 
     public addCrate(x : number, y : number) : void {
 
-        this.crates.push(new Crate((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT));
+        this.crates.push(
+            new Crate(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT, 
+                this.particles
+            )
+        );
     }
 }

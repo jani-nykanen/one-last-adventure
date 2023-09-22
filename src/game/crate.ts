@@ -3,13 +3,17 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Rectangle } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
+import { ParticleGenerator } from "./particlegenerator.js";
 import { Player } from "./player.js";
 
 
 export class Crate extends CollisionObject {
 
 
-    constructor(x : number, y : number) {
+    private readonly particles : ParticleGenerator;
+
+
+    constructor(x : number, y : number, particles : ParticleGenerator) {
 
         super(x, y, true);
 
@@ -17,8 +21,37 @@ export class Crate extends CollisionObject {
         this.collisionBox = this.hitbox.clone();
 
         this.friction = new Vector(0, 0.25);
+    
+        this.particles = particles;
     }
 
+
+    private spawnParticles() : void {
+
+        const DX : number[] = [-4, 4, -4, 4];
+        const DY : number[] = [-4, -4, 4, 4];
+        const SPEED_X : number[] = [-1, 1, -1, 1];
+        const SPEED_Y : number[] = [-1.5, -1.5, 0.5, 0.5];
+
+        const NOISE : number = 0.5;
+
+        let noisex : number;
+        let noisey : number;
+
+        for (let i = 0; i < 4; ++ i) {
+
+            noisex = 2*(Math.random() - 0.5)*NOISE;
+            noisey = -Math.random()*NOISE;
+
+            this.particles.spawn(
+                this.pos.x + DX[i] , 
+                this.pos.y + DY[i], 
+                SPEED_X[i] + noisex, 
+                SPEED_Y[i] + noisey, 
+                (Math.random()*4) | 0);
+        }
+    }
+ 
 
     protected updateEvent(event : ProgramEvent) : void {
         
@@ -63,6 +96,8 @@ export class Crate extends CollisionObject {
 
         if (player.doesOverlaySword(this, -1)) {
             
+            this.spawnParticles();
+
             player.downAttackBounce();
             this.exist = false;
         }
