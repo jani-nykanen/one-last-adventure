@@ -49,7 +49,7 @@ export class Stage {
 
     private createObject(tileID : number, x : number, y : number, objects : GameObjectManager) : void {
 
-        console.log("Created object with index: " + tileID);
+        // console.log("Created object with index: " + tileID);
 
         switch (tileID) {
 
@@ -62,7 +62,7 @@ export class Stage {
         // Crate
         case 2:
 
-            objects.addCrate(x, y);
+            objects.addCrate(x, y, y*this.width + x);
             break;
 
         default:
@@ -166,5 +166,11 @@ export class Stage {
                 }
             }
         }
+    }
+
+
+    public remarkCreatableObject(index : number) : void {
+
+        this.objectCreationWaiting[index] = true;
     }
 }

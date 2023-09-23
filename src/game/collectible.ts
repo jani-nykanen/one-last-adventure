@@ -32,9 +32,19 @@ export class Collectible extends CollisionObject {
         this.bounceFactor = new Vector(0.75, 0.75);
 
         this.collisionBox = new Rectangle(0, 2, 8, 8);
-        this.hitbox = new Rectangle(0, 0, 10, 10);
+        this.hitbox = new Rectangle(0, 0, 12, 12);
 
         this.spr = new Sprite(16, 16);
+    }
+
+
+    protected die(event : ProgramEvent) : boolean {
+
+        const ANIM_SPEED : number = 4;
+
+        this.spr.animate(this.type*2 + 1, 0, 4, ANIM_SPEED, event.tick);
+
+        return this.spr.getColumn() == 4;
     }
 
 
@@ -103,6 +113,7 @@ export class Collectible extends CollisionObject {
         if (player.overlay(this)) {
 
             this.dying = true;
+            this.spr.setFrame(0, this.type*2 + 1);
         }
     }
 }

@@ -15,8 +15,11 @@ export class Crate extends CollisionObject {
     private readonly particles : ParticleGenerator;
     private readonly collectibles : CollectibleGenerator;
 
+    public readonly stageTileIndex : number = 0;
 
-    constructor(x : number, y : number, particles : ParticleGenerator, collectibles : CollectibleGenerator) {
+
+    constructor(x : number, y : number, stageTileIndex : number,
+        particles : ParticleGenerator, collectibles : CollectibleGenerator) {
 
         super(x, y, true);
 
@@ -25,6 +28,8 @@ export class Crate extends CollisionObject {
 
         this.friction = new Vector(0, 0.25);
     
+        this.stageTileIndex = stageTileIndex;
+
         this.particles = particles;
         this.collectibles = collectibles;
     }
@@ -59,7 +64,7 @@ export class Crate extends CollisionObject {
 
     private spawnCollectible(dir : Vector) : void {
 
-        const DROP_PROB : number = 0.25;
+        const DROP_PROB : number = 1.0; // 0.25;
 
         // TODO: Spawn hearts/magic potions depending on player
         // health & magic count?
@@ -128,4 +133,5 @@ export class Crate extends CollisionObject {
             this.exist = false;
         }
     }
+
 }

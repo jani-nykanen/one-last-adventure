@@ -37,7 +37,7 @@ export class Player extends CollisionObject {
 
         super(x, y, true);
 
-        this.hitbox = new Rectangle(0, 4, 8, 8);
+        this.hitbox = new Rectangle(0, 0, 10, 10);
         this.collisionBox = new Rectangle(0, 2, 8, 12);
         this.friction = new Vector(0.15, 0.15);
 
@@ -138,7 +138,7 @@ export class Player extends CollisionObject {
     private attack(event : ProgramEvent) : void {
 
         const EPS : number = 0.25;
-        const DOWN_ATTACK_JUMP : number = -1.5;
+        const DOWN_ATTACK_JUMP : number = -1.0;
 
         if (this.attacking)
             return;

@@ -48,16 +48,17 @@ export class GameObjectManager {
             c1 = this.crates[i];
 
             c1.cameraCheck(camera, event);
+            if (!c1.isInCamera()) {
+
+                stage.remarkCreatableObject(c1.stageTileIndex);
+                this.crates.splice(i, 1);
+                continue;
+            }
+
             c1.update(event);
 
             stage.objectCollision(c1, event);
 
-            if (!c1.doesExist()) {
-
-                this.crates.splice(i, 1);
-                continue;
-            }
-           
             for (let j = i; j < this.crates.length; ++ j) {
 
                 c2 = this.crates[j];
@@ -68,6 +69,12 @@ export class GameObjectManager {
 
                 c1.collisionObjectCollision(this.player, event);
                 c1.playerCollision(this.player, event);
+
+                if (!c1.doesExist()) {
+
+                    this.crates.splice(i, 1);
+                    continue;
+                }
             }
         }
     }
@@ -120,15 +127,11 @@ export class GameObjectManager {
     }
 
 
-    public addCrate(x : number, y : number) : void {
+    public addCrate(x : number, y : number, index : number) : void {
 
         this.crates.push(
             new Crate(
-                (x + 0.5)*TILE_WIDTH, 
-                (y + 0.5)*TILE_HEIGHT, 
-                this.particles,
-                this.collectibles
-            )
-        );
+                (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, index,
+                this.particles,this.collectibles));
     }
 }
