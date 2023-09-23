@@ -2,6 +2,8 @@
     "bitmapPath": "assets/bitmaps/",
     "bitmaps": [
         {"name": "font", "path": "font.png"},
+        {"name": "font_outlines", "path": "font_outlines.png"},
+        {"name": "tiny_font", "path": "tiny_font.png"},
         {"name": "player", "path": "player.png"},
         {"name": "vortex", "path": "vortex.png"},
         {"name": "snowflakes", "path": "snowflakes.png"},
@@ -9,6 +11,7 @@
         {"name": "crate", "path": "crate.png"},
         {"name": "particles", "path": "particles.png"},
         {"name": "collectibles", "path": "collectibles.png"},
+        {"name": "hud", "path": "hud.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 

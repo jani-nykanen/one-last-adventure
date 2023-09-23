@@ -114,6 +114,17 @@ export class Collectible extends CollisionObject {
 
             this.dying = true;
             this.spr.setFrame(0, this.type*2 + 1);
+
+            switch (this.type) {
+
+            case CollectibleType.Coin:
+
+                player.addCoins(1);
+                break;
+
+            default:
+                break;
+            }
         }
     }
 }

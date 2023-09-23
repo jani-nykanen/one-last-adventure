@@ -25,9 +25,9 @@ export class Program {
 
     private drawLoadingScreen(canvas : Canvas) : void {
 
-        const OUTLINE = 4;
-        const WIDTH = 256;
-        const HEIGHT = 64;
+        const OUTLINE = 1;
+        const WIDTH = 64;
+        const HEIGHT = 12;
 
         const p = this.event.assets.getLoadingPercentage();
 
@@ -40,10 +40,12 @@ export class Program {
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
 
+        canvas.applyTransform();
+
         canvas.clear(0, 85, 170);
         canvas.setColor();
         canvas.fillRect(dx, dy, WIDTH, HEIGHT);
-        canvas.setColor(0, 0, 0);
+        canvas.setColor(0, 85, 170);
         canvas.fillRect(dx + OUTLINE, dy + OUTLINE, WIDTH - OUTLINE*2, HEIGHT - OUTLINE*2);
         canvas.setColor();
         canvas.fillRect(dx + OUTLINE*2, dy + OUTLINE*2, (WIDTH - OUTLINE*4)*p, HEIGHT - OUTLINE*4);

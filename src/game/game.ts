@@ -6,6 +6,7 @@ import { GameObjectManager } from "./gameobjectmanager.js";
 import { Stage } from "./stage.js";
 import { Camera } from "./camera.js";
 import { BackgroundType } from "./background.js";
+import { ProgressManager } from "./progress.js";
 
 
 export class Game implements Scene {
@@ -17,12 +18,61 @@ export class Game implements Scene {
     private stage : Stage | undefined = undefined;
     private camera : Camera | undefined = undefined;
 
+    private progress : ProgressManager;
+
+
+    constructor() {
+
+        this.progress = new ProgressManager();
+    }
+
+
+    private drawHUD(canvas : Canvas) : void {
+
+        const bmp = canvas.getBitmap("hud");
+        const bmpFont = canvas.getBitmap("font_outlines");
+
+        const health = this.objects.getPlayerHealth();
+        const maxHealth = this.objects.getPlayerMaxHealth();
+        const coins = this.progress.getProperty("coins", 0);
+
+        const fracHealth = (health/2) | 0;
+
+        let sx : number;
+        let dx : number;
+
+        canvas.setColor();
+
+        // Health
+        for (let i = 0; i < maxHealth/2; ++ i) {
+
+            dx = -2 + i*11;
+
+            sx = fracHealth > i ? 0 : 16;
+            canvas.drawBitmap(bmp, Flip.None, dx, -2, sx, 0, 16, 16);
+            if (health - i*2 == 1) {
+
+                canvas.drawBitmap(bmp, Flip.None, dx, -2, 0, 0, 8, 16);
+            }
+        }
+
+        // Coins
+        const coinStr = "*" + String(coins); 
+
+        dx = canvas.width - ((coinStr.length)*11 + 12) - 2;
+        canvas.drawText(bmpFont, coinStr, dx + 12, -1, -7);
+
+        canvas.drawBitmap(bmp, Flip.None, dx + 3, -1, 32, 0, 16, 16);
+    }
+
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
+        // this.progress = new ProgressManager();
+
         this.playerSprite = new Sprite(16, 16);
 
-        this.objects = new GameObjectManager(event);
+        this.objects = new GameObjectManager(this.progress, event);
         this.stage = new Stage("void", BackgroundType.Void, event);
         this.stage.createInitialObjects(this.objects);
 
@@ -66,8 +116,7 @@ export class Game implements Scene {
 
         this.stage?.drawForeground(canvas);
 
-        canvas.setColor(0, 0, 0);
-        canvas.drawText(canvas.getBitmap("font"), "Alpha 0.0.1", 2, 2, -1, 0);
+        this.drawHUD(canvas);
     }
 
 

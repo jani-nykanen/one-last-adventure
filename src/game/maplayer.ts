@@ -139,6 +139,7 @@ export class MapLayer {
 
         const HURT_WIDTH : number = 16;
         const HURT_HEIGHT : number = 6;
+        const HURT_DAMAGE : number = 2;
 
         const opos = o.getPosition();
 
@@ -206,7 +207,7 @@ export class MapLayer {
 
                         o.hurtCollision?.(
                             dx + TILE_WIDTH/2 - HURT_WIDTH/2, hurtY,
-                            HURT_WIDTH, HURT_HEIGHT, event);
+                            HURT_WIDTH, HURT_HEIGHT, HURT_DAMAGE, event);
 
                         o.verticalCollision(dx, hurtY, TILE_WIDTH, 1, event);
                         o.horizontalCollision(dx, hurtY, TILE_HEIGHT, 1, event);

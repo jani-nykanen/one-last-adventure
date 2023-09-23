@@ -7,6 +7,8 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Crate } from "./crate.js";
 import { ParticleGenerator } from "./particlegenerator.js";
 import { CollectibleGenerator } from "./collectiblegenerator.js";
+import { ProgressManager } from "./progress.js";
+import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 
 
 export class GameObjectManager {
@@ -16,13 +18,20 @@ export class GameObjectManager {
     private crates : Crate[];
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
+    private flyingMessages : FlyingMessageGenerator;
 
 
-    constructor(event : ProgramEvent) {
+    private readonly progress : ProgressManager;
+
+
+    constructor(progress : ProgressManager, event : ProgramEvent) {
 
         this.crates = new Array<Crate> ();
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
+        this.flyingMessages = new FlyingMessageGenerator();
+
+        this.progress = progress;
     }
 
 
@@ -85,6 +94,8 @@ export class GameObjectManager {
         if (camera === undefined || stage === undefined)
             return;
 
+        this.flyingMessages.update(event);
+
         if (camera?.isMoving()) {
 
             this.movingCameraCheck(camera, stage, event);
@@ -118,12 +129,16 @@ export class GameObjectManager {
         this.collectibles.draw(canvas);
 
         this.player?.draw(canvas);
+
+        this.flyingMessages.draw(canvas);
     }
 
 
     public addPlayer(x : number, y : number) : void {
 
-        this.player = this.player ?? new Player((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
+        this.player = new Player(
+            (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, 
+            this.progress, this.flyingMessages);
     }
 
 
@@ -134,4 +149,8 @@ export class GameObjectManager {
                 (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, index,
                 this.particles,this.collectibles));
     }
+
+
+    public getPlayerHealth = () : number => this.player.getHealth();
+    public getPlayerMaxHealth = () : number => this.player.getMaxHealth();
 }

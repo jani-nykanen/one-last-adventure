@@ -7,6 +7,10 @@ import { Canvas, Flip } from "../gfx/interface.js";
 import { InputState } from "../core/inputstate.js";
 import { Camera } from "./camera.js";
 import { GameObject } from "./gameobject.js";
+import { ProgressManager } from "./progress.js";
+import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
+import { FlyingMessageSymbol } from "./flyingmessage.js";
+import { RGBA } from "../math/rgba.js";
 
 
 export class Player extends CollisionObject {
@@ -35,8 +39,17 @@ export class Player extends CollisionObject {
     private hurtTimer : number = 0;
     private knockbackTimer : number = 0;
 
+    private health : number;
+    private maxHealth : number; 
 
-    constructor(x : number = 0, y : number = 0) {
+
+    private readonly flyingMessages : FlyingMessageGenerator;
+
+    public readonly progress : ProgressManager;
+
+
+    constructor(x : number, y : number, 
+        progress : ProgressManager, flyingMessages : FlyingMessageGenerator) {
 
         super(x, y, true);
 
@@ -50,6 +63,12 @@ export class Player extends CollisionObject {
         this.sprWeapon = new Sprite(32, 32);
 
         this.inCamera = true;
+
+        this.flyingMessages = flyingMessages;
+        this.progress = progress;
+
+        this.maxHealth = this.progress.getProperty("maxHealth", 6);
+        this.health = this.maxHealth;
     } 
 
 
@@ -569,17 +588,21 @@ export class Player extends CollisionObject {
         this.attacking = false;
         this.downAttacking = false;
         this.downAttackWait = 0;
+
+        this.health = Math.max(0, this.health - damage);
+
+        this.flyingMessages.spawn(this.pos.x, this.pos.y - 6, -damage, FlyingMessageSymbol.None, new RGBA(255, 0, 0));
     }
 
 
-    public hurtCollision(x : number, y : number, w : number, h : number, event : ProgramEvent) : boolean {
+    public hurtCollision(x : number, y : number, w : number, h : number, damage : number, event : ProgramEvent) : boolean {
 
         if (!this.isActive() || this.hurtTimer > 0)
             return false;
 
         if (overlayRect(this.pos, this.collisionBox, new Vector(), new Rectangle(x + w/2, y + h/2, w, h)) ) {
 
-            this.hurt(-this.dir, 2, event);
+            this.hurt(-this.dir, damage, event);
             return true;
         }
         return false;
@@ -614,4 +637,19 @@ export class Player extends CollisionObject {
         this.downAttacking = false;
         this.downAttackWait = 0;
     }
+
+
+    public addCoins(count : number) : void {
+
+        this.progress.updateProperty("coins", count);
+
+        this.flyingMessages.spawn(
+            this.pos.x, this.pos.y - 8, 
+            count, FlyingMessageSymbol.Coin,
+            new RGBA(255, 219, 0));
+    }
+
+
+    public getHealth = () : number => this.health;
+    public getMaxHealth = () : number => this.maxHealth;
 }
