@@ -6,6 +6,7 @@ import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Crate } from "./crate.js";
 import { ParticleGenerator } from "./particlegenerator.js";
+import { CollectibleGenerator } from "./collectiblegenerator.js";
 
 
 export class GameObjectManager {
@@ -14,12 +15,14 @@ export class GameObjectManager {
     private player : Player | undefined = undefined;
     private crates : Crate[];
     private particles : ParticleGenerator;
+    private collectibles : CollectibleGenerator;
 
 
     constructor(event : ProgramEvent) {
 
         this.crates = new Array<Crate> ();
         this.particles = new ParticleGenerator();
+        this.collectibles = new CollectibleGenerator();
     }
 
 
@@ -87,8 +90,12 @@ export class GameObjectManager {
         stage?.objectCollision(this.player, event);
 
         this.updateCrates(camera, stage, event);
+
         this.particles.update(stage, camera, event);
         this.particles.crateCollision(this.crates, event);
+
+        this.collectibles.update(stage, camera, this.player, event);
+        this.collectibles.crateCollision(this.crates, event);
     }
 
 
@@ -101,6 +108,7 @@ export class GameObjectManager {
             c.draw(canvas, bmpCrate);
         }
         this.particles.draw(canvas);
+        this.collectibles.draw(canvas);
 
         this.player?.draw(canvas);
     }
@@ -118,7 +126,8 @@ export class GameObjectManager {
             new Crate(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT, 
-                this.particles
+                this.particles,
+                this.collectibles
             )
         );
     }

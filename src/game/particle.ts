@@ -24,7 +24,7 @@ export class Particle extends CollisionObject {
     }
 
 
-    protected cameraEvent(enteredCamera : boolean, camera : Camera, event : ProgramEvent): void {
+    protected cameraEvent(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void {
 
         if (!enteredCamera) {
 
@@ -45,7 +45,6 @@ export class Particle extends CollisionObject {
     public spawn(x : number, y : number, speedx : number, speedy : number, id : number) : void {
 
         const DEFAULT_LIFETIME : number = 180;
-
         const BASE_GRAVITY : number = 4.0;
 
         this.pos = new Vector(x, y);
@@ -63,7 +62,7 @@ export class Particle extends CollisionObject {
     }
 
 
-    public draw(canvas : Canvas, bmp : Bitmap) : void {
+    public draw(canvas : Canvas, bmp : Bitmap | undefined) : void {
         
         if (!this.exist)
             return;

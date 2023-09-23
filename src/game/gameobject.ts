@@ -57,25 +57,25 @@ export class GameObject implements ExistingObject {
 
     public update(event : ProgramEvent) : void {
 
+        if (!this.exist) 
+            return;
+
         if (!this.inCamera) {
 
             if (this.dying) {
 
-                this.exist = false;
                 this.dying = false;
+                this.exist = false;
             }
             return;
         }
 
-        if (!this.exist) {
+        if (this.dying) {
 
-            if (this.dying) {
+            if (this.die?.(event) ?? true) {
 
-                if (this.die?.(event) ?? true) {
-
-                    this.exist = false;
-                    this.dying = false;
-                }
+                this.exist = false;
+                this.dying = false;
             }
             return;
         }
@@ -111,6 +111,11 @@ export class GameObject implements ExistingObject {
 
             this.cameraEvent?.(this.inCamera, camera, event);
         }
+
+        if (this.dying && !this.inCamera) {
+
+            this.exist = false;
+        }
     }
 
 
@@ -124,4 +129,5 @@ export class GameObject implements ExistingObject {
 
 
     public overlayRect = (shift : Vector, hitbox : Rectangle) : boolean => overlayRect(this.pos, this.hitbox, shift, hitbox);
+    public overlay = (o : GameObject) : boolean => overlayRect(this.pos, this.hitbox, o.pos, o.hitbox);
 }

@@ -8,6 +8,7 @@
         {"name": "weapons", "path": "weapons.png"},
         {"name": "crate", "path": "crate.png"},
         {"name": "particles", "path": "particles.png"},
+        {"name": "collectibles", "path": "collectibles.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 

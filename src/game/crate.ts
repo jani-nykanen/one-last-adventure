@@ -5,15 +5,18 @@ import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
 import { ParticleGenerator } from "./particlegenerator.js";
 import { Player } from "./player.js";
+import { CollectibleGenerator } from "./collectiblegenerator.js";
+import { CollectibleType } from "./collectible.js";
 
 
 export class Crate extends CollisionObject {
 
 
     private readonly particles : ParticleGenerator;
+    private readonly collectibles : CollectibleGenerator;
 
 
-    constructor(x : number, y : number, particles : ParticleGenerator) {
+    constructor(x : number, y : number, particles : ParticleGenerator, collectibles : CollectibleGenerator) {
 
         super(x, y, true);
 
@@ -23,6 +26,7 @@ export class Crate extends CollisionObject {
         this.friction = new Vector(0, 0.25);
     
         this.particles = particles;
+        this.collectibles = collectibles;
     }
 
 
@@ -52,6 +56,25 @@ export class Crate extends CollisionObject {
         }
     }
  
+
+    private spawnCollectible(dir : Vector) : void {
+
+        const DROP_PROB : number = 0.25;
+
+        // TODO: Spawn hearts/magic potions depending on player
+        // health & magic count?
+
+        if (Math.random() > DROP_PROB)
+            return;
+
+        const speedx = dir.x*(0.5 + Math.random()*1.0);
+        const speedy = -1.5 + Math.min(0, dir.y*(0.5 + Math.random()*0.5));
+
+        this.collectibles.spawn(
+            this.pos.x, this.pos.y, speedx, speedy, 
+            CollectibleType.Coin);
+    }
+
 
     protected updateEvent(event : ProgramEvent) : void {
         
@@ -94,9 +117,12 @@ export class Crate extends CollisionObject {
         if (!this.isActive() || !player.isActive())
             return;
 
+        const dir = Vector.direction(player.getPosition(), this.pos);
+
         if (player.doesOverlaySword(this, -1)) {
             
             this.spawnParticles();
+            this.spawnCollectible(dir);
 
             player.downAttackBounce();
             this.exist = false;
