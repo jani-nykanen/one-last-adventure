@@ -15,7 +15,12 @@ const enum Collision {
     Left = 0b1000,
 
     LadderBase = 0b10000,
-    LadderTop = 0b100000
+    LadderTop = 0b100000,
+
+    HurtBottom = 1 << 6,
+    HurtTop = 1 << 7,
+    HurtLeft = 1 << 8,
+    HurtRight = 1 << 9
 }
 
 
@@ -132,6 +137,9 @@ export class MapLayer {
 
         const MARGIN = 1;
 
+        const HURT_WIDTH : number = 16;
+        const HURT_HEIGHT : number = 6;
+
         const opos = o.getPosition();
 
         const startx = Math.round(opos.x/TILE_WIDTH) - MARGIN;
@@ -145,6 +153,7 @@ export class MapLayer {
 
         let dx : number;
         let dy : number;
+        let hurtY : number;
 
         for (let layer = 0; layer < this.layers.length; ++ layer) {
 
@@ -187,6 +196,21 @@ export class MapLayer {
                     if ((collisionID & Collision.LadderTop) != 0) {
 
                         o.ladderCollision?.(dx + 4, dy + 14, 8, 2, true, event);
+                    }
+
+
+                    // Hurt collision
+                    if ((collisionID & Collision.HurtBottom) != 0) {
+
+                        hurtY = dy + TILE_HEIGHT - HURT_HEIGHT;
+
+                        o.hurtCollision?.(
+                            dx + TILE_WIDTH/2 - HURT_WIDTH/2, hurtY,
+                            HURT_WIDTH, HURT_HEIGHT, event);
+
+                        o.verticalCollision(dx, hurtY, TILE_WIDTH, 1, event);
+                        o.horizontalCollision(dx, hurtY, TILE_HEIGHT, 1, event);
+                        o.horizontalCollision(dx + TILE_WIDTH, hurtY, TILE_HEIGHT, -1, event);
                     }
                 }
             }

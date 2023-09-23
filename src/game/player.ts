@@ -32,6 +32,9 @@ export class Player extends CollisionObject {
     private swordHitId : number = 0;
     private swordHitArea : Rectangle;
 
+    private hurtTimer : number = 0;
+    private knockbackTimer : number = 0;
+
 
     constructor(x : number = 0, y : number = 0) {
 
@@ -236,6 +239,13 @@ export class Player extends CollisionObject {
         const EPS = 0.1;
         const BASE_FRICTION = 0.15;
 
+        if (this.knockbackTimer > 0) {
+
+            this.target.x = 0;
+            this.target.y = BASE_GRAVITY;
+            return;
+        }
+
         if (this.downAttackWait > 0) {
 
             this.speed.x = 0;
@@ -285,6 +295,12 @@ export class Player extends CollisionObject {
 
         const ANIM_EPS = 0.01;
         const JUMP_EPS = 0.5;
+
+        if (this.knockbackTimer > 0) {
+
+            this.spr.setFrame(0, 3);
+            return;
+        }
 
         let animSpeed : number;
         let frame : number;
@@ -337,6 +353,15 @@ export class Player extends CollisionObject {
     private updateTimers(event : ProgramEvent) : void {
 
         const JUMP_SPEED = -2.25;
+
+        if (this.knockbackTimer > 0) {
+
+            this.knockbackTimer -= event.tick;
+        }
+        else if (this.hurtTimer > 0) {
+
+            this.hurtTimer -= event.tick;
+        }
 
         if (this.ledgeTimer > 0) {
 
@@ -418,7 +443,8 @@ export class Player extends CollisionObject {
 
         const WEAPON_XOFF : number[] = [2, -18];
 
-        if (!this.exist)
+        if (!this.exist || 
+            (this.hurtTimer > 0 && Math.floor(this.hurtTimer/4) % 2 == 0))
             return;
 
         const bmp = canvas.getBitmap("player");
@@ -479,11 +505,19 @@ export class Player extends CollisionObject {
         const right = left + camera.width;
         const bottom = top + camera.height;
 
-        if (this.speed.x > 0 && this.pos.x + H_MARGIN >= right) {
+        if (this.knockbackTimer > 0) {
+
+            this.horizontalCollision(left, top, camera.height, -1, event);
+            this.horizontalCollision(right, top, camera.height, 1, event);
+        }
+
+        if (this.knockbackTimer <= 0 &&
+            this.speed.x > 0 && this.pos.x + H_MARGIN >= right) {
 
             dx = 1;
         }
-        else if (this.speed.x < 0 && this.pos.x - H_MARGIN <= left) {
+        else if (this.knockbackTimer <= 0 &&
+            this.speed.x < 0 && this.pos.x - H_MARGIN <= left) {
 
             dx = -1;
         }
@@ -513,6 +547,42 @@ export class Player extends CollisionObject {
                 this.speed.x = 0;
             }
         }
+    }
+
+
+    public hurt(dirx : number, damage : number, event : ProgramEvent) : void {
+
+        const KNOCKBACK_TIME : number = 30;
+        const HURT_TIME : number = 60;
+        const KNOCKBACK_SPEED : number = 3.0;
+
+        if (this.hurtTimer > 0)
+            return;
+
+        this.knockbackTimer = KNOCKBACK_TIME;
+        this.hurtTimer = HURT_TIME;
+
+        this.speed.x = dirx*KNOCKBACK_SPEED;
+
+        this.climbing = false;
+        this.jumpTimer = 0;
+        this.attacking = false;
+        this.downAttacking = false;
+        this.downAttackWait = 0;
+    }
+
+
+    public hurtCollision(x : number, y : number, w : number, h : number, event : ProgramEvent) : boolean {
+
+        if (!this.isActive() || this.hurtTimer > 0)
+            return false;
+
+        if (overlayRect(this.pos, this.collisionBox, new Vector(), new Rectangle(x + w/2, y + h/2, w, h)) ) {
+
+            this.hurt(-this.dir, 2, event);
+            return true;
+        }
+        return false;
     }
 
 

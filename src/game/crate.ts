@@ -64,7 +64,7 @@ export class Crate extends CollisionObject {
 
     private spawnCollectible(dir : Vector) : void {
 
-        const DROP_PROB : number = 1.0; // 0.25;
+        const DROP_PROB : number = 0.50;
 
         // TODO: Spawn hearts/magic potions depending on player
         // health & magic count?
