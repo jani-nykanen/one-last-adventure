@@ -13,6 +13,8 @@ export class Slime extends Enemy {
         this.damage = 1;
 
         this.maxHealth = 5;
+
+        this.spr.setFrame(0, 1);
     }
 
 

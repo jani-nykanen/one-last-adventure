@@ -45,4 +45,13 @@ export class FlyingMessageGenerator {
             m.draw(canvas, bmp);
         }
     }
+
+
+    public clear() : void {
+
+        for (let o of this.messages) {
+
+            o.forceKill();
+        }
+    }
 }

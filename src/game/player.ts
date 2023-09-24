@@ -3,7 +3,7 @@ import { Sprite } from "../gfx/sprite.js";
 import { Rectangle, overlayRect } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
-import { Canvas, Flip } from "../gfx/interface.js";
+import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { InputState } from "../core/inputstate.js";
 import { Camera } from "./camera.js";
 import { GameObject } from "./gameobject.js";
@@ -11,6 +11,9 @@ import { ProgressManager } from "./progress.js";
 import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { FlyingMessageSymbol } from "./flyingmessage.js";
 import { RGBA } from "../math/rgba.js";
+
+
+const DEATH_TIME : number = 60;
 
 
 export class Player extends CollisionObject {
@@ -42,6 +45,8 @@ export class Player extends CollisionObject {
     private health : number;
     private maxHealth : number; 
 
+    private deathTimer : number = 0;
+
 
     private readonly flyingMessages : FlyingMessageGenerator;
 
@@ -68,7 +73,10 @@ export class Player extends CollisionObject {
         this.progress = progress;
 
         this.maxHealth = this.progress.getProperty("maxHealth", 6);
-        this.health = this.maxHealth;
+        this.health = 1; // this.maxHealth;
+
+        progress.setProperty("checkpointx", x);
+        progress.setProperty("checkpointy", y);
     } 
 
 
@@ -376,6 +384,12 @@ export class Player extends CollisionObject {
         if (this.knockbackTimer > 0) {
 
             this.knockbackTimer -= event.tick;
+            if (this.knockbackTimer <= 0 && this.health <= 0) {
+
+                this.deathTimer = 0;
+                this.dying = true;
+                this.spr.setFrame(1, 3);
+            }
         }
         else if (this.hurtTimer > 0) {
 
@@ -408,6 +422,30 @@ export class Player extends CollisionObject {
     }
 
 
+    private drawDeath(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const ORB_COUNT : number = 8;
+        const ORB_DISTANCE : number = 64;
+
+        const t = this.deathTimer / DEATH_TIME;
+        const step = Math.PI*2 / ORB_COUNT;
+
+        let angle : number;
+
+        const dx = Math.round(this.pos.x);
+        const dy = Math.round(this.pos.y);
+
+        for (let i = 0; i < ORB_COUNT; ++ i) {
+
+            angle = step*i;
+
+            this.spr.draw(canvas, bmp,
+                dx + Math.round(Math.cos(angle)*t*ORB_DISTANCE) - 8,
+                dy + Math.round(Math.sin(angle)*t*ORB_DISTANCE) - 8);
+        }
+    }
+
+
     protected verticalCollisionEvent(dir : -1 | 1, event : ProgramEvent) : void {
         
         const LEDGE_TIME : number = 8;
@@ -430,6 +468,23 @@ export class Player extends CollisionObject {
     }
 
 
+    protected die(event : ProgramEvent) : boolean {
+
+        this.spr.animate(3, 1, 3, 4, event.tick);
+
+        return ((this.deathTimer += event.tick)) >= DEATH_TIME;
+    }
+
+
+    protected updateEvent(event : ProgramEvent) : void {
+
+        this.control(event);
+        this.animate(event);
+        this.updateTimers(event);
+        this.updateFlags();
+    }   
+
+
     public ladderCollision(x : number, y : number, w : number, h : number, 
         ladderTop : boolean, event : ProgramEvent) : boolean {
 
@@ -449,24 +504,21 @@ export class Player extends CollisionObject {
     }
 
 
-    protected updateEvent(event : ProgramEvent) : void {
-
-        this.control(event);
-        this.animate(event);
-        this.updateTimers(event);
-        this.updateFlags();
-    }   
-
-
     public draw(canvas : Canvas) : void {
 
         const WEAPON_XOFF : number[] = [2, -18];
 
         if (!this.exist || 
-            (this.hurtTimer > 0 && Math.floor(this.hurtTimer/4) % 2 == 0))
+            (!this.dying && this.hurtTimer > 0 && Math.floor(this.hurtTimer/4) % 2 == 0))
             return;
 
         const bmp = canvas.getBitmap("player");
+        if (this.dying) {
+
+            this.drawDeath(canvas, bmp);
+            return;
+        }
+
         const bmpWeapons = canvas.getBitmap("weapons");
 
         const dx = Math.round(this.pos.x) - 8;
@@ -676,5 +728,39 @@ export class Player extends CollisionObject {
 
 
     public getSwordHitID = () : number => this.swordHitId;
+
+
+    public respawn() : void {
+
+        this.jumpTimer = 0;
+        this.ledgeTimer = 0;
+
+        this.touchLadder = false;
+        this.climbing = false;
+        this.touchLadderTop = false;
+        this.ladderX = 0;
+
+        this.attacking = false;
+        this.downAttacking = false;
+        this.downAttackWait = 0;
+
+        this.flip = Flip.None;
+        this.dir = 1;
+
+        this.swordHitId = 0;
+
+        this.hurtTimer = 0;
+        this.knockbackTimer = 0;
+
+        this.pos.x = this.progress.getProperty("checkpointx", 0);
+        this.pos.y = this.progress.getProperty("checkpointy", 0);
+
+        this.health = this.maxHealth;
+
+        this.dying = false;
+        this.exist = true;
+
+        this.spr.setFrame(4, 3);
+    }
     
 }

@@ -58,13 +58,15 @@ export class Enemy extends CollisionObject {
 
         this.init?.();
         this.health = this.maxHealth;
+
+        this.inCamera = true;
     }
 
 
     protected init?() : void;
 
 
-    private hurt(damage : number) : void {
+    private hurt(damage : number, player : Player) : void {
 
         const HURT_TIME : number = 30;
 
@@ -75,7 +77,10 @@ export class Enemy extends CollisionObject {
 
             this.spr.setFrame(0, 0);
 
-            // TODO: Create collectible
+            this.collectibles.spawnWeighted(
+                this.pos, 
+                Vector.direction(player.getPosition(), this.pos),
+                1.0 - player.getHealth()/player.getMaxHealth());
 
             return;
         }
@@ -152,7 +157,7 @@ export class Enemy extends CollisionObject {
 
             this.swordHitId = player.getSwordHitID();
             
-            this.hurt(damage);
+            this.hurt(damage, player);
             if (!player.downAttackBounce()) {
 
                 this.speed.x = KNOCKBACK_SPEED*dir.x*this.weight;

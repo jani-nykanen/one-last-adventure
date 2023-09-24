@@ -1,6 +1,7 @@
 import { ProgramEvent } from "../core/event";
 import { Canvas, TransformTarget } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
+import { GameObject } from "./gameobject";
 
 
 export class Camera {
@@ -44,7 +45,6 @@ export class Camera {
             this.interpolatedPos = new Vector(
                 (this.target.x*this.width) | 0, 
                 (this.target.y*this.height) | 0);
-
             return;
         }
 
@@ -110,5 +110,23 @@ export class Camera {
                pos.x - size.x/2 <= this.interpolatedPos.x + this.width &&
                pos.y + size.y/2 >= this.interpolatedPos.y &&
                pos.y - size.y/2 <= this.interpolatedPos.y + this.height;
+    }
+
+
+    public center(o : GameObject) : void {
+
+        const pos = o.getPosition();
+
+        const x = (pos.x/this.width) | 0;
+        const y = (pos.y/this.height) | 0;
+    
+        this.pos.x = x;
+        this.pos.y = y;
+
+        this.target = this.pos.clone();
+        this.interpolatedPos = new Vector(x*this.width, y*this.height);
+
+        this.moveTimer = 0;
+        this.moving = false;
     }
 }

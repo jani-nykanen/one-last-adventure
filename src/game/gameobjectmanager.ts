@@ -110,7 +110,8 @@ export class GameObjectManager {
                 continue;
 
             e1.cameraCheck(camera, event);
-
+            // TODO: This should only be called if the enemy drops
+            // outside the camera manually.
             /*
             if (!e1.isInCamera()) {
 
@@ -119,7 +120,7 @@ export class GameObjectManager {
                 continue;
             }
             */
-
+            
             if (!e1.isInCamera())
                 continue;
 
@@ -232,6 +233,34 @@ export class GameObjectManager {
     }
 
 
+    public reset() : void {
+
+        this.player?.respawn();
+
+        this.crates = new Array<Crate> ();
+        this.enemies = new Array<Enemy> ();
+
+        this.particles.clear();
+        this.flyingMessages.clear();
+        this.collectibles.clear();
+    }
+
+
     public getPlayerHealth = () : number => this.player.getHealth();
     public getPlayerMaxHealth = () : number => this.player.getMaxHealth();
+
+
+    public hasPlayerDied() : boolean {
+
+        return !this.player.doesExist();
+    }
+
+
+    public centerCameraToPlayer(camera : Camera) : void {
+
+        if (this.player === undefined)
+            return;
+
+        camera.center(this.player);
+    }
 }

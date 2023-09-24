@@ -61,4 +61,13 @@ export class ParticleGenerator {
             p.draw(canvas, bmp);
         }
     }
+
+
+    public clear() : void {
+
+        for (let o of this.particles) {
+
+            o.forceKill();
+        }
+    }
 }

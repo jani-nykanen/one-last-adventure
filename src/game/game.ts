@@ -7,6 +7,8 @@ import { Stage } from "./stage.js";
 import { Camera } from "./camera.js";
 import { BackgroundType } from "./background.js";
 import { ProgressManager } from "./progress.js";
+import { TransitionType } from "../core/transition.js";
+import { RGBA } from "../math/rgba.js";
 
 
 export class Game implements Scene {
@@ -27,6 +29,18 @@ export class Game implements Scene {
     }
 
 
+    private reset(event : ProgramEvent) : void {
+
+        this.stage.reset();
+        this.objects.reset();
+        this.objects.centerCameraToPlayer(this.camera);
+        this.stage.cameraCheck(this.camera, this.objects);
+
+        // To make certain objects appear on the screen
+        // this.objects.update(this.camera, this.stage, event);
+    }
+
+
     private drawHUD(canvas : Canvas) : void {
 
         const bmp = canvas.getBitmap("hud");
@@ -36,9 +50,6 @@ export class Game implements Scene {
         const maxHealth = this.objects.getPlayerMaxHealth();
         const coins = this.progress.getProperty("coins", 0);
 
-        const fracHealth = (health/2) | 0;
-
-        let sx : number;
         let dx : number;
 
         canvas.setColor();
@@ -65,11 +76,12 @@ export class Game implements Scene {
 
         this.playerSprite = new Sprite(16, 16);
 
+        this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
+
         this.objects = new GameObjectManager(this.progress, event);
         this.stage = new Stage("void", BackgroundType.Void, event);
         this.stage.createInitialObjects(this.objects);
-
-        this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
+        this.objects.centerCameraToPlayer(this.camera);
 
         this.stage.cameraCheck(this.camera, this.objects);
     }
@@ -77,11 +89,20 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
         
+        if (event.transition.isActive())
+            return;
+
         this.playerSprite.animate(0, 1, 6, 8, event.tick);
 
         this.objects?.update(this.camera, this.stage, event);
         this.camera?.update(event);
         this.stage?.update(this.camera, event);
+
+        if (this.objects?.hasPlayerDied()) {
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/30.0, 
+                (event : ProgramEvent) => this.reset(event), new RGBA(0, 0, 0));
+        }
     }
 
 

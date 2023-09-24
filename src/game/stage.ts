@@ -41,13 +41,19 @@ export class Stage {
         this.height = baseMap.height;
 
         this.objectLayer = baseMap.cloneLayer("objects");
-        this.objectCreationWaiting = this.objectLayer.map( (v : number) : boolean => {
+        this.objectCreationWaiting = this.computeCreationWaitingArray();
+
+        this.background = new Background(backgroundType, event);
+    }
+
+
+    private computeCreationWaitingArray() : Array<boolean> {
+
+        return this.objectLayer.map( (v : number) : boolean => {
             
             const i = v - OBJECT_LAYER_START;
             return (CREATABLE_OBJECTS.includes(i) || (i >= 16 && i <= 32));
         });
-
-        this.background = new Background(backgroundType, event);
     }
 
 
@@ -181,5 +187,11 @@ export class Stage {
     public remarkCreatableObject(index : number) : void {
 
         this.objectCreationWaiting[index] = true;
+    }
+
+
+    public reset() : void {
+
+        this.objectCreationWaiting = this.computeCreationWaitingArray();
     }
 }
