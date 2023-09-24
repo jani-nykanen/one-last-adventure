@@ -19,7 +19,8 @@ export class FlyingMessageGenerator {
 
 
     public spawn(x : number, y : number, value : number, 
-        symbol : FlyingMessageSymbol, color : RGBA = new RGBA(255, 255, 255)) : void {
+        symbol : FlyingMessageSymbol = FlyingMessageSymbol.None, 
+        color : RGBA = new RGBA(255, 255, 255)) : void {
 
         (next(this.messages, FlyingMessage) as FlyingMessage)
             .spawn(x, y, value, symbol, color);

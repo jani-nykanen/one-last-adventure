@@ -626,16 +626,20 @@ export class Player extends CollisionObject {
     }
 
 
-    public downAttackBounce() : void {
+    public downAttackBounce() : boolean {
 
-        const BOUNCE_SPEED : number = -2.0;
+        // TODO: Use jumpTimer instead?
+
+        const BOUNCE_SPEED : number = -2.75;
 
         if (!this.downAttacking && this.downAttackWait <= 0)
-            return;
+            return false;
 
         this.speed.y = BOUNCE_SPEED;
         this.downAttacking = false;
         this.downAttackWait = 0;
+
+        return true;
     }
 
 
@@ -650,6 +654,27 @@ export class Player extends CollisionObject {
     }
 
 
+    public recoverHealth(amount : number) : void {
+
+        this.health = Math.min(this.maxHealth, this.health + amount);
+
+        this.flyingMessages.spawn(
+            this.pos.x, this.pos.y - 8, 
+            amount, FlyingMessageSymbol.Heart,
+            new RGBA(182, 255, 0));
+    }
+
+
+    public getDamage() : number {
+
+        return this.downAttacking ? 5 : 3;
+    }
+
+
     public getHealth = () : number => this.health;
     public getMaxHealth = () : number => this.maxHealth;
+
+
+    public getSwordHitID = () : number => this.swordHitId;
+    
 }

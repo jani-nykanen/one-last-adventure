@@ -12,6 +12,7 @@
         {"name": "particles", "path": "particles.png"},
         {"name": "collectibles", "path": "collectibles.png"},
         {"name": "hud", "path": "hud.png"},
+        {"name": "enemies_small", "path": "enemies_small.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 

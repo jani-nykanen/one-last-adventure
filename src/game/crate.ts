@@ -62,9 +62,10 @@ export class Crate extends CollisionObject {
     }
  
 
-    private spawnCollectible(dir : Vector) : void {
+    private spawnCollectible(dir : Vector, healthWeight : number = 0.0) : void {
 
-        const DROP_PROB : number = 0.50;
+        const DROP_PROB : number = 1.0; // 0.50;
+        const HEALTH_BASE_PROB : number = 0.5;
 
         // TODO: Spawn hearts/magic potions depending on player
         // health & magic count?
@@ -75,9 +76,13 @@ export class Crate extends CollisionObject {
         const speedx = dir.x*(0.5 + Math.random()*1.0);
         const speedy = -1.5 + Math.min(0, dir.y*(0.5 + Math.random()*0.5));
 
+        let type = CollectibleType.Coin;
+        if (Math.random() < HEALTH_BASE_PROB*healthWeight)
+            type = CollectibleType.Heart;
+
         this.collectibles.spawn(
             this.pos.x, this.pos.y, speedx, speedy, 
-            CollectibleType.Coin);
+            type);
     }
 
 
@@ -127,7 +132,7 @@ export class Crate extends CollisionObject {
         if (player.doesOverlaySword(this, -1)) {
             
             this.spawnParticles();
-            this.spawnCollectible(dir);
+            this.spawnCollectible(dir, 1.0 - player.getHealth()/player.getMaxHealth());
 
             player.downAttackBounce();
             this.exist = false;

@@ -9,6 +9,8 @@ import { ParticleGenerator } from "./particlegenerator.js";
 import { CollectibleGenerator } from "./collectiblegenerator.js";
 import { ProgressManager } from "./progress.js";
 import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
+import { Enemy } from "./enemies/enemy.js";
+import { getEnemyType } from "./enemies/enemytype.js";
 
 
 export class GameObjectManager {
@@ -16,6 +18,8 @@ export class GameObjectManager {
     
     private player : Player | undefined = undefined;
     private crates : Crate[];
+    private enemies : Enemy[];
+
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
     private flyingMessages : FlyingMessageGenerator;
@@ -27,6 +31,8 @@ export class GameObjectManager {
     constructor(progress : ProgressManager, event : ProgramEvent) {
 
         this.crates = new Array<Crate> ();
+        this.enemies = new Array<Enemy> ();
+
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
         this.flyingMessages = new FlyingMessageGenerator();
@@ -64,6 +70,9 @@ export class GameObjectManager {
                 continue;
             }
 
+            if (!c1.isActive())
+                continue;
+
             c1.update(event);
 
             stage.objectCollision(c1, event);
@@ -89,6 +98,59 @@ export class GameObjectManager {
     }
 
 
+    private updateEnemies(camera : Camera, stage : Stage, event : ProgramEvent) : void {
+
+        let e1 : Enemy;
+        let e2 : Enemy;
+
+        for (let i = 0; i < this.enemies.length; ++ i) {
+
+            e1 = this.enemies[i];
+            if (!e1.doesExist())
+                continue;
+
+            e1.cameraCheck(camera, event);
+
+            /*
+            if (!e1.isInCamera()) {
+
+                stage.remarkCreatableObject(e1.stageTileIndex);
+                this.enemies.splice(i, 1);
+                continue;
+            }
+            */
+
+            if (!e1.isInCamera())
+                continue;
+
+            e1.update(event);
+            e1.cameraCollision(camera, event);
+            stage.objectCollision(e1, event);
+
+            for (let j = i; j < this.enemies.length; ++ j) {
+
+                e2 = this.enemies[j];
+                e2.enemyToEnemyCollision(e1, event);
+            }
+
+            if (this.player !== undefined) {
+
+                e1.playerCollision(this.player, event);
+                if (!e1.doesExist()) {
+
+                    this.enemies.splice(i, 1);
+                    continue;
+                }
+            }
+
+            for (let c of this.crates) {
+
+                c.collisionObjectCollision(e1, event);
+            }
+        }
+    }
+
+
     public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
 
         if (camera === undefined || stage === undefined)
@@ -108,6 +170,7 @@ export class GameObjectManager {
         stage?.objectCollision(this.player, event);
 
         this.updateCrates(camera, stage, event);
+        this.updateEnemies(camera, stage, event);
 
         this.particles.update(stage, camera, event);
         this.particles.crateCollision(this.crates, event);
@@ -120,12 +183,19 @@ export class GameObjectManager {
     public draw(canvas : Canvas) : void {
 
         const bmpCrate = canvas.getBitmap("crate");
+        const bmpEnemies = canvas.getBitmap("enemies_small");
 
         for (let c of this.crates) {
 
             c.draw(canvas, bmpCrate);
         }
         this.particles.draw(canvas);
+
+        for (let e of this.enemies) {
+
+            e.draw(canvas, bmpEnemies);
+        }
+
         this.collectibles.draw(canvas);
 
         this.player?.draw(canvas);
@@ -142,12 +212,23 @@ export class GameObjectManager {
     }
 
 
-    public addCrate(x : number, y : number, index : number) : void {
+    public addCrate(x : number, y : number, stageIndex : number) : void {
 
         this.crates.push(
             new Crate(
-                (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, index,
-                this.particles,this.collectibles));
+                (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
+                this.particles, this.collectibles));
+    }
+
+
+    public addEnemy(x : number, y : number, stageIndex : number, enemyTypeIndex : number) : void {
+
+        const type = getEnemyType(enemyTypeIndex);
+
+        this.enemies.push(
+            new type.prototype.constructor(
+                (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
+                this.flyingMessages, this.collectibles));
     }
 
 

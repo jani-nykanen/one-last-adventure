@@ -12,7 +12,7 @@ export class ProgressManager {
         this.properties = new Map<string, number> ();
 
         // Default properties
-        this.properties.set("maxHealth", 6);
+        this.properties.set("maxHealth", 5);
         this.properties.set("coins", 0);
     }
 

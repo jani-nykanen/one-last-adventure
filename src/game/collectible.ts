@@ -72,7 +72,7 @@ export class Collectible extends CollisionObject {
             start = 3;
         }
 
-        this.spr.animate(this.type as number, start, end, speed, event.tick);
+        this.spr.animate(this.type*2, start, end, speed, event.tick);
     }
 
 
@@ -120,6 +120,11 @@ export class Collectible extends CollisionObject {
             case CollectibleType.Coin:
 
                 player.addCoins(1);
+                break;
+
+            case CollectibleType.Heart:
+
+                player.recoverHealth(2);
                 break;
 
             default:

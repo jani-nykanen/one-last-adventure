@@ -44,17 +44,10 @@ export class Game implements Scene {
         canvas.setColor();
 
         // Health
-        for (let i = 0; i < maxHealth/2; ++ i) {
+        const healthStr = String(health) + "/" + String(maxHealth);
 
-            dx = -2 + i*11;
-
-            sx = fracHealth > i ? 0 : 16;
-            canvas.drawBitmap(bmp, Flip.None, dx, -2, sx, 0, 16, 16);
-            if (health - i*2 == 1) {
-
-                canvas.drawBitmap(bmp, Flip.None, dx, -2, 0, 0, 8, 16);
-            }
-        }
+        canvas.drawBitmap(bmp, Flip.None, -1, -2, 0, 0, 16, 16);
+        canvas.drawText(bmpFont, healthStr, 12, -1, -7);
 
         // Coins
         const coinStr = "*" + String(coins); 

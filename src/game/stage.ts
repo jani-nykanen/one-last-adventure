@@ -41,7 +41,11 @@ export class Stage {
         this.height = baseMap.height;
 
         this.objectLayer = baseMap.cloneLayer("objects");
-        this.objectCreationWaiting = this.objectLayer.map((v : number) => CREATABLE_OBJECTS.includes(v - OBJECT_LAYER_START));
+        this.objectCreationWaiting = this.objectLayer.map( (v : number) : boolean => {
+            
+            const i = v - OBJECT_LAYER_START;
+            return (CREATABLE_OBJECTS.includes(i) || (i >= 16 && i <= 32));
+        });
 
         this.background = new Background(backgroundType, event);
     }
@@ -66,6 +70,11 @@ export class Stage {
             break;
 
         default:
+
+            if (tileID >= 16 && tileID <= 32) {
+
+                objects.addEnemy(x, y, y*this.width + x, tileID - 16);
+            }
             break;
         }
     }
