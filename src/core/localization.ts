@@ -11,6 +11,8 @@ export class Localization {
     constructor(jsonSource : string) {
 
         this.jsonData = JSON.parse(jsonSource);
+
+        console.log(this.jsonData);
     }
 
 

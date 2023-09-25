@@ -20,6 +20,7 @@ export class Assets {
     private bitmaps : Map<string, Bitmap>;
     private samples : Map<string, AudioSample>;
     private tilemaps : Map<string, Tilemap>;
+    private documents : Map<string, string>;
 
     private loaded : number = 0;
     private totalAssets : number = 0;
@@ -33,6 +34,7 @@ export class Assets {
         this.bitmaps = new Map<string, Bitmap> ();
         this.samples = new Map<string, AudioSample> ();
         this.tilemaps = new Map<string, Tilemap> ();
+        this.documents = new Map<string, string> ();
 
         this.audio = audio;
         this.renderer = renderer;
@@ -128,12 +130,20 @@ export class Assets {
     }
 
 
+    public loadDocument(name : string, path : string) : void {
+
+        this.loadTextFile(path, "json", (s : string) => {
+
+            this.documents.set(name, s);
+        });
+    }
+
 
     public parseIndexFile(path : string) : void {
 
         this.loadTextFile(path, "json", (s : string) => {
 
-            let data = JSON.parse(s);
+            const data = JSON.parse(s);
 
             this.loadItems(data, (name : string, path : string) => {
                 this.loadBitmap(name, path);
@@ -146,6 +156,10 @@ export class Assets {
             this.loadItems(data, (name : string, path : string) => {
                 this.loadSample(name, path);
             }, "samplePath", "samples");
+
+            this.loadItems(data, (name : string, path : string) => {
+                this.loadDocument(name, path);
+            }, "documentPath", "documents");
         });
     }
 
@@ -168,6 +182,12 @@ export class Assets {
     public getTilemap(name : string) : Tilemap | undefined {
 
         return this.tilemaps.get(name);
+    }
+
+
+    public getDocument(name : string) : string | undefined {
+
+        return this.documents.get(name);
     }
 
 

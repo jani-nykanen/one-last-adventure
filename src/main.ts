@@ -16,7 +16,13 @@ const initialEvent = (event : ProgramEvent) : void => {
 
 
 const onloadEvent = (event : ProgramEvent) : void => {
-    
+
+    const loc = event.assets.getDocument("en-us");
+    if (loc !== undefined) {
+
+        event.addLocalizationJSON("en-us", loc);
+        event.setActiveLocalization("en-us");
+    }
 }
 
 

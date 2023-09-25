@@ -15,9 +15,14 @@ import { Assets } from "./assets.js";
 import { Input } from "./input.js";
 import { SceneManager } from "./scenemanager.js";
 import { Transition } from "./transition.js";
-
+import { Localization } from "./localization.js";
+ 
 
 export class ProgramEvent {
+
+
+    private localizations : Map<string, Localization>;
+    private activeLocalization : Localization | undefined = undefined;
 
 
     public readonly input : Input;
@@ -32,6 +37,12 @@ export class ProgramEvent {
     public readonly screenHeight : number;
 
 
+    public get localization() : Localization | undefined {
+        
+        return this.activeLocalization;
+    }
+
+
     constructor(renderer : Renderer) {
 
         this.input = new Input();
@@ -43,6 +54,20 @@ export class ProgramEvent {
         this.screenWidth = renderer.width;
         this.screenHeight = renderer.height;
 
+        this.localizations = new Map<string, Localization> ();
+
         renderer.setFetchBitmapCallback((name : string) => this.assets.getBitmap(name));
+    }
+
+
+    public addLocalizationJSON(key : string, jsonString : string) : void {
+
+        this.localizations.set(key, new Localization(jsonString));
+    }
+
+
+    public setActiveLocalization(key : string) : void {
+
+        this.activeLocalization = this.localizations.get(key);
     }
 }

@@ -21,5 +21,12 @@
 
         {"name": "void", "path": "void.tmx"},
         {"name": "collisions_void", "path": "collisions_void.tmx"}
+    ],
+
+
+    "documentPath": "assets/localization/",
+    "documents": [
+
+        {"name": "en-us", "path": "en-us.json"}
     ]
 }
