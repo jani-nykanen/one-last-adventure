@@ -1,0 +1,19 @@
+{
+    "yes": "Yes",
+    "no": "No",
+
+    "menu": {
+        "resume": "Resume",
+        "respawn": "Respawn",
+        "save": "Save Game",
+        "audio_on": "Audio: On",
+        "audio_off": "Audio: Off",
+        "quit": "Quit Game"
+    },
+
+    "npctest": [
+
+        "This is a test dialogue. See how nicely newlines are added automatically!",
+        "Nothing really matters here. Beeb boop, I am a robot."
+    ]
+}

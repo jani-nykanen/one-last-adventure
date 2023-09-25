@@ -7,9 +7,58 @@
 // Comment: a WebGL canvas
 //
 
+import { clamp } from "../../math/utility.js";
 import { Align, Bitmap, Canvas, Flip, Transform2D } from "../interface.js";
 import { WebGLBitmap } from "./bitmap.js";
+import { Mesh } from "./mesh.js";
 import { ShaderType, WebGLRenderer } from "./renderer.js";
+
+
+const createCircleOutMesh = (gl : WebGLRenderingContext, quality : number) : Mesh => {
+
+    const step = Math.PI*2/quality;
+
+    const vertices = new Array<number> ();
+    const indices = new Array<number> ();
+
+    let angle1 : number;
+    let angle2 : number;
+    
+    let c1 : number;
+    let c2 : number;
+    let s1 : number;
+    let s2 : number;
+
+    let index : number = 0;
+
+    for (let i = 0; i < quality; ++ i) {
+
+        angle1 = step*i;
+        angle2 = step*(i + 1);
+
+        c1 = Math.cos(angle1);
+        c2 = Math.cos(angle2);
+
+        s1 = Math.sin(angle1);
+        s2 = Math.sin(angle2);
+
+        vertices.push(
+            c1, s1, 
+            c2, s2,
+            c2*2, s2*2,
+
+            c2*2, s2*2,
+            c1*2, s1*2,
+            c1, s1);
+
+        for (let j = 0; j < 6; ++ j) {
+
+            indices.push(index ++);
+        }
+    }
+
+    return new Mesh(gl, new Float32Array(vertices), new Uint16Array(indices));
+}
 
 
 export class WebGLCanvas implements Canvas {
@@ -17,6 +66,7 @@ export class WebGLCanvas implements Canvas {
 
     private framebuffer : WebGLBitmap;
 
+    private meshCircleOut : Mesh;
 
     private readonly renderer : WebGLRenderer;
 
@@ -45,6 +95,8 @@ export class WebGLCanvas implements Canvas {
 
         this.renderer = renderer;
         this.transform = transform;
+
+        this.meshCircleOut = createCircleOutMesh(gl, 64);
     }
 
 
@@ -139,6 +191,31 @@ export class WebGLCanvas implements Canvas {
 
             x += (cw + xoff) * scalex;
         }
+    }
+
+
+    public fillCircleOutside(centerx : number, centery : number, radius : number) : void {
+
+        this.renderer.changeShader(ShaderType.NoTexture);
+
+        // Center
+        this.renderer.setVertexTransform(centerx, centery, radius, radius);
+        this.renderer.drawMesh(this.meshCircleOut);
+
+        // Borders
+        const top = Math.max(0, centery - radius) | 0;
+        const bottom = Math.min(this.height, centery + radius) | 0;
+        const left = Math.max(centerx - radius, 0) | 0;
+        const right = Math.min(centerx + radius, this.width) | 0;
+
+        if (top > 0)
+            this.fillRect(0, 0, this.width, top);
+        if (bottom < this.height)
+            this.fillRect(0, bottom, this.width, this.height - bottom);
+        if (left > 0)
+            this.fillRect(0, 0, left, this.width);
+        if (right < this.width)
+            this.fillRect(right, 0, this.width - right, this.height);
     }
 
 

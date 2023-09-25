@@ -73,6 +73,7 @@ export interface Canvas {
     drawText(font : Bitmap | undefined, text : string, 
         dx : number, dy : number, xoff? : number, yoff? : number, 
         align? : Align, scalex? : number, scaley? : number) : void;
+    fillCircleOutside(centerx : number, centery : number, radius : number) : void;
 
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
 

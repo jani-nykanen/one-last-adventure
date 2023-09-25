@@ -11,6 +11,7 @@
 import { RGBA } from "../math/rgba.js";
 import { Canvas } from "../gfx/interface.js";
 import { ProgramEvent } from "./event.js";
+import { Vector } from "../math/vector.js";
 
 
 export const enum TransitionType {
@@ -29,7 +30,8 @@ export class Transition {
     private active : boolean = false;
     private speed : number = 1.0;
     private color : RGBA;
-    
+    private center : Vector | undefined = undefined;
+
     private callback : ((event : ProgramEvent) => void) = (() => {});
 
 
@@ -40,7 +42,8 @@ export class Transition {
 
 
     public activate(fadeOut : boolean, type : TransitionType, speed : number, 
-        callback : (event : ProgramEvent) => any, color : RGBA = new RGBA(0, 0, 0)) : void {
+        callback : (event : ProgramEvent) => any, color : RGBA = new RGBA(0, 0, 0),
+        center : Vector | undefined = undefined) : void {
 
         this.fadeOut = fadeOut;
         this.speed = speed;
@@ -48,6 +51,7 @@ export class Transition {
         this.callback = callback;
         this.effectType = type;
         this.color = color;
+        this.center = center;
 
         this.active = true;
     }
@@ -87,6 +91,8 @@ export class Transition {
         let maxRadius : number;
         let radius : number;
 
+        let center : Vector;
+
         switch (this.effectType) {
 
         case TransitionType.Fade:
@@ -97,18 +103,18 @@ export class Transition {
 
         case TransitionType.Circle:
 
+            center = this.center ?? new Vector(canvas.width/2, canvas.height/2);
+
             maxRadius = Math.max(
-                Math.hypot(canvas.width/2, canvas.height/2),
-                Math.hypot(canvas.width - canvas.width/2, canvas.height/2),
-                Math.hypot(canvas.width - canvas.width/2, canvas.height - canvas.height/2),
-                Math.hypot(canvas.width/2, canvas.height - canvas.height/2)
+                Math.hypot(center.x, center.y),
+                Math.hypot(canvas.width - center.x, center.y),
+                Math.hypot(canvas.width - center.x, canvas.height - center.y),
+                Math.hypot(center.x, canvas.height - center.y)
             );
 
-            radius = (1 - t) * maxRadius;
-            canvas.setColor(0, 0, 0);
-            // TODO: Implement the following function
-            // canvas.fillCircleOutside(radius);
-
+            radius = (1 - t)*(1 - t)*maxRadius;
+            canvas.setColor(this.color.r, this.color.g, this.color.b);
+            canvas.fillCircleOutside(center.x, center.y, radius);
             break;
 
         default:
@@ -124,5 +130,11 @@ export class Transition {
     public deactivate() : void {
 
         this.active = false;
+    }
+
+
+    public setCenter(pos : Vector) : void {
+
+        this.center = pos;
     }
 }

@@ -11,6 +11,7 @@ import { ProgressManager } from "./progress.js";
 import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { Enemy } from "./enemies/enemy.js";
 import { getEnemyType } from "./enemies/enemytype.js";
+import { Vector } from "../math/vector.js";
 
 
 export class GameObjectManager {
@@ -253,6 +254,14 @@ export class GameObjectManager {
     public hasPlayerDied() : boolean {
 
         return !this.player.doesExist();
+    }
+
+
+    public getRelativePlayerPosition = (camera : Camera) : Vector => {
+
+        const o = this.player.getPosition();
+
+        return new Vector(o.x % camera.width, o.y % camera.height);
     }
 
 

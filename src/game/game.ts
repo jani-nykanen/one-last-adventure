@@ -38,6 +38,8 @@ export class Game implements Scene {
 
         // To make certain objects appear on the screen
         // this.objects.update(this.camera, this.stage, event);
+
+        event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
     }
 
 
@@ -100,8 +102,9 @@ export class Game implements Scene {
 
         if (this.objects?.hasPlayerDied()) {
 
-            event.transition.activate(true, TransitionType.Fade, 1.0/30.0, 
-                (event : ProgramEvent) => this.reset(event), new RGBA(0, 0, 0));
+            event.transition.activate(true, TransitionType.Circle, 1.0/45.0, 
+                (event : ProgramEvent) => this.reset(event), new RGBA(0, 0, 0),
+                this.objects.getRelativePlayerPosition(this.camera));
         }
     }
 
