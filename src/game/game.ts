@@ -9,6 +9,8 @@ import { BackgroundType } from "./background.js";
 import { ProgressManager } from "./progress.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
+import { PauseMenu } from "./pause.js";
+import { InputState } from "../core/inputstate.js";
 
 
 export class Game implements Scene {
@@ -21,6 +23,8 @@ export class Game implements Scene {
     private camera : Camera | undefined = undefined;
 
     private progress : ProgressManager;
+
+    private pause : PauseMenu | undefined = undefined;
 
 
     constructor() {
@@ -86,6 +90,8 @@ export class Game implements Scene {
         this.objects.centerCameraToPlayer(this.camera);
 
         this.stage.cameraCheck(this.camera, this.objects);
+
+        this.pause = new PauseMenu(event, () => this.objects.killPlayer() );
     }
 
 
@@ -93,6 +99,18 @@ export class Game implements Scene {
         
         if (event.transition.isActive())
             return;
+
+        if (this.pause.isActive()) {
+
+            this.pause.update(event);
+            return;
+        }
+
+        if (event.input.getAction("pause") == InputState.Pressed) {
+
+            this.pause.activate();
+            return;
+        }
 
         this.playerSprite.animate(0, 1, 6, 8, event.tick);
 
@@ -134,6 +152,8 @@ export class Game implements Scene {
         this.stage?.drawForeground(canvas);
 
         this.drawHUD(canvas);
+
+        this.pause.draw(canvas);
     }
 
 

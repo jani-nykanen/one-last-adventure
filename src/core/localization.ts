@@ -11,23 +11,21 @@ export class Localization {
     constructor(jsonSource : string) {
 
         this.jsonData = JSON.parse(jsonSource);
-
-        console.log(this.jsonData);
     }
 
 
-    public getItem(key : string) : string | string[] | undefined {
+    public getItem(key : string) : string[] | undefined {
 
         const item = this.jsonData[key];
+
+        if (typeof(item) === "string") {
+
+            return [item as string];
+        }
 
         if (item?.["length"] !== undefined) {
 
             return item as string[];
-        }
-
-        if (typeof(item) === "string") {
-
-            return item as string;
         }
 
         return undefined;

@@ -36,11 +36,11 @@ export class AudioPlayer {
 
     public playSample(sample : AudioSample | undefined, vol : number = 1.0) : void {
 
-        const EPS = 0.001;
+        const EPS : number = 0.001;
 
         if (this.ctx === undefined ||
             !this.enabled || 
-            sample == undefined || 
+            sample === undefined || 
             this.globalVolume*vol <= EPS) {
 
             return;

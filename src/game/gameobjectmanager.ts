@@ -272,4 +272,10 @@ export class GameObjectManager {
 
         camera.center(this.player);
     }
+
+
+    public killPlayer() : void {
+
+        this.player.kill();
+    }
 }

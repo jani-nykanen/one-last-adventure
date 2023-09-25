@@ -2,14 +2,16 @@
     "yes": "Yes",
     "no": "No",
 
-    "menu": {
-        "resume": "Resume",
-        "respawn": "Respawn",
-        "save": "Save Game",
-        "audio_on": "Audio: On",
-        "audio_off": "Audio: Off",
-        "quit": "Quit Game"
-    },
+    "menu": [
+        "Resume",
+        "Respawn",
+        "Save Game",
+        "Audio: On ",
+        "Audio: Off",
+        "Quit Game"
+    ],
+
+    "respawn": "Do you want to\nrespawn at the\nlatest checkpoint?",
 
     "npctest": [
 

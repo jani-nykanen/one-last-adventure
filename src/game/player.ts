@@ -763,4 +763,15 @@ export class Player extends CollisionObject {
         this.spr.setFrame(4, 3);
     }
     
+
+
+    public kill() : void {
+
+        if (this.dying)
+            return;
+
+        this.deathTimer = 0;
+        this.dying = true;
+        this.spr.setFrame(1, 3);
+    }
 }
