@@ -17,5 +17,11 @@
 
         "This is a test dialogue. See how nicely newlines are added automatically!",
         "Nothing really matters here. Beeb boop, I am a robot."
-    ]
+    ],
+
+
+    "save": "Save your progress?\nThis will override\nthe old save!",
+
+    "save_success": "Game saved\nsuccessfully!",
+    "save_failure": "Failed to save the\ngame. See web\nconsole for errors."
 }

@@ -3,6 +3,7 @@ import { Canvas } from "../gfx/interface.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
+import { TextBox } from "../ui/textbox.js";
 
 
 export class PauseMenu {
@@ -10,6 +11,9 @@ export class PauseMenu {
 
     private menu : Menu;
     private respawnConfirmation : ConfirmationBox;
+    private saveConfirmation : ConfirmationBox;
+
+    private saveMessage : TextBox;
     
 
     constructor(event : ProgramEvent, respawnEvent : (event : ProgramEvent) => void) {
@@ -18,6 +22,8 @@ export class PauseMenu {
 
         const strYes = event.localization?.getItem("yes")?.[0] ?? "null";
         const strNo = event.localization?.getItem("no")?.[0] ?? "null";
+        
+        this.saveMessage = new TextBox();
 
         this.respawnConfirmation = new ConfirmationBox([strYes, strNo], 
             event.localization?.getItem("respawn")?.[0] ?? "null",
@@ -25,6 +31,19 @@ export class PauseMenu {
 
                 respawnEvent(event);
                 this.menu.deactivate();
+            },
+            (event : ProgramEvent) => {
+
+                // ...
+            });
+
+        this.saveConfirmation = new ConfirmationBox([strYes, strNo], 
+            event.localization?.getItem("save")?.[0] ?? "null",
+            (event : ProgramEvent) => {
+
+                // TODO: Actually *save* the game
+                this.saveMessage.addText(event.localization?.getItem("save_success") ?? []);
+                this.saveMessage.activate(true);
             },
             (event : ProgramEvent) => {
 
@@ -52,7 +71,7 @@ export class PauseMenu {
         new MenuButton(text[2] ?? "null",
         (event : ProgramEvent) => {
 
-            // ...
+            this.saveConfirmation.activate(1);
         }),
 
         // Toggle audio
@@ -81,6 +100,18 @@ export class PauseMenu {
 
     public update(event : ProgramEvent) : void {
 
+        if (this.saveMessage.isActive()) {
+
+            this.saveMessage.update(event);
+            return;
+        }
+
+        if (this.saveConfirmation.isActive()) {
+
+            this.saveConfirmation.update(event);
+            return;
+        }
+
         if (this.respawnConfirmation.isActive()) {
 
             this.respawnConfirmation.update(event);
@@ -101,11 +132,24 @@ export class PauseMenu {
         canvas.setColor(0, 0, 0, DARKEN_ALPHA);
         canvas.fillRect();
 
+        if (this.saveMessage.isActive()) {
+
+            this.saveMessage.draw(canvas);
+            return;
+        }
+
+        if (this.saveConfirmation.isActive()) {
+
+            this.saveConfirmation.draw(canvas);
+            return;
+        }
+
         if (this.respawnConfirmation.isActive()) {
 
             this.respawnConfirmation.draw(canvas);
             return;
         }
+
         this.menu.draw(canvas, 0, 0, 12, true);
     }
 

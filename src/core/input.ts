@@ -41,6 +41,8 @@ export class Input {
     private vstick : Vector;
     private stickDelta : Vector;
 
+    private anyPressed : boolean = false;
+
     public readonly keyboard : Keyboard;
     public readonly gamepad : GamePad;
 
@@ -70,7 +72,7 @@ export class Input {
     }
 
 
-    public updateStick() : void {
+    public preUpdate() : void {
 
         const DEADZONE = 0.25;
 
@@ -112,6 +114,8 @@ export class Input {
 
         this.stickDelta.x = this.vstick.x - this.oldStick.x;
         this.stickDelta.y = this.vstick.y - this.oldStick.y;
+
+        this.anyPressed = this.keyboard.isAnyPressed() || this.gamepad.isAnyPressed();
     }
 
 
@@ -178,5 +182,5 @@ export class Input {
     }
 
 
-    public anyPressed = () : boolean => this.keyboard.isAnyPressed() || this.gamepad.isAnyPressed();
+    public isAnyPressed = () : boolean => this.anyPressed;
 }
