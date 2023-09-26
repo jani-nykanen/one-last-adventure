@@ -16,7 +16,9 @@ export class PauseMenu {
     private saveMessage : TextBox;
     
 
-    constructor(event : ProgramEvent, respawnEvent : (event : ProgramEvent) => void) {
+    constructor(event : ProgramEvent, 
+        respawnEvent : (event : ProgramEvent) => void,
+        saveEvent : (event : ProgramEvent) => boolean) {
 
         const text = event.localization?.getItem("menu") ?? [];
 
@@ -41,8 +43,9 @@ export class PauseMenu {
             event.localization?.getItem("save")?.[0] ?? "null",
             (event : ProgramEvent) => {
 
-                // TODO: Actually *save* the game
-                this.saveMessage.addText(event.localization?.getItem("save_success") ?? []);
+                const success = saveEvent(event);
+
+                this.saveMessage.addText(event.localization?.getItem(success ? "save_success" : "save_failure") ?? []);
                 this.saveMessage.activate(true);
             },
             (event : ProgramEvent) => {

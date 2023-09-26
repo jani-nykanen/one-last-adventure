@@ -11,6 +11,7 @@ import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { PauseMenu } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
+import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 
 
 export class Game implements Scene {
@@ -91,7 +92,9 @@ export class Game implements Scene {
 
         this.stage.cameraCheck(this.camera, this.objects);
 
-        this.pause = new PauseMenu(event, () => this.objects.killPlayer() );
+        this.pause = new PauseMenu(event, 
+            () => this.objects.killPlayer(),
+            () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) );
     }
 
 

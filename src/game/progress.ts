@@ -35,4 +35,23 @@ export class ProgressManager {
 
         this.properties.set(key, old + change);
     }
+
+
+    public saveToLocalStorage(key : string) : boolean {
+
+        const data = JSON.stringify(Object.fromEntries(this.properties)) as string;
+
+        try {
+
+            // In past Closure had problems with these, so let us do
+            // things in a funny way
+            window["localStorage"]["setItem"](key, data);
+        }
+        catch (e : any) {
+
+            console.warn("Error saving the game: " + e["message"]);
+            return false;
+        }
+        return true;
+    }
 }
