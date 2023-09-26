@@ -12,6 +12,7 @@ import { RGBA } from "../math/rgba.js";
 import { PauseMenu } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
 import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
+import { TextBox } from "../ui/textbox.js";
 
 
 export class Game implements Scene {
@@ -27,10 +28,14 @@ export class Game implements Scene {
 
     private pause : PauseMenu | undefined = undefined;
 
+    private genericTextbox : TextBox;
+
 
     constructor() {
 
         this.progress = new ProgressManager();
+
+        this.genericTextbox = new TextBox();
     }
 
 
@@ -38,8 +43,11 @@ export class Game implements Scene {
 
         this.stage.reset();
         this.objects.reset();
+        this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
         this.stage.cameraCheck(this.camera, this.objects);
+
+        this.objects.initialCameraCheck(this.camera, event);
 
         // To make certain objects appear on the screen
         // this.objects.update(this.camera, this.stage, event);
@@ -85,7 +93,7 @@ export class Game implements Scene {
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
 
-        this.objects = new GameObjectManager(this.progress, event);
+        this.objects = new GameObjectManager(this.progress, this.genericTextbox);
         this.stage = new Stage("void", BackgroundType.Void, event);
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
@@ -102,6 +110,12 @@ export class Game implements Scene {
         
         if (event.transition.isActive())
             return;
+
+        if (this.genericTextbox.isActive()) {
+
+            this.genericTextbox.update(event);
+            return;
+        }
 
         if (this.pause.isActive()) {
 
@@ -156,6 +170,7 @@ export class Game implements Scene {
 
         this.drawHUD(canvas);
 
+        this.genericTextbox.draw(canvas);
         this.pause.draw(canvas);
     }
 

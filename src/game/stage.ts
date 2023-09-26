@@ -157,6 +157,7 @@ export class Stage {
             return;
 
         let tileID : number;
+        let modifier : number;
 
         for (let y = 0; y < this.mapLayer.height; ++ y) {
 
@@ -168,12 +169,20 @@ export class Stage {
 
                 tileID -= OBJECT_LAYER_START;
 
+                modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);
+
                 switch (tileID) {
 
                 // Player
                 case 1:
 
                     objects.addPlayer(x, y);
+                    break;
+
+                // Chest
+                case 3:
+
+                    objects.addChest(x, y, modifier);
                     break;
 
                 default:

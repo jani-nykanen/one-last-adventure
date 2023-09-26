@@ -12,6 +12,9 @@ import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { Enemy } from "./enemies/enemy.js";
 import { getEnemyType } from "./enemies/enemytype.js";
 import { Vector } from "../math/vector.js";
+import { Chest } from "./chest.js";
+import { ActivableObject } from "./activableobject.js";
+import { TextBox } from "../ui/textbox.js";
 
 
 export class GameObjectManager {
@@ -20,6 +23,7 @@ export class GameObjectManager {
     private player : Player | undefined = undefined;
     private crates : Crate[];
     private enemies : Enemy[];
+    private chests : Chest[];
 
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
@@ -27,18 +31,21 @@ export class GameObjectManager {
 
 
     private readonly progress : ProgressManager;
+    private readonly textbox : TextBox;
 
 
-    constructor(progress : ProgressManager, event : ProgramEvent) {
+    constructor(progress : ProgressManager, textbox : TextBox) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+        this.chests = new Array<Chest> ();
 
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
         this.flyingMessages = new FlyingMessageGenerator();
 
         this.progress = progress;
+        this.textbox = textbox;
     }
 
 
@@ -50,6 +57,40 @@ export class GameObjectManager {
         for (let c of this.crates) {
 
             c.cameraCheck(camera, event);
+        }
+
+        for (let e of this.enemies) {
+
+            e.cameraCheck(camera, event);
+        }
+
+        for (let c of this.chests) {
+
+            c.cameraCheck(camera, event);
+        }
+    }
+
+
+    private updateActivableObjectArray(arr : ActivableObject[], camera : Camera, event : ProgramEvent) : void {
+
+        let o : ActivableObject;
+
+        for (let i = 0; i < arr.length; ++ i) {
+
+            o = arr[i];
+
+            o.cameraCheck(camera, event);
+            if (!o.isInCamera())
+                continue;
+
+            o.update(event);
+            o.playerCollision(this.player, event);
+
+            if (!o.doesExist()) {
+
+                arr.splice(i, 1);
+                continue;
+            }
         }
     }
 
@@ -166,6 +207,12 @@ export class GameObjectManager {
             return;
         }
 
+        if (this.player?.isSpecialAnimationActive()) {
+
+            this.player?.updateSpecialAnimation(event);
+            return;
+        }
+
         this.player?.update(event);
         this.player?.updateCollisionFlags();
         this.player?.cameraCollision(camera, event);
@@ -179,6 +226,27 @@ export class GameObjectManager {
 
         this.collectibles.update(stage, camera, this.player, event);
         this.collectibles.crateCollision(this.crates, event);
+
+        this.updateActivableObjectArray(this.chests, camera, event);
+    }
+
+
+    public initialCameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        for (let c of this.crates) {
+
+            c.cameraCheck(camera, event);
+        }
+
+        for (let e of this.enemies) {
+
+            e.cameraCheck(camera, event);
+        }
+
+        for (let c of this.chests) {
+
+            c.cameraCheck(camera, event);
+        }
     }
 
 
@@ -186,6 +254,12 @@ export class GameObjectManager {
 
         const bmpCrate = canvas.getBitmap("crate");
         const bmpEnemies = canvas.getBitmap("enemies_small");
+        const bmpChest = canvas.getBitmap("chest");
+
+        for (let c of this.chests) {
+
+            c.draw(canvas, bmpChest);
+        }
 
         for (let c of this.crates) {
 
@@ -201,12 +275,16 @@ export class GameObjectManager {
         this.collectibles.draw(canvas);
 
         this.player?.draw(canvas);
+        this.player?.drawIcon(canvas);
 
         this.flyingMessages.draw(canvas);
     }
 
 
     public addPlayer(x : number, y : number) : void {
+
+        if (this.player !== undefined)
+            return;
 
         this.player = new Player(
             (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, 
@@ -234,12 +312,26 @@ export class GameObjectManager {
     }
 
 
+    public addChest(x : number, y : number, id : number) : void {
+
+        if (this.progress.getProperty("item" + String(id), 0) != 0)
+            return;
+
+        this.chests.push(
+            new Chest(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT, 
+                id, this.textbox));
+    }
+
+
     public reset() : void {
 
         this.player?.respawn();
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+        this.chests = new Array<Chest> ();
 
         this.particles.clear();
         this.flyingMessages.clear();

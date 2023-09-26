@@ -16,6 +16,13 @@ import { RGBA } from "../math/rgba.js";
 const DEATH_TIME : number = 60;
 
 
+export const enum SpecialPlayerAnimationType {
+
+    None = 0,
+    HoldItem = 1,
+};
+
+
 export class Player extends CollisionObject {
 
 
@@ -33,8 +40,12 @@ export class Player extends CollisionObject {
 
     private spr : Sprite;
     private sprWeapon : Sprite;
+    private sprIcon : Sprite;
     private flip : Flip = Flip.None;
     private dir : -1 | 1 = 1;
+
+    private showIcon : boolean = false;
+    private iconID : number = 0;
 
     private swordHitId : number = 0;
     private swordHitArea : Rectangle;
@@ -46,6 +57,11 @@ export class Player extends CollisionObject {
     private maxHealth : number; 
 
     private deathTimer : number = 0;
+
+    private specialAnimationType : SpecialPlayerAnimationType = SpecialPlayerAnimationType.None;
+    private specialAnimationTimer : number = 0;
+    private specialAnimationParam : number = 0;
+    private specialAnimationCallback : ((event : ProgramEvent) => void) | undefined = undefined;;
 
 
     private readonly flyingMessages : FlyingMessageGenerator;
@@ -66,6 +82,8 @@ export class Player extends CollisionObject {
 
         this.spr = new Sprite(16, 16);
         this.sprWeapon = new Sprite(32, 32);
+        this.sprIcon = new Sprite(16, 16);
+        this.sprIcon.setFrame(0, 4);
 
         this.inCamera = true;
 
@@ -322,6 +340,12 @@ export class Player extends CollisionObject {
 
         const ANIM_EPS = 0.01;
         const JUMP_EPS = 0.5;
+        const ICON_ANIM_SPEED : number = 20;
+
+        if (this.showIcon) {
+
+            this.sprIcon.animate(4, this.iconID*2, this.iconID*2 + 1, ICON_ANIM_SPEED, event.tick);
+        }
 
         if (this.knockbackTimer > 0) {
 
@@ -419,6 +443,7 @@ export class Player extends CollisionObject {
 
         this.touchLadder = false;
         this.touchLadderTop = false;
+        this.showIcon = false;
     }
 
 
@@ -496,6 +521,15 @@ export class Player extends CollisionObject {
             this.touchLadder ||= !ladderTop;
             this.touchLadderTop ||= ladderTop;
 
+            if (this.touchLadderTop && this.touchSurface && !this.climbing) {
+
+                this.showActionIcon(1);
+            }
+            else if (this.touchLadder && !this.climbing) {
+
+                this.showActionIcon(0);
+            }
+
             this.ladderX = x + w/2;
 
             return true;
@@ -538,6 +572,22 @@ export class Player extends CollisionObject {
 
             this.sprWeapon.draw(canvas, bmpWeapons, dx + WEAPON_XOFF[flip], dy - 8, flip);
         }
+    }
+
+
+    public drawIcon(canvas : Canvas) : void {
+
+        const Y_OFFSET : number = -18;
+
+        if (!this.isActive() || !this.showIcon)
+            return;
+
+        const dx = Math.round(this.pos.x) - 8;
+        const dy = Math.round(this.pos.y) - 7 + Y_OFFSET;
+
+        const bmp = canvas.getBitmap("player");
+
+        this.sprIcon.draw(canvas, bmp, dx, dy);
     }
 
 
@@ -752,6 +802,8 @@ export class Player extends CollisionObject {
         this.hurtTimer = 0;
         this.knockbackTimer = 0;
 
+        this.showIcon = false;
+
         this.pos.x = this.progress.getProperty("checkpointx", 0);
         this.pos.y = this.progress.getProperty("checkpointy", 0);
 
@@ -764,7 +816,6 @@ export class Player extends CollisionObject {
     }
     
 
-
     public kill() : void {
 
         if (this.dying)
@@ -774,4 +825,62 @@ export class Player extends CollisionObject {
         this.dying = true;
         this.spr.setFrame(1, 3);
     }
+
+
+    public showActionIcon(id : number) : void {
+
+        this.showIcon = true;
+        this.iconID = id;
+
+        const column = this.sprIcon.getColumn();
+        if (this.sprIcon.getRow() != 4 ||
+            column > id*2 + 1 ||
+            column < id*2) {
+
+            this.sprIcon.setFrame(id*2, 4);
+        }
+    }
+
+
+    public updateSpecialAnimation(event : ProgramEvent) : void {
+
+        const ANIM_SPEED : number[] = [0, 1.0/60.0];
+
+        if (this.specialAnimationTimer <= 0)
+            return;
+
+        this.specialAnimationTimer -= ANIM_SPEED[this.specialAnimationType]*event.tick;
+        if (this.specialAnimationTimer <= 0) {
+
+            this.specialAnimationCallback?.(event);
+            return;
+        }
+
+        switch (this.specialAnimationType) {
+
+        case SpecialPlayerAnimationType.HoldItem:
+
+            this.spr.setFrame(5, 3);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
+    public toggleSpecialAnimation(type : SpecialPlayerAnimationType, 
+        param : number, cb : (event : ProgramEvent) => void) : void {
+
+        this.specialAnimationType = type;
+        this.specialAnimationParam = param;
+        this.specialAnimationTimer = 1.0;
+
+        this.showIcon = false;
+
+        this.specialAnimationCallback = cb;
+    } 
+
+
+    public isSpecialAnimationActive = () : boolean => this.specialAnimationTimer > 0.0;
 }

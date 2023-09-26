@@ -103,4 +103,7 @@ export class CollisionObject extends GameObject {
         }
         return false;
     }
+
+
+    public doesTouchSurface = () : boolean => this.touchSurface;
 }

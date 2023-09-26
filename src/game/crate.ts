@@ -6,7 +6,6 @@ import { CollisionObject } from "./collisionobject.js";
 import { ParticleGenerator } from "./particlegenerator.js";
 import { Player } from "./player.js";
 import { CollectibleGenerator } from "./collectiblegenerator.js";
-import { CollectibleType } from "./collectible.js";
 
 
 export class Crate extends CollisionObject {
@@ -33,7 +32,7 @@ export class Crate extends CollisionObject {
         this.particles = particles;
         this.collectibles = collectibles;
 
-        this.inCamera = true;
+        // this.inCamera = true;
     }
 
 

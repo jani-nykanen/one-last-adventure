@@ -123,6 +123,8 @@ export class TextBox {
 
                 this.charPos = 0;
                 this.charWait = 0;
+
+                this.finished = false;
             }
         }
     }
