@@ -16,6 +16,7 @@ import { Chest } from "./chest.js";
 import { ActivableObject } from "./activableobject.js";
 import { TextBox } from "../ui/textbox.js";
 import { Portal } from "./portal.js";
+import { Hint } from "./hint.js";
 
 
 export class GameObjectManager {
@@ -26,6 +27,9 @@ export class GameObjectManager {
     private enemies : Enemy[];
     private chests : Chest[];
     private portals : Portal[];
+    private hints : Hint[];
+
+    private overridingHint : Hint | undefined = undefined;
 
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
@@ -42,6 +46,7 @@ export class GameObjectManager {
         this.enemies = new Array<Enemy> ();
         this.chests = new Array<Chest> ();
         this.portals = new Array<Portal> ();
+        this.hints = new Array<Hint> ();
 
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
@@ -52,9 +57,17 @@ export class GameObjectManager {
     }
 
 
+    private createItemHint(x : number, y : number, id : number, event : ProgramEvent) : void {
+
+        const text = event.localization?.getItem("item_hints")?.[id - 1] ?? "";
+
+        this.overridingHint = new Hint(x, y, text, true);
+    }
+
+
     private movingCameraCheck(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
-        stage.cameraCheck(camera, this);
+        stage.cameraCheck(camera, this, event);
         this.player?.cameraCollision(camera, event);
 
         for (let c of this.crates) {
@@ -75,6 +88,19 @@ export class GameObjectManager {
         for (let p of this.portals) {
 
             p.cameraCheck(camera, event);
+        }
+
+        for (let i = 0; i < this.hints.length; ++ i) {
+
+            if (this.hints[i].isActivated()) {
+
+                this.hints.splice(i, 1);
+            }    
+        }
+
+        if (this.overridingHint?.isActivated()) {
+
+            this.overridingHint = undefined;
         }
     }
 
@@ -202,6 +228,24 @@ export class GameObjectManager {
     }
 
 
+    private updateHints(camera : Camera, event : ProgramEvent) : void {
+
+        let h : Hint;
+        for (let i = 0; i < this.hints.length; ++ i) {
+
+            h = this.hints[i];
+
+            h.cameraCheck(camera, event);
+            h.update(event);
+            if (h.isActive() && this.overridingHint !== undefined) {
+
+                this.hints.splice(i);
+            }
+        }
+        this.overridingHint?.update(event);
+    }
+
+
     public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
 
         if (camera === undefined || stage === undefined)
@@ -237,6 +281,8 @@ export class GameObjectManager {
 
         this.updateActivableObjectArray(this.chests, camera, event);
         this.updateActivableObjectArray(this.portals, camera, event);
+
+        this.updateHints(camera, event);
     }
 
 
@@ -296,6 +342,19 @@ export class GameObjectManager {
     }
 
 
+    public postDraw(canvas : Canvas) : void {
+
+        if (this.textbox.isActive())
+            return;
+
+        for (let h of this.hints) {
+
+            h.draw(canvas);
+        }
+        this.overridingHint?.draw(canvas);
+    }
+
+
     public addPlayer(x : number, y : number) : void {
 
         if (this.player !== undefined)
@@ -336,7 +395,8 @@ export class GameObjectManager {
             new Chest(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT, 
-                id, this.textbox));
+                id, this.textbox,
+                (x : number, y : number, id : number, event : ProgramEvent) => this.createItemHint(x, y, id, event)));
     }
 
 
@@ -350,12 +410,30 @@ export class GameObjectManager {
     }
 
 
+    public addHint(x : number, y : number, id : number, event : ProgramEvent) : void {
+
+        const hintStr = "hint" + String(id);
+
+        if (this.progress.getProperty(hintStr) == 1) 
+            return;
+
+        const text = event.localization?.getItem("static_hints")?.[id - 1] ?? "";
+
+        this.hints.push(new Hint(x*TILE_WIDTH, y*TILE_HEIGHT, text));
+
+        this.progress.setProperty(hintStr, 1);
+    }
+
+
     public reset() : void {
 
         this.player?.respawn();
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+        this.hints = new Array<Hint> ();
+
+        this.overridingHint = undefined;
 
         // TODO: No need to recreate these, really
         this.chests = new Array<Chest> ();

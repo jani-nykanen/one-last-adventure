@@ -697,7 +697,7 @@ export class Player extends CollisionObject {
         this.knockbackTimer = KNOCKBACK_TIME;
         this.hurtTimer = HURT_TIME;
 
-        this.speed.x = dirx*KNOCKBACK_SPEED;
+        this.speed.x = Math.sign(dirx)*KNOCKBACK_SPEED;
 
         this.climbing = false;
         this.jumpTimer = 0;

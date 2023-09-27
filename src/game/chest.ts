@@ -17,8 +17,11 @@ export class Chest extends ActivableObject {
 
     private spr : Sprite;
 
+    private hintCb : (x : number, y : number, id : number, event : ProgramEvent) => void;
 
-    constructor(x : number, y : number, id : number, textbox : TextBox) {
+
+    constructor(x : number, y : number, id : number, textbox : TextBox,
+        createHintCb : (x : number, y : number, id : number, event : ProgramEvent) => void) {
 
         super(x, y);
 
@@ -32,6 +35,8 @@ export class Chest extends ActivableObject {
         this.facePlayer = true;
 
         this.cameraCheckArea = new Vector(32, 32);
+
+        this.hintCb = createHintCb;
     }
 
 
@@ -60,6 +65,8 @@ export class Chest extends ActivableObject {
                 this.textbox.activate();
 
                 player.setCheckpoint(this.pos.x, this.pos.y);
+
+                this.hintCb(this.pos.x, this.pos.y, this.id, event);
             });
     }
 

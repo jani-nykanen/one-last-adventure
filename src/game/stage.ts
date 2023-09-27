@@ -8,7 +8,7 @@ import { Background, BackgroundType } from "./background.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
-const CREATABLE_OBJECTS = [2];
+const CREATABLE_OBJECTS = [2, 5];
 const OBJECT_LAYER_START = 256;
 
 
@@ -57,9 +57,12 @@ export class Stage {
     }
 
 
-    private createObject(tileID : number, x : number, y : number, objects : GameObjectManager) : void {
+    private createObject(tileID : number, x : number, y : number, 
+        objects : GameObjectManager, event : ProgramEvent) : void {
 
         // console.log("Created object with index: " + tileID);
+
+        const modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);
 
         switch (tileID) {
 
@@ -73,6 +76,11 @@ export class Stage {
         case 2:
 
             objects.addCrate(x, y, y*this.width + x);
+            break;
+
+        // Hint
+        case 5:
+            objects.addHint(x, y, modifier, event);
             break;
 
         default:
@@ -121,7 +129,7 @@ export class Stage {
     }
 
 
-    public cameraCheck(camera : Camera, objects : GameObjectManager) : void {
+    public cameraCheck(camera : Camera, objects : GameObjectManager, event : ProgramEvent) : void {
 
         const MARGIN = 2;
 
@@ -144,7 +152,7 @@ export class Stage {
                 if (!this.objectCreationWaiting[index]) 
                     continue;
 
-                this.createObject(this.objectLayer[index] - OBJECT_LAYER_START, x, y, objects);
+                this.createObject(this.objectLayer[index] - OBJECT_LAYER_START, x, y, objects, event);
                 this.objectCreationWaiting[index] = false;
             }
         }
@@ -167,9 +175,9 @@ export class Stage {
                 if (tileID <= OBJECT_LAYER_START)
                     continue;
 
-                tileID -= OBJECT_LAYER_START;
+                modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);;
 
-                modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);
+                tileID -= OBJECT_LAYER_START;
 
                 switch (tileID) {
 

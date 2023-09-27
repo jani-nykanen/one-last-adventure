@@ -45,7 +45,7 @@ export class Game implements Scene {
         this.objects.reset();
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
-        this.stage.cameraCheck(this.camera, this.objects);
+        this.stage.cameraCheck(this.camera, this.objects, event);
 
         this.objects.initialCameraCheck(this.camera, event);
 
@@ -98,7 +98,7 @@ export class Game implements Scene {
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
 
-        this.stage.cameraCheck(this.camera, this.objects);
+        this.stage.cameraCheck(this.camera, this.objects, event);
 
         this.pause = new PauseMenu(event, 
             () => this.objects.killPlayer(),
@@ -167,6 +167,8 @@ export class Game implements Scene {
         canvas.applyTransform();
 
         this.stage?.drawForeground(canvas);
+
+        this.objects.postDraw(canvas);
 
         this.drawHUD(canvas);
 

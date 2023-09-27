@@ -33,7 +33,7 @@ export class CollectibleGenerator {
 
     public spawnWeighted(pos : Vector, dir : Vector, healthWeight : number = 0.0) : void {
 
-        const DROP_PROB : number = 1.0; // 0.50;
+        const DROP_PROB : number = 0.50; // TODO: pass as parameter
         const HEALTH_BASE_PROB : number = 0.5;
 
         // TODO: Spawn hearts/magic potions depending on player

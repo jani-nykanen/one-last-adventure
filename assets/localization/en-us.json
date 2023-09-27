@@ -20,8 +20,21 @@
     "save_failure": "Failed to save the\ngame. See web\nconsole for errors.",
 
 
+    "static_hints": [
+        "Use LEFT and RIGHT\nARROW KEYS to walk.",
+        "Press SPACE or Z to jump.",
+        "Use UP and DOWN\nARROW to climb.",
+        "Use UP ARROW to interact\nwith objects.",
+        "Press DOWN + ATTACK\nto perform a\ndown attack."
+    ],
+
+    "item_hints": [
+        "Press LEFT CTRL or X to\nattack."
+    ],
+
+
     "item1": [
         "You obtain a TOY SWORD!", 
-        "It's a sword made of paper.\nAt least the risk of paper\ncuts is real."
+        "It's a sword made of paper.\nIt might look harmless, but\nat least the risk of paper\ncuts is real."
     ]
 }
