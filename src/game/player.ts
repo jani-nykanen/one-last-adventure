@@ -91,7 +91,7 @@ export class Player extends CollisionObject {
         this.progress = progress;
 
         this.maxHealth = this.progress.getProperty("maxHealth", 6);
-        this.health = 1; // this.maxHealth;
+        this.health = this.maxHealth;
 
         progress.setProperty("checkpointx", x);
         progress.setProperty("checkpointy", y);
@@ -189,6 +189,10 @@ export class Player extends CollisionObject {
         const DOWN_ATTACK_JUMP : number = -1.0;
 
         if (this.attacking)
+            return;
+
+        const hasSword = this.progress.getProperty("item1") === 1;
+        if (!hasSword)
             return;
 
         if (event.input.getAction("attack") == InputState.Pressed) {
@@ -572,6 +576,16 @@ export class Player extends CollisionObject {
 
             this.sprWeapon.draw(canvas, bmpWeapons, dx + WEAPON_XOFF[flip], dy - 8, flip);
         }
+
+        let bmpItems : Bitmap | undefined;
+        if (this.specialAnimationTimer > 0) {
+
+            bmpItems = canvas.getBitmap("items");
+
+            canvas.drawBitmap(bmpItems, Flip.None, 
+                dx, dy - 16, 
+                (this.specialAnimationParam - 1)*16, 0, 16, 16);
+        }
     }
 
 
@@ -883,4 +897,11 @@ export class Player extends CollisionObject {
 
 
     public isSpecialAnimationActive = () : boolean => this.specialAnimationTimer > 0.0;
+
+
+    public setCheckpoint(x : number, y : number) : void {
+        
+        this.progress.setProperty("checkpointx", x);
+        this.progress.setProperty("checkpointy", y);
+    }
 }

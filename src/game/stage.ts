@@ -185,6 +185,12 @@ export class Stage {
                     objects.addChest(x, y, modifier);
                     break;
 
+                // Portal
+                case 4:
+
+                    objects.addPortal(x, y);
+                    break;
+
                 default:
                     break;
                 }

@@ -14,6 +14,8 @@
         {"name": "hud", "path": "hud.png"},
         {"name": "enemies_small", "path": "enemies_small.png"},
         {"name": "chest", "path": "chest.png"},
+        {"name": "items", "path": "items.png"},
+        {"name": "portal", "path": "portal.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 

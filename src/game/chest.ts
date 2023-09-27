@@ -58,6 +58,8 @@ export class Chest extends ActivableObject {
                 player.progress.setProperty(itemIDStr, 1);
                 this.textbox.addText(event.localization?.getItem(itemIDStr) ?? []);
                 this.textbox.activate();
+
+                player.setCheckpoint(this.pos.x, this.pos.y);
             });
     }
 

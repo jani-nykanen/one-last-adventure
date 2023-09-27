@@ -18,13 +18,21 @@ export class TextBox {
 
     private width : number = 0;
     private height : number = 0;
+    private fixedSize : boolean = false;
 
     private waitWave : number = 0;
 
 
-    constructor() {   
+    constructor(fixedSize : boolean = false, fixedWidth? : number, fixedHeight? : number) {   
 
         this.textBuffer = new Array<string> ();
+
+        this.fixedSize = fixedSize;
+        if (fixedSize) {
+
+            this.width = fixedWidth ?? 0;
+            this.height = fixedHeight ?? 0;
+        }
     }
 
 
@@ -52,7 +60,11 @@ export class TextBox {
             return;
 
         this.activeText = this.textBuffer.shift();
-        this.computeDimensions();
+
+        if (!this.fixedSize) {
+
+            this.computeDimensions();
+        }
 
         this.charPos = 0;
         this.charWait = 0;
@@ -73,7 +85,7 @@ export class TextBox {
     public update(event : ProgramEvent) : void {
 
         const WAIT_WAVE_SPEED : number = Math.PI*2/60;
-        const CHAR_WAIT_TIME : number = 4;
+        const CHAR_WAIT_TIME : number = 3;
 
         if (!this.active || this.activeText === undefined)
             return;
@@ -92,7 +104,7 @@ export class TextBox {
             while ((this.charWait += event.tick) >= CHAR_WAIT_TIME) {
 
                 ++ this.charPos;
-                if (this.charPos == this.activate.length) {
+                if (this.charPos == this.activeText.length) {
 
                     this.finished = true;
                     break;
@@ -119,7 +131,11 @@ export class TextBox {
                     this.active = false;
                     return;
                 }
-                this.computeDimensions();
+
+                if (!this.fixedSize) {
+
+                    this.computeDimensions();
+                }
 
                 this.charPos = 0;
                 this.charWait = 0;
@@ -141,6 +157,8 @@ export class TextBox {
             return;
 
         const font = canvas.getBitmap("font");
+        const fontOutlines = canvas.getBitmap("font_outlines");
+
         const charDim = (font?.width ?? 128)/16;
 
         const w = this.width*charDim + SIDE_OFFSET*2;
@@ -164,10 +182,10 @@ export class TextBox {
         if (this.finished) {
 
             canvas.setColor(255, 255, 0);
-            canvas.drawBitmap(font, Flip.None, 
-                dx + w - 4, 
-                dy + h - 4 + Math.round(Math.sin(this.waitWave)*1), 
-                120, 8, 8, 8);
+            canvas.drawBitmap(fontOutlines, Flip.None, 
+                dx + w - 8, 
+                dy + h - 7 + Math.round(Math.sin(this.waitWave)*1), 
+                240, 16, 16, 16);
             canvas.setColor();
         }
     }
@@ -180,4 +198,8 @@ export class TextBox {
 
         this.active = false;
     }
+
+
+    public getWidth = () : number => this.width;
+    public getHeight = () : number => this.height;
 }

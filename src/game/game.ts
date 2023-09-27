@@ -35,7 +35,7 @@ export class Game implements Scene {
 
         this.progress = new ProgressManager();
 
-        this.genericTextbox = new TextBox();
+        this.genericTextbox = new TextBox(true, 27, 5);
     }
 
 
@@ -170,7 +170,7 @@ export class Game implements Scene {
 
         this.drawHUD(canvas);
 
-        this.genericTextbox.draw(canvas);
+        this.genericTextbox.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
         this.pause.draw(canvas);
     }
 

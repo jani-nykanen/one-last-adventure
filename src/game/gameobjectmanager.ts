@@ -15,6 +15,7 @@ import { Vector } from "../math/vector.js";
 import { Chest } from "./chest.js";
 import { ActivableObject } from "./activableobject.js";
 import { TextBox } from "../ui/textbox.js";
+import { Portal } from "./portal.js";
 
 
 export class GameObjectManager {
@@ -24,6 +25,7 @@ export class GameObjectManager {
     private crates : Crate[];
     private enemies : Enemy[];
     private chests : Chest[];
+    private portals : Portal[];
 
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
@@ -39,6 +41,7 @@ export class GameObjectManager {
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
         this.chests = new Array<Chest> ();
+        this.portals = new Array<Portal> ();
 
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
@@ -67,6 +70,11 @@ export class GameObjectManager {
         for (let c of this.chests) {
 
             c.cameraCheck(camera, event);
+        }
+
+        for (let p of this.portals) {
+
+            p.cameraCheck(camera, event);
         }
     }
 
@@ -228,6 +236,7 @@ export class GameObjectManager {
         this.collectibles.crateCollision(this.crates, event);
 
         this.updateActivableObjectArray(this.chests, camera, event);
+        this.updateActivableObjectArray(this.portals, camera, event);
     }
 
 
@@ -255,6 +264,12 @@ export class GameObjectManager {
         const bmpCrate = canvas.getBitmap("crate");
         const bmpEnemies = canvas.getBitmap("enemies_small");
         const bmpChest = canvas.getBitmap("chest");
+        const bmpPortal = canvas.getBitmap("portal");
+
+        for (let c of this.portals) {
+
+            c.draw(canvas, bmpPortal);
+        }
 
         for (let c of this.chests) {
 
@@ -325,13 +340,26 @@ export class GameObjectManager {
     }
 
 
+    public addPortal(x : number, y : number) : void {
+
+        this.portals.push(
+            new Portal(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                () => {}));
+    }
+
+
     public reset() : void {
 
         this.player?.respawn();
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+
+        // TODO: No need to recreate these, really
         this.chests = new Array<Chest> ();
+        this.portals = new Array<Portal> ();
 
         this.particles.clear();
         this.flyingMessages.clear();
