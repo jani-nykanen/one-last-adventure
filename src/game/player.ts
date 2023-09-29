@@ -15,6 +15,8 @@ import { RGBA } from "../math/rgba.js";
 
 const DEATH_TIME : number = 60;
 
+const JUMP_VOLUME : number = 0.60;
+
 
 export const enum SpecialPlayerAnimationType {
 
@@ -110,6 +112,8 @@ export class Player extends CollisionObject {
             this.jumpTimer = JUMP_TIME;
             this.ledgeTimer = 0;
             this.touchSurface = false;
+
+            event.audio.playSample(event.assets.getSample("jump"), JUMP_VOLUME);
         }
         else if (this.jumpTimer > 0 &&
             (jumpButton & InputState.DownOrPressed) == 0) {
@@ -170,6 +174,7 @@ export class Player extends CollisionObject {
 
                 this.jumpTimer = CLIMB_JUMP_TIME;
             }
+            event.audio.playSample(event.assets.getSample("jump"), JUMP_VOLUME);
 
             return;
         }
@@ -364,6 +369,7 @@ export class Player extends CollisionObject {
             return;
 
         // Climbing
+        const oldFrame = this.spr.getColumn();
         if (this.climbing) {
 
             if (Math.abs(this.target.y) < ANIM_EPS &&
@@ -374,6 +380,11 @@ export class Player extends CollisionObject {
             }
 
             this.spr.animate(1, 3, 6, 6, event.tick);
+            if (this.spr.getColumn() != oldFrame && oldFrame == 3) {
+
+                event.audio.playSample(event.assets.getSample("climb"), 0.60);
+            }
+
             return;
         }
 

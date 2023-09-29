@@ -13,6 +13,7 @@ import { PauseMenu } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
 import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 import { TextBox } from "../ui/textbox.js";
+import { MusicVolume } from "./musicvolume.js";
 
 
 export class Game implements Scene {
@@ -103,6 +104,8 @@ export class Game implements Scene {
         this.pause = new PauseMenu(event, 
             () => this.objects.killPlayer(),
             () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) );
+
+        event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
     }
 
 

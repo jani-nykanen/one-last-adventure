@@ -27,6 +27,15 @@
     ],
 
 
+    "samplePath": "assets/audio/",
+    "samples": [
+
+        {"name": "climb", "path": "climb.wav"},
+        {"name": "jump", "path": "jump.wav"},
+
+        {"name": "theme_void", "path": "theme_void.ogg"}
+    ],
+
     "documentPath": "assets/localization/",
     "documents": [
 

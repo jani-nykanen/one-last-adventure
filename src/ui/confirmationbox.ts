@@ -46,7 +46,7 @@ export class ConfirmationBox {
     }
 
 
-    public draw(canvas : Canvas, 
+    public draw(canvas : Canvas, drawBox : boolean = true,
         x : number = 0, y : number = 0, 
         yoff : number = 10, menuYoff : number = 12,
         boxColors? : RGBA[]) : void {
@@ -66,10 +66,13 @@ export class ConfirmationBox {
         const dx = x + canvas.width/2 - w/2;
         const dy = y + canvas.height/2 - h/2; 
 
-        drawUIBox(canvas, 
-            dx - BOX_OFFSET, dy - BOX_OFFSET, 
-            w + BOX_OFFSET*2, h + BOX_OFFSET*2,
-            boxColors);
+        if (drawBox) {
+            
+            drawUIBox(canvas, 
+                dx - BOX_OFFSET, dy - BOX_OFFSET, 
+                w + BOX_OFFSET*2, h + BOX_OFFSET*2,
+                boxColors);
+        }
 
         for (let i = 0; i < this.message.length; ++ i) {
 

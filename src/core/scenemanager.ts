@@ -26,10 +26,13 @@ export class SceneManager {
     }
 
 
-    public addScene(name : string, scene : Scene) : void {
+    public addScene(name : string, scene : Scene, makeActive : boolean = true) : void {
 
         this.scenes.set(name, scene);
-        this.activeScene = scene;
+        if (makeActive) {
+
+            this.activeScene = scene;
+        }
         
     }
 
