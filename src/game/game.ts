@@ -54,6 +54,8 @@ export class Game implements Scene {
         // this.objects.update(this.camera, this.stage, event);
 
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
+
+        event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
     }
 
 
@@ -102,7 +104,7 @@ export class Game implements Scene {
         this.stage.cameraCheck(this.camera, this.objects, event);
 
         this.pause = new PauseMenu(event, 
-            () => this.objects.killPlayer(),
+            (event : ProgramEvent) => this.objects.killPlayer(event),
             () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) );
 
         event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
@@ -128,8 +130,9 @@ export class Game implements Scene {
 
         if (event.input.getAction("pause") == InputState.Pressed) {
 
-            event.audio.pauseMusic();
+            event.audio.playSample(event.assets.getSample("pause"), 0.40);
 
+            event.audio.pauseMusic();
             this.pause.activate();
             return;
         }

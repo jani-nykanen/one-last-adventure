@@ -430,6 +430,9 @@ export class Player extends CollisionObject {
                 this.deathTimer = 0;
                 this.dying = true;
                 this.spr.setFrame(1, 3);
+
+                event.audio.stopMusic();
+                event.audio.playSample(event.assets.getSample("death"), 0.40);
             }
         }
         else if (this.hurtTimer > 0) {
@@ -560,7 +563,10 @@ export class Player extends CollisionObject {
         const WEAPON_XOFF : number[] = [2, -18];
 
         if (!this.exist || 
-            (!this.dying && this.hurtTimer > 0 && Math.floor(this.hurtTimer/4) % 2 == 0))
+            (this.specialAnimationTimer <= 0 && 
+                !this.dying && 
+                this.hurtTimer > 0 && 
+                Math.floor(this.hurtTimer/4) % 2 == 0))
             return;
 
         const bmp = canvas.getBitmap("player");
@@ -721,6 +727,8 @@ export class Player extends CollisionObject {
         this.health = Math.max(0, this.health - damage);
 
         this.flyingMessages.spawn(this.pos.x, this.pos.y - 6, -damage, FlyingMessageSymbol.None, new RGBA(255, 0, 0));
+
+        event.audio.playSample(event.assets.getSample("hurt"), 0.60);
     }
 
 
@@ -843,7 +851,7 @@ export class Player extends CollisionObject {
     }
     
 
-    public kill() : void {
+    public kill(event : ProgramEvent) : void {
 
         if (this.dying)
             return;
@@ -851,6 +859,9 @@ export class Player extends CollisionObject {
         this.deathTimer = 0;
         this.dying = true;
         this.spr.setFrame(1, 3);
+
+        event.audio.stopMusic();
+        event.audio.playSample(event.assets.getSample("death"), 0.40);
     }
 
 

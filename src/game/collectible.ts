@@ -119,11 +119,13 @@ export class Collectible extends CollisionObject {
 
             case CollectibleType.Coin:
 
+                event.audio.playSample(event.assets.getSample("coin"), 0.70);
                 player.addCoins(1);
                 break;
 
             case CollectibleType.Heart:
 
+                event.audio.playSample(event.assets.getSample("heal"), 0.60);
                 player.recoverHealth(2);
                 break;
 

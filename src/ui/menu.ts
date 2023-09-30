@@ -52,7 +52,7 @@ export class Menu {
         if (oldPos != this.cursorPos) {
 
             this.cursorPos = negMod(this.cursorPos, this.buttons.length);
-            event.audio.playSample(event.assets.getSample("choose"), 0.60);
+            event.audio.playSample(event.assets.getSample("choose"), 0.50);
         }
 
         if (event.input.getAction("select") == InputState.Pressed) {

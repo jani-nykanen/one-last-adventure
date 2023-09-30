@@ -35,6 +35,12 @@
         {"name": "select", "path": "select.wav"},
         {"name": "choose", "path": "choose.wav"},
         {"name": "sword", "path": "sword.wav"},
+        {"name": "pause", "path": "pause.wav"},
+        {"name": "hurt", "path": "hurt.wav"},
+        {"name": "death", "path": "death.wav"},
+        {"name": "coin", "path": "coin.wav"},
+        {"name": "break", "path": "break.wav"},
+        {"name": "heal", "path": "heal.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}

@@ -114,6 +114,8 @@ export class Crate extends CollisionObject {
 
             player.downAttackBounce();
             this.exist = false;
+
+            event.audio.playSample(event.assets.getSample("break"), 0.60);
         }
     }
 

@@ -472,8 +472,8 @@ export class GameObjectManager {
     }
 
 
-    public killPlayer() : void {
+    public killPlayer(event : ProgramEvent) : void {
 
-        this.player.kill();
+        this.player.kill(event);
     }
 }

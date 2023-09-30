@@ -42,10 +42,10 @@ export class Program {
 
         canvas.applyTransform();
 
-        canvas.clear(0, 85, 170);
+        canvas.clear(36, 109, 182);
         canvas.setColor();
         canvas.fillRect(dx, dy, WIDTH, HEIGHT);
-        canvas.setColor(0, 85, 170);
+        canvas.setColor(36, 109, 182);
         canvas.fillRect(dx + OUTLINE, dy + OUTLINE, WIDTH - OUTLINE*2, HEIGHT - OUTLINE*2);
         canvas.setColor();
         canvas.fillRect(dx + OUTLINE*2, dy + OUTLINE*2, (WIDTH - OUTLINE*4)*p, HEIGHT - OUTLINE*4);

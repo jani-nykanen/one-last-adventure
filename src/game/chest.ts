@@ -56,7 +56,7 @@ export class Chest extends ActivableObject {
         this.spr.setFrame(0, 1);
 
         event.audio.pauseMusic();
-        event.audio.playSample(event.assets.getSample("item"), 1.0);
+        event.audio.playSample(event.assets.getSample("item"), 0.80);
 
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, this.id,
             (event : ProgramEvent) => {
