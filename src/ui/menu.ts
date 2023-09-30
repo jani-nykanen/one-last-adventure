@@ -58,7 +58,7 @@ export class Menu {
         if (event.input.getAction("select") == InputState.Pressed) {
 
             this.buttons[this.cursorPos].evaluateCallback(event);
-            event.audio.playSample(event.assets.getSample("select"), 0.60);
+            event.audio.playSample(event.assets.getSample("select"), 0.50);
         }
     }
 

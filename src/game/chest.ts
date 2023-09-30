@@ -55,6 +55,9 @@ export class Chest extends ActivableObject {
         this.dying = true;
         this.spr.setFrame(0, 1);
 
+        event.audio.pauseMusic();
+        event.audio.playSample(event.assets.getSample("item"), 1.0);
+
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, this.id,
             (event : ProgramEvent) => {
 
@@ -62,7 +65,7 @@ export class Chest extends ActivableObject {
 
                 player.progress.setProperty(itemIDStr, 1);
                 this.textbox.addText(event.localization?.getItem(itemIDStr) ?? []);
-                this.textbox.activate();
+                this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
 
                 player.setCheckpoint(this.pos.x, this.pos.y);
 

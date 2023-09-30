@@ -22,6 +22,8 @@ export class TextBox {
 
     private waitWave : number = 0;
 
+    private finishEvent : ((event : ProgramEvent) => void) | undefined = undefined;
+
 
     constructor(fixedSize : boolean = false, fixedWidth? : number, fixedHeight? : number) {   
 
@@ -54,7 +56,7 @@ export class TextBox {
     }
 
 
-    public activate(instant : boolean = false) : void {
+    public activate(instant : boolean = false, finishEvent? : (event : ProgramEvent) => void) : void {
 
         if (this.textBuffer.length == 0)
             return;
@@ -79,6 +81,8 @@ export class TextBox {
             this.finished = true;
             this.charPos = this.activeText?.length ?? 0;
         }
+
+        this.finishEvent = finishEvent;
     }
 
 
@@ -96,6 +100,8 @@ export class TextBox {
 
             if (event.input.isAnyPressed()) {
                 
+                event.audio.playSample(event.assets.getSample("choose"), 0.60);
+
                 this.charPos = this.activeText.length;
                 this.finished = true;
                 return;
@@ -125,9 +131,12 @@ export class TextBox {
 
             if (event.input.isAnyPressed()) {
 
+                event.audio.playSample(event.assets.getSample("choose"), 0.60);
+
                 this.activeText = this.textBuffer.shift();
                 if (this.activeText === undefined) {
 
+                    this.finishEvent?.(event);
                     this.active = false;
                     return;
                 }

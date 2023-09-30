@@ -32,7 +32,11 @@
 
         {"name": "climb", "path": "climb.wav"},
         {"name": "jump", "path": "jump.wav"},
+        {"name": "select", "path": "select.wav"},
+        {"name": "choose", "path": "choose.wav"},
+        {"name": "sword", "path": "sword.wav"},
 
+        {"name": "item", "path": "item.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}
     ],
 

@@ -4,6 +4,7 @@ import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { TextBox } from "../ui/textbox.js";
+import { MusicVolume } from "./musicvolume.js";
 
 
 export class PauseMenu {
@@ -61,6 +62,11 @@ export class PauseMenu {
         (event : ProgramEvent) => {
 
             this.menu.deactivate();
+
+            if (!event.audio.resumeMusic()) {
+
+                event.audio.playMusic(event.assets.getSample("theme_void"), MusicVolume["void"]);
+            }
         }),
 
         // Respawn
@@ -97,7 +103,7 @@ export class PauseMenu {
 
     private getAudioText(text : string[], event : ProgramEvent) : string {
 
-        return text[3 + Number(event.audio.isEnabled())] ?? "";
+        return text[4 - Number(event.audio.isEnabled())] ?? "";
     }
 
 

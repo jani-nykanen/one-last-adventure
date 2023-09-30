@@ -221,6 +221,8 @@ export class Player extends CollisionObject {
                 this.sprWeapon.setFrame(0, 0);
             }
             ++ this.swordHitId;
+
+            event.audio.playSample(event.assets.getSample("sword"), 0.60);
         }
     }
 
@@ -869,7 +871,7 @@ export class Player extends CollisionObject {
 
     public updateSpecialAnimation(event : ProgramEvent) : void {
 
-        const ANIM_SPEED : number[] = [0, 1.0/60.0];
+        const ANIM_SPEED : number[] = [0, 1.0/90.0];
 
         if (this.specialAnimationTimer <= 0)
             return;
