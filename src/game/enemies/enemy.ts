@@ -66,7 +66,7 @@ export class Enemy extends CollisionObject {
     protected init?() : void;
 
 
-    private hurt(damage : number, player : Player) : void {
+    private hurt(damage : number, player : Player, event : ProgramEvent) : void {
 
         const HURT_TIME : number = 30;
 
@@ -74,6 +74,8 @@ export class Enemy extends CollisionObject {
 
             this.hurtTimer = 0;
             this.dying = true;
+
+            event.audio.playSample(event.assets.getSample("kill"), 0.50);
 
             this.spr.setFrame(0, 0);
 
@@ -84,6 +86,7 @@ export class Enemy extends CollisionObject {
 
             return;
         }
+        event.audio.playSample(event.assets.getSample("hit"), 0.60);
 
         this.hurtTimer = HURT_TIME;
     }
@@ -157,7 +160,7 @@ export class Enemy extends CollisionObject {
 
             this.swordHitId = player.getSwordHitID();
             
-            this.hurt(damage, player);
+            this.hurt(damage, player, event);
             if (!player.downAttackBounce()) {
 
                 this.speed.x = KNOCKBACK_SPEED*dir.x*this.weight;

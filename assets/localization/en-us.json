@@ -16,8 +16,25 @@
 
     "save": "Save your progress?\nThis will override\nthe old save!",
 
+    "quit": "Return to the title\nscreen? You will\nlose your progress!",
+
+
     "save_success": "Game saved\nsuccessfully!",
     "save_failure": "Failed to save the\ngame. See web\nconsole for errors.",
+
+    "titlescreen": [
+        "New Game",
+        "Continue",
+        "Audio: On ",
+        "Audio: Off"
+    ],
+
+
+    "save_result": [
+
+        "Could not find\na save data!",
+        "Failed to load\nthe save data!\nSee web console\nfor errors."
+    ],
 
 
     "static_hints": [

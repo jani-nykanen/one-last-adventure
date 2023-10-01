@@ -54,4 +54,28 @@ export class ProgressManager {
         }
         return true;
     }
+
+
+    public loadFromLocalStorage(key : string) : boolean {
+
+        let dataStr : string;
+        let dataJson : Object;
+
+        try {
+
+            dataStr = window["localStorage"]["getItem"](key);
+            dataJson = JSON.parse(dataStr);
+
+            for (let k of Object.keys(dataJson)) {
+
+                this.properties.set(k, Number(dataJson[k]));
+            }
+        }
+        catch (e : any) {
+
+            console.warn("Error loading the game: " + e["message"]);
+            return false;
+        }
+        return true;
+    }
 }

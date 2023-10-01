@@ -5,6 +5,7 @@ import { MenuButton } from "../ui/menubutton.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
+import { TransitionType } from "../core/transition.js";
 
 
 export class PauseMenu {
@@ -13,13 +14,15 @@ export class PauseMenu {
     private menu : Menu;
     private respawnConfirmation : ConfirmationBox;
     private saveConfirmation : ConfirmationBox;
+    private quitConfirmation : ConfirmationBox;
 
     private saveMessage : TextBox;
     
 
     constructor(event : ProgramEvent, 
         respawnEvent : (event : ProgramEvent) => void,
-        saveEvent : (event : ProgramEvent) => boolean) {
+        saveEvent : (event : ProgramEvent) => boolean,
+        quitEvent : (event : ProgramEvent) => void) {
 
         const text = event.localization?.getItem("menu") ?? [];
 
@@ -52,6 +55,20 @@ export class PauseMenu {
             (event : ProgramEvent) => {
 
                 // ...
+            });
+
+        this.quitConfirmation = new ConfirmationBox([strYes, strNo], 
+            event.localization?.getItem("quit")?.[0] ?? "null",
+            (event : ProgramEvent) => {
+
+                this.deactive();
+                this.quitConfirmation.deactive();
+
+                event.transition.activate(true, TransitionType.Circle, 1.0/30.0, quitEvent);
+            },
+            (event : ProgramEvent) => {
+
+                this.quitConfirmation.deactive();
             });
 
         this.menu = new Menu(
@@ -95,7 +112,7 @@ export class PauseMenu {
         new MenuButton(text[5] ?? "null",
         (event : ProgramEvent) => {
 
-            // ...
+            this.quitConfirmation.activate(1);
         }),
         ], false);
     }
@@ -108,6 +125,12 @@ export class PauseMenu {
 
 
     public update(event : ProgramEvent) : void {
+
+        if (this.quitConfirmation.isActive()) {
+
+            this.quitConfirmation.update(event);
+            return;
+        }
 
         if (this.saveMessage.isActive()) {
 
@@ -150,6 +173,12 @@ export class PauseMenu {
         if (this.saveConfirmation.isActive()) {
 
             this.saveConfirmation.draw(canvas);
+            return;
+        }
+
+        if (this.quitConfirmation.isActive()) {
+
+            this.quitConfirmation.draw(canvas);
             return;
         }
 

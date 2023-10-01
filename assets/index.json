@@ -41,6 +41,8 @@
         {"name": "coin", "path": "coin.wav"},
         {"name": "break", "path": "break.wav"},
         {"name": "heal", "path": "heal.wav"},
+        {"name": "hit", "path": "hit.wav"},
+        {"name": "kill", "path": "kill.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}

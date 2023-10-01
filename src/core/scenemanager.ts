@@ -56,8 +56,7 @@ export class SceneManager {
 
     public changeScene(name : string, event : ProgramEvent) : void {
 
-        const s = this.scenes.get(name);
-        const param = s?.dispose();
+        const param = this.activeScene?.dispose();
 
         this.activeScene = this.scenes.get(name);
         this.activeScene?.init?.(param, event)

@@ -14,30 +14,21 @@ import { InputState } from "../core/inputstate.js";
 import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
 export class Game implements Scene {
 
 
-    private playerSprite : Sprite
-
     private objects : GameObjectManager | undefined = undefined;
     private stage : Stage | undefined = undefined;
     private camera : Camera | undefined = undefined;
 
-    private progress : ProgressManager;
-
     private pause : PauseMenu | undefined = undefined;
 
-    private genericTextbox : TextBox;
+    private progress : ProgressManager | undefined = undefined;
+    private genericTextbox : TextBox | undefined = undefined;
 
-
-    constructor() {
-
-        this.progress = new ProgressManager();
-
-        this.genericTextbox = new TextBox(true, 27, 5);
-    }
 
 
     private reset(event : ProgramEvent) : void {
@@ -88,15 +79,36 @@ export class Game implements Scene {
     }
 
 
+    private createInitialPlayer() : void {
+
+        const cx = this.progress.getProperty("checkpointx", -1);
+        const cy = this.progress.getProperty("checkpointy", -1)
+
+        if (cx != -1 && cy != -1) {
+
+            this.objects.addPlayer((cx/TILE_WIDTH) | 0, (cy/TILE_HEIGHT) | 0);
+        }
+    } 
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        // this.progress = new ProgressManager();
+        this.progress = new ProgressManager();
+        if (param === 1) {
 
-        this.playerSprite = new Sprite(16, 16);
+            this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);
+        }
+
+        this.genericTextbox = new TextBox(true, 27, 5);
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
 
         this.objects = new GameObjectManager(this.progress, this.genericTextbox);
+        if (param === 1) {
+
+            this.createInitialPlayer();
+        }
+
         this.stage = new Stage("void", BackgroundType.Void, event);
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
@@ -105,9 +117,14 @@ export class Game implements Scene {
 
         this.pause = new PauseMenu(event, 
             (event : ProgramEvent) => this.objects.killPlayer(event),
-            () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) );
+            () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY),
+            (event : ProgramEvent) => event.scenes.changeScene("titlescreen", event));
 
         event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+
+        event.transition.activate(false, 
+            TransitionType.Circle, 1.0/30.0, undefined, new RGBA(0, 0, 0),
+            this.objects.getRelativePlayerPosition(this.camera));
     }
 
 
@@ -136,8 +153,6 @@ export class Game implements Scene {
             this.pause.activate();
             return;
         }
-
-        this.playerSprite.animate(0, 1, 6, 8, event.tick);
 
         this.objects?.update(this.camera, this.stage, event);
         this.camera?.update(event);
@@ -186,6 +201,13 @@ export class Game implements Scene {
 
 
     public dispose() : SceneParameter {
+
+        this.objects = undefined;
+        this.stage = undefined;
+        this.camera = undefined;
+        this.pause = undefined;
+        this.genericTextbox = undefined;
+        this.progress = undefined;
 
         return undefined;
     }

@@ -97,6 +97,8 @@ export class Player extends CollisionObject {
 
         progress.setProperty("checkpointx", x);
         progress.setProperty("checkpointy", y);
+
+        this.spr.setFrame(4, 3);
     } 
 
 
