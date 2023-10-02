@@ -45,10 +45,12 @@ export class Portal extends ActivableObject {
     }
 
 
-    public draw(canvas : Canvas, bmp : Bitmap | undefined) : void {
+    public draw(canvas : Canvas) : void {
         
         if (!this.exist || !this.inCamera)
             return;
+
+        const bmp = canvas.getBitmap("portal");
 
         const dx = Math.round(this.pos.x) - 16;
         const dy = Math.round(this.pos.y) - 40;

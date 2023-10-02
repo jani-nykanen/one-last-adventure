@@ -32,7 +32,7 @@ export class Crate extends CollisionObject {
         this.particles = particles;
         this.collectibles = collectibles;
 
-        // this.inCamera = true;
+        this.inCamera = true;
     }
 
 

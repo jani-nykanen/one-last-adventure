@@ -82,10 +82,12 @@ export class Chest extends ActivableObject {
     }
 
 
-    public draw(canvas : Canvas, bmp : Bitmap | undefined) : void {
+    public draw(canvas : Canvas) : void {
         
         if (!this.exist || !this.inCamera)
             return;
+
+        const bmp = canvas.getBitmap("chest");
 
         const flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
 

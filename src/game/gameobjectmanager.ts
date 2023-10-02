@@ -17,6 +17,7 @@ import { ActivableObject } from "./activableobject.js";
 import { TextBox } from "../ui/textbox.js";
 import { Portal } from "./portal.js";
 import { Hint } from "./hint.js";
+import { SavePoint } from "./savepoint.js";
 
 
 export class GameObjectManager {
@@ -25,9 +26,9 @@ export class GameObjectManager {
     private player : Player | undefined = undefined;
     private crates : Crate[];
     private enemies : Enemy[];
-    private chests : Chest[];
-    private portals : Portal[];
     private hints : Hint[];
+
+    private activableObjects : ActivableObject[];
 
     private overridingHint : Hint | undefined = undefined;
 
@@ -35,18 +36,20 @@ export class GameObjectManager {
     private collectibles : CollectibleGenerator;
     private flyingMessages : FlyingMessageGenerator;
 
+    private saveDialogueCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private readonly progress : ProgressManager;
     private readonly textbox : TextBox;
 
 
-    constructor(progress : ProgressManager, textbox : TextBox) {
+    constructor(progress : ProgressManager, textbox : TextBox,
+        saveDialogueCallback? : (event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
-        this.chests = new Array<Chest> ();
-        this.portals = new Array<Portal> ();
         this.hints = new Array<Hint> ();
+
+        this.activableObjects = new Array<ActivableObject> ();
 
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
@@ -54,6 +57,8 @@ export class GameObjectManager {
 
         this.progress = progress;
         this.textbox = textbox;
+
+        this.saveDialogueCallback = saveDialogueCallback;
     }
 
 
@@ -80,14 +85,9 @@ export class GameObjectManager {
             e.cameraCheck(camera, event);
         }
 
-        for (let c of this.chests) {
+        for (let o of this.activableObjects) {
 
-            c.cameraCheck(camera, event);
-        }
-
-        for (let p of this.portals) {
-
-            p.cameraCheck(camera, event);
+            o.cameraCheck(camera, event);
         }
 
         for (let i = 0; i < this.hints.length; ++ i) {
@@ -105,13 +105,13 @@ export class GameObjectManager {
     }
 
 
-    private updateActivableObjectArray(arr : ActivableObject[], camera : Camera, event : ProgramEvent) : void {
+    private updateActivableObjects(camera : Camera, event : ProgramEvent) : void {
 
         let o : ActivableObject;
 
-        for (let i = 0; i < arr.length; ++ i) {
+        for (let i = 0; i < this.activableObjects.length; ++ i) {
 
-            o = arr[i];
+            o = this.activableObjects[i];
 
             o.cameraCheck(camera, event);
             if (!o.isInCamera())
@@ -122,7 +122,7 @@ export class GameObjectManager {
 
             if (!o.doesExist()) {
 
-                arr.splice(i, 1);
+                this.activableObjects.splice(i, 1);
                 continue;
             }
         }
@@ -279,9 +279,7 @@ export class GameObjectManager {
         this.collectibles.update(stage, camera, this.player, event);
         this.collectibles.crateCollision(this.crates, event);
 
-        this.updateActivableObjectArray(this.chests, camera, event);
-        this.updateActivableObjectArray(this.portals, camera, event);
-
+        this.updateActivableObjects(camera, event);
         this.updateHints(camera, event);
     }
 
@@ -298,9 +296,21 @@ export class GameObjectManager {
             e.cameraCheck(camera, event);
         }
 
-        for (let c of this.chests) {
+        for (let o of this.activableObjects) {
 
-            c.cameraCheck(camera, event);
+            o.cameraCheck(camera, event);
+        }
+    }
+
+
+    public initialActivableObjectCheck(event : ProgramEvent) : void {
+
+        if (this.player === undefined)
+            return;
+
+        for (let o of this.activableObjects) {
+
+            o.playerCollision(this.player, event, true);
         }
     }
 
@@ -309,17 +319,10 @@ export class GameObjectManager {
 
         const bmpCrate = canvas.getBitmap("crate");
         const bmpEnemies = canvas.getBitmap("enemies_small");
-        const bmpChest = canvas.getBitmap("chest");
-        const bmpPortal = canvas.getBitmap("portal");
 
-        for (let c of this.portals) {
+        for (let o of this.activableObjects) {
 
-            c.draw(canvas, bmpPortal);
-        }
-
-        for (let c of this.chests) {
-
-            c.draw(canvas, bmpChest);
+            o.draw(canvas);
         }
 
         for (let c of this.crates) {
@@ -391,7 +394,7 @@ export class GameObjectManager {
         if (this.progress.getProperty("item" + String(id), 0) != 0)
             return;
 
-        this.chests.push(
+        this.activableObjects.push(
             new Chest(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT, 
@@ -402,11 +405,21 @@ export class GameObjectManager {
 
     public addPortal(x : number, y : number) : void {
 
-        this.portals.push(
+        this.activableObjects.push(
             new Portal(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
                 () => {}));
+    }
+
+
+    public addSavepoint(x : number, y : number) : void {
+
+        this.activableObjects.push(
+            new SavePoint(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                this.saveDialogueCallback));
     }
 
 
@@ -436,8 +449,7 @@ export class GameObjectManager {
         this.overridingHint = undefined;
 
         // TODO: No need to recreate these, really
-        this.chests = new Array<Chest> ();
-        this.portals = new Array<Portal> ();
+        this.activableObjects = new Array<ActivableObject> ();
 
         this.particles.clear();
         this.flyingMessages.clear();

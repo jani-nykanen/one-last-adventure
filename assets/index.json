@@ -16,6 +16,7 @@
         {"name": "chest", "path": "chest.png"},
         {"name": "items", "path": "items.png"},
         {"name": "portal", "path": "portal.png"},
+        {"name": "savepoint", "path": "savepoint.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 
@@ -43,6 +44,7 @@
         {"name": "heal", "path": "heal.wav"},
         {"name": "hit", "path": "hit.wav"},
         {"name": "kill", "path": "kill.wav"},
+        {"name": "savepoint", "path": "savepoint.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}

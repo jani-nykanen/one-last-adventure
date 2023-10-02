@@ -89,7 +89,7 @@ export class ConfirmationBox {
     }
 
 
-    public deactive() : void {
+    public deactivate() : void {
 
         this.menu.deactivate();
     }

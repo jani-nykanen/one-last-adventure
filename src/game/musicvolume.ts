@@ -2,5 +2,5 @@
 
 export const MusicVolume = {
 
-    "void": 0.50
+    "void": 0.55
 }

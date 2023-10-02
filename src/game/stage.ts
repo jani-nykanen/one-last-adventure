@@ -8,7 +8,7 @@ import { Background, BackgroundType } from "./background.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
-const CREATABLE_OBJECTS = [2, 5];
+const CREATABLE_OBJECTS = [2, 5, 6];
 const OBJECT_LAYER_START = 256;
 
 
@@ -81,6 +81,12 @@ export class Stage {
         // Hint
         case 5:
             objects.addHint(x, y, modifier, event);
+            break;
+
+        // Savepoint
+        case 6:
+
+            objects.addSavepoint(x, y);
             break;
 
         default:

@@ -17,6 +17,8 @@ export class PauseMenu {
     private quitConfirmation : ConfirmationBox;
 
     private saveMessage : TextBox;
+
+    private isSavingOnly : boolean = false;
     
 
     constructor(event : ProgramEvent, 
@@ -61,14 +63,14 @@ export class PauseMenu {
             event.localization?.getItem("quit")?.[0] ?? "null",
             (event : ProgramEvent) => {
 
-                this.deactive();
-                this.quitConfirmation.deactive();
+                this.deactivate();
+                this.quitConfirmation.deactivate();
 
                 event.transition.activate(true, TransitionType.Circle, 1.0/30.0, quitEvent);
             },
             (event : ProgramEvent) => {
 
-                this.quitConfirmation.deactive();
+                this.quitConfirmation.deactivate();
             });
 
         this.menu = new Menu(
@@ -144,6 +146,12 @@ export class PauseMenu {
             return;
         }
 
+        if (this.isSavingOnly) {
+
+            this.deactivate();
+            return;
+        }
+
         if (this.respawnConfirmation.isActive()) {
 
             this.respawnConfirmation.update(event);
@@ -161,8 +169,11 @@ export class PauseMenu {
         if (!this.menu.isActive())
             return;
 
-        canvas.setColor(0, 0, 0, DARKEN_ALPHA);
-        canvas.fillRect();
+        if (!this.isSavingOnly) {
+            
+            canvas.setColor(0, 0, 0, DARKEN_ALPHA);
+            canvas.fillRect();
+        }
 
         if (this.saveMessage.isActive()) {
 
@@ -175,6 +186,9 @@ export class PauseMenu {
             this.saveConfirmation.draw(canvas);
             return;
         }
+
+        if (this.isSavingOnly)
+            return;
 
         if (this.quitConfirmation.isActive()) {
 
@@ -192,15 +206,27 @@ export class PauseMenu {
     }
 
 
-    public activate() : void {
+    public activate(savingOnly : boolean = false) : void {
 
+        this.isSavingOnly = savingOnly;
         this.menu.activate(0);
+
+        if (savingOnly) {
+
+            this.saveConfirmation.activate(1);
+        }
     }
 
 
-    public deactive() : void {
+    public deactivate() : void {
 
+        this.saveConfirmation.deactivate();
+        this.saveMessage.deactivate();
+        this.respawnConfirmation.deactivate();
+        this.quitConfirmation.deactivate();
         this.menu.deactivate();
+
+        this.isSavingOnly = false;
     }
 
 

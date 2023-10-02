@@ -18,9 +18,11 @@ export class ActivableObject extends GameObject {
 
 
     protected activationEvent?(player : Player, event : ProgramEvent) : void;
+    protected playerTouchEvent?(player : Player, event : ProgramEvent, initial? : boolean) : void;
+    protected generalPlayerEvent?(player : Player, event : ProgramEvent) : void;
 
 
-    public playerCollision(player : Player, event : ProgramEvent) : boolean {
+    public playerCollision(player : Player, event : ProgramEvent, initial : boolean = false) : boolean {
 
         if (!player.isActive() || !this.isActive())
             return false;
@@ -30,8 +32,14 @@ export class ActivableObject extends GameObject {
             this.dir = player.getPosition().x < this.pos.x ? -1 : 1;
         }
 
-        if (player.overlay(this) && player.doesTouchSurface()) {
+        this.generalPlayerEvent?.(player, event);
+
+        if (player.overlay(this) && (player.doesTouchSurface() || initial)) {
             
+            this.playerTouchEvent?.(player, event, initial);
+            if (initial)
+                return true;
+
             player.showActionIcon(0);
 
             if (event.input.upPress()) {

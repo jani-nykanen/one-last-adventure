@@ -60,6 +60,8 @@ export class Player extends CollisionObject {
 
     private deathTimer : number = 0;
 
+    private activeSavepoint : GameObject | undefined = undefined;
+
     private specialAnimationType : SpecialPlayerAnimationType = SpecialPlayerAnimationType.None;
     private specialAnimationTimer : number = 0;
     private specialAnimationParam : number = 0;
@@ -850,6 +852,8 @@ export class Player extends CollisionObject {
         this.exist = true;
 
         this.spr.setFrame(4, 3);
+
+        this.activeSavepoint = undefined;
     }
     
 
@@ -930,4 +934,13 @@ export class Player extends CollisionObject {
         this.progress.setProperty("checkpointx", x);
         this.progress.setProperty("checkpointy", y);
     }
+
+
+    public setActiveSavePoint(o : GameObject | undefined) : void {
+
+        this.activeSavepoint = o;
+    }
+
+
+    public isActiveSavepoint = (o : GameObject) : boolean => o === this.activeSavepoint;
 }

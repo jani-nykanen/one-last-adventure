@@ -31,11 +31,11 @@ export class AudioIntro implements Scene {
             [strYes, strNo], "",
             (event : ProgramEvent) => {
 
-                this.goToGame(true, event);
+                this.goToNextScene(true, event);
             },
             (event : ProgramEvent) => {
 
-                this.goToGame(false, event);
+                this.goToNextScene(false, event);
             });
 
         this.yesNoMenu.activate(0);
@@ -46,11 +46,11 @@ export class AudioIntro implements Scene {
     }
 
 
-    private goToGame(toggleAudio : boolean, event : ProgramEvent) : void {
+    private goToNextScene(toggleAudio : boolean, event : ProgramEvent) : void {
 
         event.audio.toggle(toggleAudio);
 
-        event.scenes.changeScene("game", event);
+        event.scenes.changeScene("titlescreen", event);
     }
 
 
