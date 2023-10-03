@@ -28,6 +28,8 @@ export class Portal extends ActivableObject {
         this.cameraCheckArea = new Vector(36, 48);
 
         this.cb = useCb;
+    
+        this.inCamera = true;
     }
 
 

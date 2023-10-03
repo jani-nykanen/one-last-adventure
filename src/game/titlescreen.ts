@@ -6,6 +6,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { TextBox } from "../ui/textbox.js";
+import { Background, BackgroundType } from "./background.js";
 import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 
 
@@ -18,10 +19,15 @@ export class TitleScreen implements Scene {
 
     private loadGame : boolean = false;
 
+    private cloudPos : number = 0;
+
+    private background : Background;
+
 
     constructor() {
 
         this.error = new TextBox();
+        this.background = new Background(BackgroundType.IslandDay);
     }
 
 
@@ -116,15 +122,13 @@ export class TitleScreen implements Scene {
         }
 
         this.menu.update(event);
+        this.background.update(undefined, event);
     }
 
 
     public redraw(canvas : Canvas): void {
         
-        const CLOUD_Y : number = 88;
-
-        const bmpSky = canvas.getBitmap("sky_day");
-        const bmpClouds = canvas.getBitmap("clouds_day");
+        const bmpLogo = canvas.getBitmap("logo");
 
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
@@ -133,19 +137,9 @@ export class TitleScreen implements Scene {
         canvas.transform.loadIdentity();
         canvas.applyTransform();
 
-        canvas.setColor();
-        canvas.drawBitmap(bmpSky);
+        this.background.draw(canvas);
 
-        const waterY = CLOUD_Y + (bmpClouds?.height ?? 0);
-
-        canvas.setColor(109, 109, 182);
-        canvas.fillRect(0, waterY, canvas.width, canvas.height - waterY);
-
-        canvas.setColor();
-        for (let i = 0; i < 2; ++ i) {
-
-            canvas.drawBitmap(bmpClouds, Flip.None, i*128, CLOUD_Y);
-        }
+        canvas.drawBitmap(bmpLogo, Flip.None, canvas.width/2 - (bmpLogo?.width ?? 0)/2, 24);
 
         this.menu.draw(canvas, 0, 32);
 

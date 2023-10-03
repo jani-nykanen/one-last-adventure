@@ -9,6 +9,7 @@ export const enum BackgroundType {
 
     Unknown = 0,
     Void = 1,
+    IslandDay = 2,
 };
 
 
@@ -22,15 +23,15 @@ export class Background {
     private timers : number[];
 
 
-    constructor(type : BackgroundType, event : ProgramEvent) {
+    constructor(type : BackgroundType, event? : ProgramEvent | undefined) {
 
-        const COUNT = [0, 1];
+        const COUNT = [0, 1, 1];
 
-        this.type = BackgroundType.Void;
+        this.type = type;
 
         this.timers = (new Array<number> (COUNT[type])).fill(0);
 
-        if (type == BackgroundType.Void) {
+        if (type == BackgroundType.Void && event !== undefined) {
 
             this.snowflakes = new SnowflakeGenerator(event);
         }
@@ -60,16 +61,50 @@ export class Background {
     }
 
 
-    public update(camera : Camera, event : ProgramEvent) : void {
+    private drawIslandDay(canvas : Canvas, shiftx : number, shifty : number) : void {
+
+        const CLOUD_Y : number = 88; // TODO: Move higher?
+    
+        const bmpSky = canvas.getBitmap("sky_day");
+        const bmpClouds = canvas.getBitmap("clouds_day");
+
+        // Sky
+        canvas.setColor();
+        canvas.drawBitmap(bmpSky);
+    
+        // Water
+        const waterY = CLOUD_Y + (bmpClouds?.height ?? 0) + shifty;
+        canvas.setColor(109, 109, 182);
+        canvas.fillRect(0, waterY, canvas.width, canvas.height - waterY);
+        
+        // Clouds
+        canvas.setColor();
+        for (let i = 0; i < 3; ++ i) {
+    
+            canvas.drawBitmap(bmpClouds, Flip.None, i*128 - ((this.timers[0] + shiftx) | 0), CLOUD_Y + shifty);
+        }
+    }
+
+
+    public update(camera : Camera | undefined = undefined, event : ProgramEvent) : void {
 
         const VORTEX_SPEED : number = Math.PI*2 / 600;
+        const CLOUD_SPEED : number = 0.5;
 
         switch (this.type) {
 
         case BackgroundType.Void:
 
-            this.snowflakes?.update(camera, event);
+            if (camera !== undefined) {
+
+                this.snowflakes?.update(camera, event);
+            }
             this.timers[0] = (this.timers[0] + VORTEX_SPEED*event.tick) % (Math.PI*2);
+            break;
+
+        case BackgroundType.IslandDay:
+
+            this.timers[0] = (this.timers[0] + CLOUD_SPEED*event.tick) % 128;
             break;
 
         default:
@@ -78,13 +113,18 @@ export class Background {
     }
 
 
-    public draw(canvas : Canvas) : void {
+    public draw(canvas : Canvas, shiftx : number = 0, shifty : number = 0) : void {
 
         switch (this.type) {
 
         case BackgroundType.Void:
 
             this.drawVoid(canvas);
+            break;
+
+        case BackgroundType.IslandDay:
+
+            this.drawIslandDay(canvas, shiftx, shifty);
             break;
     
         default:

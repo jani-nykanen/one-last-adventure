@@ -19,6 +19,7 @@
         {"name": "savepoint", "path": "savepoint.png"},
         {"name": "sky_day", "path": "sky_day.png"},
         {"name": "clouds_day", "path": "clouds_day.png"},
+        {"name": "logo", "path": "logo.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 
