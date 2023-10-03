@@ -32,7 +32,7 @@ export class Transition {
     private color : RGBA;
     private center : Vector | undefined = undefined;
 
-    private callback : ((event : ProgramEvent) => void) = (() => {});
+    private callback : ((event : ProgramEvent) => void) | undefined = undefined;
 
 
     constructor() {
@@ -42,7 +42,8 @@ export class Transition {
 
 
     public activate(fadeOut : boolean, type : TransitionType, speed : number, 
-        callback : (event : ProgramEvent) => any, color : RGBA = new RGBA(0, 0, 0),
+        callback : ((event : ProgramEvent) => any) | undefined = undefined, 
+        color : RGBA = new RGBA(0, 0, 0),
         center : Vector | undefined = undefined) : void {
 
         this.fadeOut = fadeOut;
@@ -69,7 +70,7 @@ export class Transition {
             if (!this.fadeOut) {
 
                 this.timer += 1.0;
-                this.callback(event);
+                this.callback?.(event);
                 return;
             }
 

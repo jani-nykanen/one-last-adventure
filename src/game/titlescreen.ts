@@ -1,7 +1,7 @@
 import { ProgramEvent } from "../core/event.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { TransitionType } from "../core/transition.js";
-import { Canvas, TransformTarget } from "../gfx/interface.js";
+import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
@@ -121,6 +121,11 @@ export class TitleScreen implements Scene {
 
     public redraw(canvas : Canvas): void {
         
+        const CLOUD_Y : number = 88;
+
+        const bmpSky = canvas.getBitmap("sky_day");
+        const bmpClouds = canvas.getBitmap("clouds_day");
+
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
 
@@ -128,7 +133,19 @@ export class TitleScreen implements Scene {
         canvas.transform.loadIdentity();
         canvas.applyTransform();
 
-        canvas.clear(36, 109, 182);
+        canvas.setColor();
+        canvas.drawBitmap(bmpSky);
+
+        const waterY = CLOUD_Y + (bmpClouds?.height ?? 0);
+
+        canvas.setColor(109, 109, 182);
+        canvas.fillRect(0, waterY, canvas.width, canvas.height - waterY);
+
+        canvas.setColor();
+        for (let i = 0; i < 2; ++ i) {
+
+            canvas.drawBitmap(bmpClouds, Flip.None, i*128, CLOUD_Y);
+        }
 
         this.menu.draw(canvas, 0, 32);
 

@@ -53,5 +53,14 @@
     "item1": [
         "You obtain a TOY SWORD!", 
         "It's a sword made of paper.\nIt might look harmless, but\nat least the risk of paper\ncuts is real."
+    ],
+
+
+    "story_intro": [
+
+        "A thousand times you\nhave died...",
+        "A thousand times I\nhave brought you\nback...",
+        "Once again, I need\nyour help...",
+        "So wake up, it is\ntime for one last\nadventure!"
     ]
 }

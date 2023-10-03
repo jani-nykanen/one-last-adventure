@@ -103,6 +103,8 @@ export class Menu {
             canvas.drawText(font, this.buttons[i].getText(), 
                 dx + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
         } 
+
+        canvas.setColor();
     }
 
 

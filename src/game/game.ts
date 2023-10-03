@@ -14,6 +14,7 @@ import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
+import { Story } from "./story.js";
 
 
 export class Game implements Scene {
@@ -27,6 +28,14 @@ export class Game implements Scene {
 
     private progress : ProgressManager | undefined = undefined;
     private genericTextbox : TextBox | undefined = undefined;
+
+    private story : Story;
+
+
+    constructor() {
+
+        this.story = new Story();
+    }
 
 
     private reset(event : ProgramEvent) : void {
@@ -96,6 +105,12 @@ export class Game implements Scene {
         if (param === 1) {
 
             this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);
+            event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+        }
+        else {
+
+            event.transition.activate(false, TransitionType.Fade, 1.0/30.0);
+            this.story.activate(true, event);
         }
 
         this.genericTextbox = new TextBox(true, 27, 5);
@@ -122,11 +137,12 @@ export class Game implements Scene {
             () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY),
             (event : ProgramEvent) => event.scenes.changeScene("titlescreen", event));
 
-        event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+        if (param === 1) {
 
-        event.transition.activate(false, 
-            TransitionType.Circle, 1.0/30.0, undefined, new RGBA(0, 0, 0),
-            this.objects.getRelativePlayerPosition(this.camera));
+            event.transition.activate(false, 
+                TransitionType.Circle, 1.0/30.0, undefined, new RGBA(0, 0, 0),
+                this.objects.getRelativePlayerPosition(this.camera));
+        }
     }
 
 
@@ -134,6 +150,12 @@ export class Game implements Scene {
         
         if (event.transition.isActive())
             return;
+
+        if (!this.story.isPlayed()) {
+
+            this.story.update(event);
+            return;
+        }
 
         if (this.genericTextbox.isActive()) {
 
@@ -196,6 +218,12 @@ export class Game implements Scene {
         this.objects.postDraw(canvas);
 
         this.drawHUD(canvas);
+
+        if (!this.story.isPlayed()) {
+
+            this.story.draw(canvas, this.objects.getRelativePlayerPosition(this.camera));
+            return;
+        }
 
         this.genericTextbox.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
         this.pause.draw(canvas);
