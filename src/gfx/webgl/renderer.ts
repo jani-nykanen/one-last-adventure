@@ -226,7 +226,7 @@ export class WebGLRenderer implements Renderer {
             return;
 
         this.activeBitmap = bmp;
-        bmp?.bind(this.gl);
+        bmp?.bind();
     }   
 
 
@@ -237,10 +237,10 @@ export class WebGLRenderer implements Renderer {
         if (this.activeMesh !== mesh) {
 
             this.activeMesh = mesh;
-            mesh.bind(this.gl);
+            mesh.bind();
         }
 
-        mesh.draw(this.gl);
+        mesh.draw();
     }
 
 
@@ -279,7 +279,7 @@ export class WebGLRenderer implements Renderer {
 
         gl.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-        this.canvas.setRenderTarget(gl);
+        this.canvas.setRenderTarget();
         cb(this.canvas);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
@@ -308,9 +308,9 @@ export class WebGLRenderer implements Renderer {
         
         this.clear(0, 0, 0);
 
-        this.meshRect.bind(gl);
-        this.canvas.bind(gl);
-        this.meshRect.draw(gl);
+        this.meshRect.bind();
+        this.canvas.bind();
+        this.meshRect.draw();
 
         gl.bindTexture(gl.TEXTURE_2D, null);
 
@@ -319,8 +319,8 @@ export class WebGLRenderer implements Renderer {
             this.activeShader?.use();
         }
 
-        this.activeMesh?.bind(gl);
-        this.activeBitmap?.bind(gl);
+        this.activeMesh?.bind();
+        this.activeBitmap?.bind();
         this.activeShader?.setColor(
             this.activeColor.r, 
             this.activeColor.g, 
@@ -346,5 +346,17 @@ export class WebGLRenderer implements Renderer {
     public setFetchBitmapCallback(cb : (name : string) => Bitmap | undefined) : void {
 
         this.fetchBitmapCallback = cb;
+    }
+
+
+    public nullActiveBitmap() : void {
+
+        this.activeBitmap = null;
+    }
+
+
+    public cloneCanvasToBufferBitmap() : void {
+
+        this.canvas.cloneToBufferBitmap();
     }
 }

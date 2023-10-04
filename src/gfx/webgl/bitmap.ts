@@ -16,6 +16,8 @@ export class WebGLBitmap implements Bitmap {
     private texture : WebGLTexture | null = null;
     private framebuffer : WebGLFramebuffer | null = null;
 
+    private readonly gl : WebGLRenderingContext;
+
     public readonly width : number;
     public readonly height : number;
 
@@ -65,19 +67,39 @@ export class WebGLBitmap implements Bitmap {
         }
 
         gl.bindTexture(gl.TEXTURE_2D, null);
+
+        this.gl = gl;
     }
 
 
-    public bind(gl : WebGLRenderingContext) : void {
+    public bind() : void {
+
+        const gl = this.gl;
 
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
     }
 
 
-    public setRenderTarget(gl : WebGLRenderingContext) : void {
+    public setRenderTarget() : void {
 
         if (this.framebuffer === null) return;
 
+        const gl = this.gl;
+
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    }
+
+
+    public cloneToBitmap(target : WebGLBitmap) : void {
+
+        const gl = this.gl;
+
+        gl.bindTexture(gl.TEXTURE_2D, target.texture);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+        gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, this.width, this.height, 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 }

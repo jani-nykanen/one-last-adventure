@@ -873,6 +873,12 @@ export class Player extends CollisionObject {
 
     public showActionIcon(id : number) : void {
 
+        if (id == -1) {
+
+            this.showIcon = false;
+            return;
+        }
+
         this.showIcon = true;
         this.iconID = id;
 
@@ -943,4 +949,17 @@ export class Player extends CollisionObject {
 
 
     public isActiveSavepoint = (o : GameObject) : boolean => o === this.activeSavepoint;
+
+
+    public setFrame(column : number, row : number) : void {
+
+        this.spr.setFrame(column, row);
+    }
+
+
+    public setPosition(x : number, y : number) : void {
+
+        this.pos.x = x;
+        this.pos.y = y;
+    }
 }

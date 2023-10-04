@@ -9,7 +9,7 @@
 
 
 import { RGBA } from "../math/rgba.js";
-import { Canvas } from "../gfx/interface.js";
+import { Canvas, Flip } from "../gfx/interface.js";
 import { ProgramEvent } from "./event.js";
 import { Vector } from "../math/vector.js";
 
@@ -17,7 +17,8 @@ import { Vector } from "../math/vector.js";
 export const enum TransitionType {
     None = 0,
     Fade = 1,
-    Circle = 2
+    Circle = 2,
+    Waves = 3,
 };
 
 
@@ -42,9 +43,16 @@ export class Transition {
 
 
     public activate(fadeOut : boolean, type : TransitionType, speed : number, 
+        event : ProgramEvent,
         callback : ((event : ProgramEvent) => any) | undefined = undefined, 
         color : RGBA = new RGBA(0, 0, 0),
         center : Vector | undefined = undefined) : void {
+
+        if (type == TransitionType.Waves) {
+
+            this.active = false;
+            event.cloneCanvasToBufferTexture(true);
+        }
 
         this.fadeOut = fadeOut;
         this.speed = speed;
@@ -82,6 +90,9 @@ export class Transition {
 
     public draw(canvas : Canvas) : void {
 
+        const MAX_AMPLITUDE : number = 0.25;
+        const MIN_PERIOD : number = 0.25;
+
         if (!this.active || this.effectType == TransitionType.None)
             return;
 
@@ -92,10 +103,25 @@ export class Transition {
         let maxRadius : number;
         let radius : number;
 
+        let amplitude : number;
+        let period : number;
+        let shift : number;
+
         let center : Vector;
 
         switch (this.effectType) {
 
+        case TransitionType.Waves:
+
+            amplitude = t*MAX_AMPLITUDE*canvas.width;
+            period = ((1.0 - t) + t*MIN_PERIOD)*canvas.height;
+            shift = Math.PI*2*t;
+
+            canvas.clear(this.color.r, this.color.g, this.color.b);
+            canvas.drawHorizontallyWavingBitmap(canvas.getCloneBufferBitmap(),
+                amplitude, period, shift, 0, 0, Flip.Vertical);
+            
+        // Fallthrough
         case TransitionType.Fade:
 
             canvas.setColor(this.color.r, this.color.g, this.color.b, t);

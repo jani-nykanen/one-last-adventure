@@ -53,6 +53,7 @@
         {"name": "hit", "path": "hit.wav"},
         {"name": "kill", "path": "kill.wav"},
         {"name": "savepoint", "path": "savepoint.wav"},
+        {"name": "teleport", "path": "teleport.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}

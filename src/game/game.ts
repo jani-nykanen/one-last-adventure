@@ -124,7 +124,7 @@ export class Game implements Scene {
         }
         else {
 
-            event.transition.activate(false, TransitionType.Fade, 1.0/30.0);
+            event.transition.activate(false, TransitionType.Fade, 1.0/30.0, event);
             this.story.activate(true, event);
         }
 
@@ -137,11 +137,11 @@ export class Game implements Scene {
             () => this.pause.activate(true),
             (event : ProgramEvent) => {
 
-                event.transition.activate(true, TransitionType.Circle, 1.0/60.0,
-                (event : ProgramEvent) => {
-
-                    this.changeMap("island", BackgroundType.IslandDay, event);
-                }, new RGBA(255, 255, 255), this.objects.getRelativePlayerPosition(this.camera))
+                event.transition.deactivate();
+                this.changeMap("island", BackgroundType.IslandDay, event);
+                this.objects.setPlayerFrame(3, 2);
+                event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
+                    undefined, new RGBA(255, 255, 255));
             });
         if (param === 1) {
 
@@ -163,7 +163,8 @@ export class Game implements Scene {
         if (param === 1) {
 
             event.transition.activate(false, 
-                TransitionType.Circle, 1.0/30.0, undefined, new RGBA(0, 0, 0),
+                TransitionType.Circle, 1.0/30.0, event,
+                undefined, new RGBA(0, 0, 0),
                 this.objects.getRelativePlayerPosition(this.camera));
         }
     }
@@ -207,7 +208,7 @@ export class Game implements Scene {
 
         if (this.objects?.hasPlayerDied()) {
 
-            event.transition.activate(true, TransitionType.Circle, 1.0/45.0, 
+            event.transition.activate(true, TransitionType.Circle, 1.0/45.0, event,
                 (event : ProgramEvent) => this.reset(event), new RGBA(0, 0, 0),
                 this.objects.getRelativePlayerPosition(this.camera));
         }

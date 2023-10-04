@@ -510,4 +510,10 @@ export class GameObjectManager {
 
         this.relocatePlayer = state;
     }
+
+
+    public setPlayerFrame(column : number, row : number) : void {
+
+        this.player?.setFrame(column, row);
+    }
 }

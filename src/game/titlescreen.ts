@@ -59,7 +59,7 @@ export class TitleScreen implements Scene {
 
         this.loadGame = loadGame;
 
-        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, 
+        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
             (event : ProgramEvent) => {
 
                 event.scenes.changeScene("game", event);

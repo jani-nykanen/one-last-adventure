@@ -10,7 +10,7 @@
 
 
 import { AudioPlayer } from "../audio/audioplayer.js";
-import { Renderer } from "../gfx/interface.js";
+import { Canvas, Renderer } from "../gfx/interface.js";
 import { Assets } from "./assets.js";
 import { Input } from "./input.js";
 import { SceneManager } from "./scenemanager.js";
@@ -36,6 +36,8 @@ export class ProgramEvent {
     public readonly screenWidth : number;
     public readonly screenHeight : number;
 
+    private readonly renderer : Renderer;
+
 
     public get localization() : Localization | undefined {
         
@@ -54,6 +56,8 @@ export class ProgramEvent {
         this.screenWidth = renderer.width;
         this.screenHeight = renderer.height;
 
+        this.renderer = renderer;
+
         this.localizations = new Map<string, Localization> ();
 
         renderer.setFetchBitmapCallback((name : string) => this.assets.getBitmap(name));
@@ -69,5 +73,18 @@ export class ProgramEvent {
     public setActiveLocalization(key : string) : void {
 
         this.activeLocalization = this.localizations.get(key);
+    }
+
+
+    public cloneCanvasToBufferTexture(forceRedraw : boolean = false) : void {
+
+        if (forceRedraw) {
+
+            this.renderer.drawToCanvas((canvas : Canvas) : void => {
+
+                this.scenes.redraw(canvas);
+            });
+        }
+        this.renderer.cloneCanvasToBufferBitmap();
     }
 }

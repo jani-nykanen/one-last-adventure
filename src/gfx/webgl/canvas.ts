@@ -65,6 +65,7 @@ export class WebGLCanvas implements Canvas {
 
 
     private framebuffer : WebGLBitmap;
+    private cloneTexture : WebGLBitmap;
 
     private meshCircleOut : Mesh;
 
@@ -92,6 +93,7 @@ export class WebGLCanvas implements Canvas {
         gl : WebGLRenderingContext) {
 
         this.framebuffer = new WebGLBitmap(gl, undefined, false, true, width, height);
+        this.cloneTexture = new WebGLBitmap(gl, undefined, false, false, width, height);
 
         this.renderer = renderer;
         this.transform = transform;
@@ -217,6 +219,34 @@ export class WebGLCanvas implements Canvas {
         if (right < this.width)
             this.fillRect(right, 0, this.width - right, this.height);
     }
+    
+
+    public drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 
+        amplitude : number, period : number, shift : number,
+        dx : number = 0, dy : number = 0, flip : Flip = Flip.None) : void {
+
+        if (bitmap === undefined)
+            return;
+
+        // Note: For better performance one should obviously do this in
+        // a shader, but I'm lazy
+
+        let phase = shift;
+        let phaseStep = Math.PI*2 / period;
+
+        let x : number;
+        let sy : number;
+
+        for (let y = 0; y < bitmap.height; ++ y) {
+
+            phase = shift + phaseStep*y;
+
+            x = dx + Math.round(Math.sin(phase)*amplitude);
+
+            sy = (flip & Flip.Vertical) != 0 ? (bitmap.height - 1) - y : y;
+            this.drawBitmap(bitmap, Flip.Horizontal & flip, x, dy + y, 0, sy, bitmap.width, 1);
+        }
+    }
 
 
     public setColor(r : number = 255, g : number = r, b : number = g, a : number = 1.0) : void {
@@ -225,23 +255,31 @@ export class WebGLCanvas implements Canvas {
     }
     
 
-    public setRenderTarget(gl : WebGLRenderingContext) : void {
+    public setRenderTarget() : void {
 
-        this.framebuffer.setRenderTarget(gl);
+        this.framebuffer.setRenderTarget();
     }
 
 
-    public bind(gl : WebGLRenderingContext) : void {
+    public bind() : void {
 
-        this.framebuffer.bind(gl);
+        this.framebuffer.bind();
     }
 
 
     public getBitmap = (name : string) : Bitmap | undefined => this.renderer.getBitmap(name);
+    public getCloneBufferBitmap = () : Bitmap => this.cloneTexture;
 
 
     public applyTransform() : void {
 
         this.renderer.applyTransform();
+    }
+
+
+    public cloneToBufferBitmap() : void {
+
+        this.renderer.nullActiveBitmap();
+        this.framebuffer.cloneToBitmap(this.cloneTexture);
     }
 }

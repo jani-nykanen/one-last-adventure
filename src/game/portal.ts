@@ -5,6 +5,8 @@ import { ProgramEvent } from "../core/event.js";
 import { Player } from "./player.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
+import { TransitionType } from "../core/transition.js";
+import { RGBA } from "../math/rgba.js";
 
 
 export class Portal extends ActivableObject {
@@ -35,7 +37,15 @@ export class Portal extends ActivableObject {
 
     protected activationEvent(player : Player, event : ProgramEvent): void {
         
-        this.cb(event);
+        player.showActionIcon(-1);
+        player.setPosition(this.pos.x, this.pos.y);
+        player.setFrame(4, 2);
+
+        event.audio.stopMusic();
+        event.audio.playSample(event.assets.getSample("teleport"), 0.35);
+
+        event.transition.activate(true, TransitionType.Waves, 1.0/120.0, event,
+            (event : ProgramEvent) => this.cb(event), new RGBA(255, 255, 255));
     }
 
 

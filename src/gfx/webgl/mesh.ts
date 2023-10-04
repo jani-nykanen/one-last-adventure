@@ -17,6 +17,8 @@ export class Mesh {
     private uvBuffer : WebGLBuffer | null;
     private indexBuffer : WebGLBuffer | null;
 
+    private readonly gl : WebGLRenderingContext;
+
 
     constructor(gl : WebGLRenderingContext, 
             vertices : Float32Array,     
@@ -40,10 +42,14 @@ export class Mesh {
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+        this.gl = gl;
     }
 
 
-    public bind(gl : WebGLRenderingContext) : void {
+    public bind() : void {
+
+        const gl = this.gl;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
@@ -64,14 +70,18 @@ export class Mesh {
     }
 
 
-    public draw(gl : WebGLRenderingContext) : void {
+    public draw() : void {
         
+        const gl = this.gl;
+
         gl.drawElements(gl.TRIANGLES, this.elementCount, gl.UNSIGNED_SHORT, 0);
     }
 
 
-    public dispose(gl : WebGLRenderingContext) : void {
+    public dispose() : void {
         
+        const gl = this.gl;
+
         gl.deleteBuffer(this.vertexBuffer);
         gl.deleteBuffer(this.indexBuffer);
 

@@ -75,9 +75,14 @@ export interface Canvas {
         align? : Align, scalex? : number, scaley? : number) : void;
     fillCircleOutside(centerx : number, centery : number, radius : number) : void;
 
+    drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 
+        amplitude : number, period : number, shift : number,
+        dx? : number, dy? : number, flip? : Flip) : void;
+
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
 
     getBitmap(name : string) : Bitmap | undefined;
+    getCloneBufferBitmap() : Bitmap;
 
     applyTransform() : void;
 }   
@@ -96,4 +101,9 @@ export interface Renderer {
     createBitmap(img : HTMLImageElement) : Bitmap;
 
     setFetchBitmapCallback(cb : (name : string) => Bitmap | undefined) : void;
+
+    // This is here so there is not access to this function
+    // in the redraw event since this messes up with 
+    // active framebuffers
+    cloneCanvasToBufferBitmap() : void;
 }       

@@ -66,7 +66,7 @@ export class PauseMenu {
                 this.deactivate();
                 this.quitConfirmation.deactivate();
 
-                event.transition.activate(true, TransitionType.Circle, 1.0/30.0, quitEvent);
+                event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event, quitEvent);
             },
             (event : ProgramEvent) => {
 
