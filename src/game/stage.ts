@@ -20,6 +20,8 @@ export class Stage {
     private objectCreationWaiting : boolean[];
 
     private background : Background;
+
+    private mapName : string;
     
     public readonly width : number;
     public readonly height : number;
@@ -44,6 +46,8 @@ export class Stage {
         this.objectCreationWaiting = this.computeCreationWaitingArray();
 
         this.background = new Background(backgroundType, event);
+
+        this.mapName = mapName;
     }
 
 
@@ -108,7 +112,7 @@ export class Stage {
 
     public draw(canvas : Canvas, camera : Camera | undefined) : void {
 
-        const bmp = canvas.getBitmap("tileset_void");
+        const bmp = canvas.getBitmap("tileset_" + this.mapName);
 
         this.mapLayer.draw(canvas, bmp, camera);
     }

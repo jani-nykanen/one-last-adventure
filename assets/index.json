@@ -20,6 +20,8 @@
         {"name": "sky_day", "path": "sky_day.png"},
         {"name": "clouds_day", "path": "clouds_day.png"},
         {"name": "logo", "path": "logo.png"},
+
+        {"name": "tileset_island", "path": "tileset_island.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 
@@ -27,7 +29,10 @@
     "tilemaps": [
 
         {"name": "void", "path": "void.tmx"},
-        {"name": "collisions_void", "path": "collisions_void.tmx"}
+        {"name": "island", "path": "island.tmx"},
+
+        {"name": "collisions_void", "path": "collisions_void.tmx"},
+        {"name": "collisions_island", "path": "collisions_island.tmx"}
     ],
 
 

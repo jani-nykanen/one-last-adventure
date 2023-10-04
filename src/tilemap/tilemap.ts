@@ -10,6 +10,7 @@
 
 export class Tilemap {
 
+    // TODO: Check the first tile index from a tilemap, then substitute?
 
     private tileLayers : Map<string, number[]>;
     private properties : Map<string, string>;

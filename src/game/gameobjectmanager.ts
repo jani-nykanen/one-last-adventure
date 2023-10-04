@@ -37,13 +37,17 @@ export class GameObjectManager {
     private flyingMessages : FlyingMessageGenerator;
 
     private saveDialogueCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private initialPortalCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+
+    private relocatePlayer : boolean = false;
 
     private readonly progress : ProgressManager;
     private readonly textbox : TextBox;
 
 
     constructor(progress : ProgressManager, textbox : TextBox,
-        saveDialogueCallback? : (event : ProgramEvent) => void) {
+        saveDialogueCallback? : (event : ProgramEvent) => void,
+        initialPortalCallback? : (event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -59,6 +63,7 @@ export class GameObjectManager {
         this.textbox = textbox;
 
         this.saveDialogueCallback = saveDialogueCallback;
+        this.initialPortalCallback = initialPortalCallback;
     }
 
 
@@ -360,8 +365,16 @@ export class GameObjectManager {
 
     public addPlayer(x : number, y : number) : void {
 
-        if (this.player !== undefined)
+        if (this.player !== undefined) {
+
+            if (this.relocatePlayer) {
+
+                this.player.respawn((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
+                this.relocatePlayer = false;
+                return;
+            }
             return;
+        }
 
         this.player = new Player(
             (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, 
@@ -409,7 +422,7 @@ export class GameObjectManager {
             new Portal(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
-                () => {}));
+                this.initialPortalCallback));
     }
 
 
@@ -440,7 +453,10 @@ export class GameObjectManager {
 
     public reset() : void {
 
-        this.player?.respawn();
+        if (!this.relocatePlayer) {
+
+            this.player?.respawn();
+        }
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -487,5 +503,11 @@ export class GameObjectManager {
     public killPlayer(event : ProgramEvent) : void {
 
         this.player.kill(event);
+    }
+
+
+    public togglePlayerRelocation(state : boolean) : void {
+
+        this.relocatePlayer = state;
     }
 }

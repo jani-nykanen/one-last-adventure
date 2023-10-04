@@ -38,9 +38,14 @@ export class Game implements Scene {
     }
 
 
-    private reset(event : ProgramEvent) : void {
+    private reset(event : ProgramEvent, newStage : boolean = false) : void {
+        
+        this.objects.togglePlayerRelocation(newStage);
+        if (!newStage) {
 
-        this.stage.reset();
+            this.stage.reset();
+        }
+
         this.objects.reset();
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
@@ -54,7 +59,17 @@ export class Game implements Scene {
 
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
 
+        // TODO: Check music by the active map type?
         event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+    }
+
+
+    private changeMap(mapName : string, backgroundType : BackgroundType, event : ProgramEvent) : void {
+
+        // TODO: Recreate stage with a bit more memory-friendly way?
+        this.stage = new Stage(mapName, backgroundType, event);
+
+        this.reset(event, true);
     }
 
 
@@ -119,7 +134,15 @@ export class Game implements Scene {
 
         this.objects = new GameObjectManager(
             this.progress, this.genericTextbox,
-            (event : ProgramEvent) => this.pause.activate(true));
+            () => this.pause.activate(true),
+            (event : ProgramEvent) => {
+
+                event.transition.activate(true, TransitionType.Circle, 1.0/60.0,
+                (event : ProgramEvent) => {
+
+                    this.changeMap("island", BackgroundType.IslandDay, event);
+                }, new RGBA(255, 255, 255), this.objects.getRelativePlayerPosition(this.camera))
+            });
         if (param === 1) {
 
             this.createInitialPlayer();

@@ -819,7 +819,7 @@ export class Player extends CollisionObject {
     public getSwordHitID = () : number => this.swordHitId;
 
 
-    public respawn() : void {
+    public respawn(posx? : number, posy? : number) : void {
 
         this.jumpTimer = 0;
         this.ledgeTimer = 0;
@@ -843,8 +843,8 @@ export class Player extends CollisionObject {
 
         this.showIcon = false;
 
-        this.pos.x = this.progress.getProperty("checkpointx", 0);
-        this.pos.y = this.progress.getProperty("checkpointy", 0);
+        this.pos.x = posx ?? this.progress.getProperty("checkpointx", 0);
+        this.pos.y = posy ?? this.progress.getProperty("checkpointy", 0);
 
         this.health = this.maxHealth;
 
