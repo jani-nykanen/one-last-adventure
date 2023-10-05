@@ -20,6 +20,7 @@
         {"name": "sky_day", "path": "sky_day.png"},
         {"name": "clouds_day", "path": "clouds_day.png"},
         {"name": "logo", "path": "logo.png"},
+        {"name": "npc", "path": "npc.png"},
 
         {"name": "tileset_island", "path": "tileset_island.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}

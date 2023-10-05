@@ -6,10 +6,15 @@ import { GameObjectManager } from "./gameobjectmanager.js";
 import { MapLayer } from "./maplayer.js";
 import { Background, BackgroundType } from "./background.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
+import { getMapName } from "./mapnames.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6];
+const CREATABLE_OBJECTS = [2, 5, 6, 7];
 const OBJECT_LAYER_START = 256;
+
+
+const getBackgroundType = (id : number) : BackgroundType =>
+    [BackgroundType.Void, BackgroundType.IslandDay][id] ?? BackgroundType.Unknown;
 
 
 export class Stage {
@@ -21,13 +26,16 @@ export class Stage {
 
     private background : Background;
 
+    private index : number;
     private mapName : string;
     
     public readonly width : number;
     public readonly height : number;
 
 
-    constructor(mapName : string, backgroundType : BackgroundType, event : ProgramEvent) {
+    constructor(index : number, event : ProgramEvent) {
+
+        const mapName = getMapName(index);
 
         const baseMap = event.assets.getTilemap(mapName);
         const baseCollision = event.assets.getTilemap("collisions_" + mapName);
@@ -45,7 +53,7 @@ export class Stage {
         this.objectLayer = baseMap.cloneLayer("objects");
         this.objectCreationWaiting = this.computeCreationWaitingArray();
 
-        this.background = new Background(backgroundType, event);
+        this.background = new Background(getBackgroundType(index), event);
 
         this.mapName = mapName;
     }
@@ -91,6 +99,12 @@ export class Stage {
         case 6:
 
             objects.addSavepoint(x, y);
+            break;
+
+        // NPC
+        case 7:
+
+            objects.addNPC(x, y, modifier);
             break;
 
         default:

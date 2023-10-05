@@ -14,6 +14,7 @@ export class ProgressManager {
         // Default properties
         this.properties.set("maxHealth", 5);
         this.properties.set("coins", 0);
+        this.properties.set("area", 0);
     }
 
 

@@ -62,5 +62,11 @@
         "A thousand times I\nhave brought you\nback...",
         "Once again, I need\nyour help...",
         "So wake up, it is\ntime for one last\nadventure!"
+    ],
+
+
+    "npc1": [
+        "Good morning, stranger! See\nthat ruined portal over \nthere? They say that it\nwill take you to another\nworld.",
+        "Or, at least it used to.\nIt was already broken when\nI came here, and that was\nat least a thousand years\nago."
     ]
 }

@@ -37,6 +37,8 @@ export class Chest extends ActivableObject {
         this.cameraCheckArea = new Vector(32, 32);
 
         this.hintCb = createHintCb;
+
+        this.inCamera = true;
     }
 
 

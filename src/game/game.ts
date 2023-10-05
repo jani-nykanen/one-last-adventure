@@ -4,7 +4,6 @@ import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { GameObjectManager } from "./gameobjectmanager.js";
 import { Stage } from "./stage.js";
 import { Camera } from "./camera.js";
-import { BackgroundType } from "./background.js";
 import { ProgressManager } from "./progress.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
@@ -15,6 +14,7 @@ import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Story } from "./story.js";
+import { getMapName } from "./mapnames.js";
 
 
 export class Game implements Scene {
@@ -31,10 +31,20 @@ export class Game implements Scene {
 
     private story : Story;
 
+    private stageIndex : number = 0;
+
 
     constructor() {
 
         this.story = new Story();
+    }
+
+
+    private playMusic(event : ProgramEvent) : void {
+
+        const name = getMapName(this.stageIndex);
+
+        event.audio.fadeInMusic(event.assets.getSample("theme_" + String(name)), MusicVolume[name], 1000);
     }
 
 
@@ -59,15 +69,18 @@ export class Game implements Scene {
 
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
 
-        // TODO: Check music by the active map type?
-        event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+        this.playMusic(event);
     }
 
 
-    private changeMap(mapName : string, backgroundType : BackgroundType, event : ProgramEvent) : void {
+    private changeMap(index : number, event : ProgramEvent) : void {
+
+        this.stageIndex = index;
+
+        this.progress.setProperty("area", index);
 
         // TODO: Recreate stage with a bit more memory-friendly way?
-        this.stage = new Stage(mapName, backgroundType, event);
+        this.stage = new Stage(index, event);
 
         this.reset(event, true);
     }
@@ -120,7 +133,8 @@ export class Game implements Scene {
         if (param === 1) {
 
             this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);
-            event.audio.fadeInMusic(event.assets.getSample("theme_void"), MusicVolume["void"], 1000);
+            this.stageIndex = this.progress.getProperty("area");
+            this.playMusic(event);
         }
         else {
 
@@ -138,7 +152,7 @@ export class Game implements Scene {
             (event : ProgramEvent) => {
 
                 event.transition.deactivate();
-                this.changeMap("island", BackgroundType.IslandDay, event);
+                this.changeMap(1, event);
                 this.objects.setPlayerFrame(3, 2);
                 event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
                     undefined, new RGBA(255, 255, 255));
@@ -148,7 +162,7 @@ export class Game implements Scene {
             this.createInitialPlayer();
         }
 
-        this.stage = new Stage("void", BackgroundType.Void, event);
+        this.stage = new Stage(this.stageIndex, event);
         this.stage.createInitialObjects(this.objects);
         this.objects.centerCameraToPlayer(this.camera);
 

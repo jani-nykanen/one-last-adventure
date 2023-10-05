@@ -18,6 +18,7 @@ import { TextBox } from "../ui/textbox.js";
 import { Portal } from "./portal.js";
 import { Hint } from "./hint.js";
 import { SavePoint } from "./savepoint.js";
+import { NPC } from "./npc.js";
 
 
 export class GameObjectManager {
@@ -433,6 +434,16 @@ export class GameObjectManager {
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
                 this.saveDialogueCallback));
+    }
+
+
+    public addNPC(x : number, y : number, id : number) : void {
+
+        this.activableObjects.push(
+            new NPC(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT, 
+                id, this.textbox));
     }
 
 
