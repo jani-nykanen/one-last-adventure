@@ -383,12 +383,12 @@ export class GameObjectManager {
     }
 
 
-    public addCrate(x : number, y : number, stageIndex : number) : void {
+    public addCrate(x : number, y : number, stageIndex : number, id : number = 0) : void {
 
         this.crates.push(
             new Crate(
                 (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
-                this.particles, this.collectibles));
+                this.particles, this.collectibles, id));
     }
 
 

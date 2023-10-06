@@ -11,6 +11,8 @@ import { CollectibleGenerator } from "./collectiblegenerator.js";
 export class Crate extends CollisionObject {
 
 
+    private id : number;
+
     private readonly particles : ParticleGenerator;
     private readonly collectibles : CollectibleGenerator;
 
@@ -18,7 +20,8 @@ export class Crate extends CollisionObject {
 
 
     constructor(x : number, y : number, stageTileIndex : number,
-        particles : ParticleGenerator, collectibles : CollectibleGenerator) {
+        particles : ParticleGenerator, collectibles : CollectibleGenerator,
+        id : number = 0) {
 
         super(x, y, true);
 
@@ -33,6 +36,8 @@ export class Crate extends CollisionObject {
         this.collectibles = collectibles;
 
         this.inCamera = true;
+
+        this.id = id;
     }
 
 
@@ -79,7 +84,7 @@ export class Crate extends CollisionObject {
         const dx = Math.round(this.pos.x) - 8;
         const dy = Math.round(this.pos.y) - 8;
 
-        canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, 0, 16, 16);
+        canvas.drawBitmap(bmp, Flip.None, dx, dy, this.id*16, 0, 16, 16);
     }
 
 
@@ -106,7 +111,8 @@ export class Crate extends CollisionObject {
 
         const dir = Vector.direction(player.getPosition(), this.pos);
 
-        if (player.doesOverlaySword(this, -1)) {
+        if ((this.id != 1 || player.hasStrongSword()) &&
+            player.doesOverlaySword(this, -1)) {
             
             this.spawnParticles();
             this.collectibles.spawnWeighted(

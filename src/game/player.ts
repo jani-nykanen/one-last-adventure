@@ -962,4 +962,7 @@ export class Player extends CollisionObject {
         this.pos.x = x;
         this.pos.y = y;
     }
+
+    
+    public hasStrongSword = () : boolean => false; // this.progress.getProperty("item10") != 0;
 }

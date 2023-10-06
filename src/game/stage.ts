@@ -9,7 +9,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7];
+const CREATABLE_OBJECTS = [2, 5, 6, 7, 8];
 const OBJECT_LAYER_START = 256;
 
 
@@ -85,9 +85,10 @@ export class Stage {
             break;
 
         // Crate
+        case 8:
         case 2:
 
-            objects.addCrate(x, y, y*this.width + x);
+            objects.addCrate(x, y, y*this.width + x, tileID == 2 ? 0 : 1);
             break;
 
         // Hint

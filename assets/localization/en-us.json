@@ -68,5 +68,10 @@
     "npc1": [
         "Good morning, stranger! See\nthat ruined portal over \nthere? They say that it\nwill take you to another\nworld.",
         "Or, at least it used to.\nIt was already broken when\nI came here, and that was\nat least a thousand years\nago."
+    ],
+
+    "npc2": [
+        "See those rocks over there?\nYou cannot break them\nwith an ordinary sword.",
+        "You would need a hammer...\nor at least a sword with a\nvery blunt blade, and what\nkind of sword is that?"
     ]
 }
