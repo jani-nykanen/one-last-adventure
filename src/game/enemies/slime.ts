@@ -28,6 +28,6 @@ export class Slime extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
         
-        this.spr.animate(1, 0, 3, 8, event.tick);
+        this.spr.animate(1, 0, 3, 10, event.tick);
     }
 }

@@ -394,7 +394,7 @@ export class GameObjectManager {
 
     public addEnemy(x : number, y : number, stageIndex : number, enemyTypeIndex : number) : void {
 
-        const type = getEnemyType(enemyTypeIndex);
+        const type = getEnemyType(enemyTypeIndex - 1);
 
         this.enemies.push(
             new type.prototype.constructor(

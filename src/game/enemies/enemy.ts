@@ -28,6 +28,10 @@ export class Enemy extends CollisionObject {
     protected weight : number = 1.0;
     protected getGravity : boolean = true;
 
+    protected specialTimer : number = 0;
+    protected dir : -1 | 0 | 1 = 0;
+
+    protected didTouchSurface : boolean = false;
 
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
@@ -123,6 +127,9 @@ export class Enemy extends CollisionObject {
         }
 
         this.updateAI?.(event);
+
+        this.didTouchSurface = this.touchSurface;
+        this.touchSurface = false;
     }
 
 
