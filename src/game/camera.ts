@@ -15,6 +15,8 @@ export class Camera {
     private moveSpeed : number = 1.0;
     private moveTimer : number = 0.0;
 
+    private stoppedMoving : boolean = false;
+
     public readonly width : number;
     public readonly height : number;
 
@@ -34,6 +36,8 @@ export class Camera {
 
     public update(event : ProgramEvent) : void {
 
+        this.stoppedMoving = false;
+
         if (!this.moving)
             return;
 
@@ -45,6 +49,9 @@ export class Camera {
             this.interpolatedPos = new Vector(
                 (this.target.x*this.width) | 0, 
                 (this.target.y*this.height) | 0);
+
+            this.stoppedMoving = true;
+
             return;
         }
 
@@ -129,4 +136,7 @@ export class Camera {
         this.moveTimer = 0;
         this.moving = false;
     }
+
+
+    public didStopMoving = () : boolean => this.stoppedMoving; 
 }

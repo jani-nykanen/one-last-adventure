@@ -16,39 +16,49 @@ export class Rabbit extends Enemy {
 
         this.maxHealth = 5;
 
-        this.friction.y = 0.125;
+        this.friction.y = 0.10;
 
         this.spr.setFrame(1, 2);
 
         this.specialTimer = (Math.random()*JUMP_TIME) | 0;
+
+        this.weight = 0.95;
     }
 
 
     protected playerEvent(player : Player, event : ProgramEvent): void {
         
-        const dir = player.getPosition().x - this.pos.x;
+        this.dir = player.getPosition().x - this.pos.x > 0 ? 1 : -1;
 
-        this.flip = dir > 0 ? Flip.Horizontal : Flip.None;
+        if (this.touchSurface) {
+
+            this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
+        }
     }
 
 
     protected updateAI(event : ProgramEvent) : void {
         
-        const JUMP_SPEED : number = -3.25;
+        const MOVE_SPEED : number = 0.5;
+        const JUMP_SPEED : number = -2.25;
         const FRAME_EPS : number = 0.5;
 
         let frame : number;
 
         if (this.touchSurface) {
 
+            this.target.x = 0;
+
             this.spr.setFrame(0, 2);
 
             this.specialTimer += event.tick;
-
             if (this.specialTimer >= JUMP_TIME) {
 
                 this.specialTimer = 0;
                 this.speed.y = JUMP_SPEED;
+
+                this.target.x = this.dir*MOVE_SPEED;
+                this.speed.x = this.target.x;
             }
         }
         else {

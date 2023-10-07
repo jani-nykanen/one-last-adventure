@@ -192,16 +192,15 @@ export class GameObjectManager {
                 continue;
 
             e1.cameraCheck(camera, event);
-            // TODO: This should only be called if the enemy drops
-            // outside the camera manually.
-            /*
-            if (!e1.isInCamera()) {
+
+            // TODO: Check if this is sufficient
+            if (!e1.isInCamera() && !e1.isDying()) {
 
                 stage.remarkCreatableObject(e1.stageTileIndex);
                 this.enemies.splice(i, 1);
+                
                 continue;
             }
-            */
             
             if (!e1.isInCamera())
                 continue;

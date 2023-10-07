@@ -29,7 +29,7 @@ export class Enemy extends CollisionObject {
     protected getGravity : boolean = true;
 
     protected specialTimer : number = 0;
-    protected dir : -1 | 0 | 1 = 0;
+    protected dir : number = 0;
 
     protected didTouchSurface : boolean = false;
 
@@ -170,7 +170,7 @@ export class Enemy extends CollisionObject {
             this.hurt(damage, player, event);
             if (!player.downAttackBounce()) {
 
-                this.speed.x = KNOCKBACK_SPEED*dir.x*this.weight;
+                this.speed.x = KNOCKBACK_SPEED*dir.x/this.weight;
             }
 
             this.messages.spawn(this.pos.x, this.pos.y - 6, -damage);
