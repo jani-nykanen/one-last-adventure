@@ -23,7 +23,7 @@ export class SavePoint extends ActivableObject {
 
         this.spr = new Sprite(16, 16);
 
-        this.hitbox = new Rectangle(0, 2, 12, 12);
+        this.hitbox = new Rectangle(0, 0, 12, 16);
 
         this.facePlayer = false;
 

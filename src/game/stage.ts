@@ -135,7 +135,12 @@ export class Stage {
 
     public drawBackground(canvas : Canvas, camera : Camera | undefined) : void {
 
-        this.background.draw(canvas);
+        const cpos = camera.getTopCorner();
+
+        const shiftx = -Math.round(cpos.x / 16);
+        const shifty = -Math.round(cpos.y / 16);
+
+        this.background.draw(canvas, shiftx, shifty);
     }
 
 

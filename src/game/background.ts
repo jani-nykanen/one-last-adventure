@@ -1,6 +1,7 @@
 import { ProgramEvent } from "../core/event.js";
 import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { RGBA } from "../math/rgba.js";
+import { negMod } from "../math/utility.js";
 import { Camera } from "./camera.js";
 import { SnowflakeGenerator } from "./snowflakes.js";
 
@@ -77,11 +78,13 @@ export class Background {
         canvas.setColor(109, 109, 182);
         canvas.fillRect(0, waterY, canvas.width, canvas.height - waterY);
         
+        const t = negMod(this.timers[0] - shiftx | 0, 128);
+
         // Clouds
         canvas.setColor();
         for (let i = 0; i < 3; ++ i) {
-    
-            canvas.drawBitmap(bmpClouds, Flip.None, i*128 - ((this.timers[0] + shiftx) | 0), CLOUD_Y + shifty);
+
+            canvas.drawBitmap(bmpClouds, Flip.None, i*128 - t, CLOUD_Y + shifty);
         }
     }
 
