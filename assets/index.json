@@ -55,8 +55,10 @@
         {"name": "kill", "path": "kill.wav"},
         {"name": "savepoint", "path": "savepoint.wav"},
         {"name": "teleport", "path": "teleport.wav"},
+        {"name": "enemy_jump", "path": "enemy_jump.wav"},
 
         {"name": "item", "path": "item.ogg"},
+        {"name": "theme_island", "path": "theme_island.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}
     ],
 

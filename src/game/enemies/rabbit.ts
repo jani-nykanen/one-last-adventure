@@ -59,6 +59,8 @@ export class Rabbit extends Enemy {
 
                 this.target.x = this.dir*MOVE_SPEED;
                 this.speed.x = this.target.x;
+
+                event.audio.playSample(event.assets.getSample("enemy_jump"), 0.40);
             }
         }
         else {
