@@ -2,6 +2,7 @@ import { GameObject } from "./gameobject.js";
 import { Rectangle } from "../math/rectangle.js";
 import { ProgramEvent } from "../core/event.js";
 import { Player } from "./player.js";
+import { Camera } from "./camera.js";
 
 
 export class ActivableObject extends GameObject {
@@ -17,12 +18,12 @@ export class ActivableObject extends GameObject {
     }
 
 
-    protected activationEvent?(player : Player, event : ProgramEvent) : void;
+    protected activationEvent?(player : Player, event : ProgramEvent, camera? : Camera) : void;
     protected playerTouchEvent?(player : Player, event : ProgramEvent, initial? : boolean) : void;
     protected generalPlayerEvent?(player : Player, event : ProgramEvent) : void;
 
 
-    public playerCollision(player : Player, event : ProgramEvent, initial : boolean = false) : boolean {
+    public playerCollision(player : Player, camera : Camera, event : ProgramEvent, initial : boolean = false) : boolean {
 
         if (!player.isActive() || !this.isActive())
             return false;
@@ -44,7 +45,7 @@ export class ActivableObject extends GameObject {
 
             if (event.input.upPress()) {
 
-                this.activationEvent?.(player, event);
+                this.activationEvent?.(player, event, camera);
                 return true;
             }
         }

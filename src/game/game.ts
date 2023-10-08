@@ -62,7 +62,7 @@ export class Game implements Scene {
         this.stage.cameraCheck(this.camera, this.objects, event);
 
         this.objects.initialCameraCheck(this.camera, event);
-        this.objects.initialActivableObjectCheck(event);
+        this.objects.initialActivableObjectCheck(this.camera, event);
 
         // To make certain objects appear on the screen
         // this.objects.update(this.camera, this.stage, event);
@@ -73,7 +73,7 @@ export class Game implements Scene {
     }
 
 
-    private changeMap(index : number, event : ProgramEvent) : void {
+    private changeMap(index : number, event : ProgramEvent, recreatePlayer : boolean = true) : void {
 
         this.stageIndex = index;
 
@@ -82,9 +82,10 @@ export class Game implements Scene {
         // TODO: Recreate stage with a bit more memory-friendly way?
         this.stage = new Stage(index, event);
 
-        this.reset(event, true);
+        this.reset(event, recreatePlayer);
     }
 
+    
 
     private drawHUD(canvas : Canvas) : void {
 
@@ -156,7 +157,14 @@ export class Game implements Scene {
                 this.objects.setPlayerFrame(3, 2);
                 event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
                     undefined, new RGBA(255, 255, 255));
-            });
+            },
+            (event : ProgramEvent) => {
+                
+                this.stageIndex = this.stageIndex == 1 ? 2 : 1;
+                this.changeMap(this.stageIndex, event, false);
+
+                this.objects.setPlayerFrame(3, 2);
+            } );
         if (param === 1) {
 
             this.createInitialPlayer();
@@ -167,7 +175,7 @@ export class Game implements Scene {
         this.objects.centerCameraToPlayer(this.camera);
 
         this.stage.cameraCheck(this.camera, this.objects, event);
-        this.objects.initialActivableObjectCheck(event);
+        this.objects.initialActivableObjectCheck(this.camera, event);
 
         this.pause = new PauseMenu(event, 
             (event : ProgramEvent) => this.objects.killPlayer(event),

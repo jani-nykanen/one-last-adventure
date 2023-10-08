@@ -14,7 +14,7 @@ export class Portal extends ActivableObject {
     
     private spr : Sprite;
 
-    private cb : (event : ProgramEvent) => void;
+    private cb : ((event : ProgramEvent) => void) | undefined = undefined;
 
 
     constructor(x : number, y : number, useCb : (event : ProgramEvent) => void) {
@@ -45,7 +45,7 @@ export class Portal extends ActivableObject {
         event.audio.playSample(event.assets.getSample("teleport"), 0.35);
 
         event.transition.activate(true, TransitionType.Waves, 1.0/120.0, event,
-            (event : ProgramEvent) => this.cb(event), new RGBA(255, 255, 255));
+            (event : ProgramEvent) => this.cb?.(event), new RGBA(255, 255, 255));
     }
 
 

@@ -1,5 +1,5 @@
 
 
 export const getMapName = (id : number) : string =>
-    ["void", "island"][id] ?? "void";
+    ["void", "island", "caves"][id] ?? "void";
     

@@ -19,6 +19,7 @@ import { Portal } from "./portal.js";
 import { Hint } from "./hint.js";
 import { SavePoint } from "./savepoint.js";
 import { NPC } from "./npc.js";
+import { Door } from "./door.js";
 
 
 export class GameObjectManager {
@@ -39,6 +40,7 @@ export class GameObjectManager {
 
     private saveDialogueCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private initialPortalCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private doorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -48,7 +50,8 @@ export class GameObjectManager {
 
     constructor(progress : ProgressManager, textbox : TextBox,
         saveDialogueCallback? : (event : ProgramEvent) => void,
-        initialPortalCallback? : (event : ProgramEvent) => void) {
+        initialPortalCallback? : (event : ProgramEvent) => void,
+        doorCallback? : (event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -65,6 +68,7 @@ export class GameObjectManager {
 
         this.saveDialogueCallback = saveDialogueCallback;
         this.initialPortalCallback = initialPortalCallback;
+        this.doorCallback = doorCallback;
     }
 
 
@@ -124,7 +128,7 @@ export class GameObjectManager {
                 continue;
 
             o.update(event);
-            o.playerCollision(this.player, event);
+            o.playerCollision(this.player, camera, event);
 
             if (!o.doesExist()) {
 
@@ -308,14 +312,14 @@ export class GameObjectManager {
     }
 
 
-    public initialActivableObjectCheck(event : ProgramEvent) : void {
+    public initialActivableObjectCheck(camera : Camera, event : ProgramEvent) : void {
 
         if (this.player === undefined)
             return;
 
         for (let o of this.activableObjects) {
 
-            o.playerCollision(this.player, event, true);
+            o.playerCollision(this.player, camera, event, true);
         }
     }
 
@@ -327,7 +331,7 @@ export class GameObjectManager {
 
         for (let o of this.activableObjects) {
 
-            o.draw(canvas);
+            o.draw?.(canvas);
         }
 
         for (let c of this.crates) {
@@ -423,6 +427,16 @@ export class GameObjectManager {
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
                 this.initialPortalCallback));
+    }
+
+
+    public addDoor(x : number, y : number) : void {
+
+        this.activableObjects.push(
+            new Door(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                this.doorCallback));
     }
 
 
