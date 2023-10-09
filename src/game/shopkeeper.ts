@@ -6,28 +6,26 @@ import { ProgramEvent } from "../core/event.js";
 import { Player, SpecialPlayerAnimationType } from "./player.js";
 import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
+import { Shop } from "./shop.js";
 
 
-export class NPC extends ActivableObject {
+export class Shopkeeper extends ActivableObject {
 
-    
-    private id : number;
 
-    private textbox : TextBox;
+    private shop : Shop;
 
     private spr : Sprite;
 
 
-    constructor(x : number, y : number, id : number, textbox : TextBox) {
+    constructor(x : number, y : number, shop : Shop) {
 
         super(x, y);
 
-        this.id = id;
-        this.textbox = textbox;
+        this.shop = shop;
 
-        this.spr = new Sprite(16, 16);
+        this.spr = new Sprite(24, 32);
 
-        this.hitbox = new Rectangle(0, 2, 12, 12);
+        this.hitbox = new Rectangle(0, 2, 16, 12);
 
         this.facePlayer = true;
 
@@ -41,10 +39,7 @@ export class NPC extends ActivableObject {
         
         event.audio.playSample(event.assets.getSample("select"), 0.60);
 
-        const idStr = "npc" + String(this.id);
-
-        this.textbox.addText(event.localization?.getItem(idStr) ?? []);
-        this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
+        this.shop.activate();
     }
 
 
@@ -61,12 +56,12 @@ export class NPC extends ActivableObject {
         if (!this.exist || !this.inCamera)
             return;
 
-        const bmp = canvas.getBitmap("npc");
+        const bmp = canvas.getBitmap("shopkeeper");
 
         const flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
 
-        const dx = Math.round(this.pos.x) - 8;
-        const dy = Math.round(this.pos.y) - 7;
+        const dx = Math.round(this.pos.x) - 12;
+        const dy = Math.round(this.pos.y) - 23;
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
     }

@@ -24,7 +24,8 @@ export class PauseMenu {
     constructor(event : ProgramEvent, 
         respawnEvent : (event : ProgramEvent) => void,
         saveEvent : (event : ProgramEvent) => boolean,
-        quitEvent : (event : ProgramEvent) => void) {
+        quitEvent : (event : ProgramEvent) => void,
+        resumeEvent : (event : ProgramEvent) => void) {
 
         const text = event.localization?.getItem("menu") ?? [];
 
@@ -81,11 +82,7 @@ export class PauseMenu {
         (event : ProgramEvent) => {
 
             this.menu.deactivate();
-
-            if (!event.audio.resumeMusic()) {
-
-                event.audio.playMusic(event.assets.getSample("theme_void"), MusicVolume["void"]);
-            }
+            resumeEvent(event);
         }),
 
         // Respawn

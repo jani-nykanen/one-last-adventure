@@ -157,7 +157,8 @@ export class TextBox {
 
     public draw(canvas : Canvas, 
         x : number = 0, y : number = 0, yoff : number = 2,
-        drawBox : boolean = true, boxColors? : RGBA[]) : void {
+        drawBox : boolean = true, drawIcon : boolean = true,
+        boxColors? : RGBA[]) : void {
 
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
@@ -188,7 +189,7 @@ export class TextBox {
 
         canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
 
-        if (this.finished) {
+        if (this.finished && drawIcon) {
 
             canvas.setColor(255, 255, 0);
             canvas.drawBitmap(fontOutlines, Flip.None, 
@@ -209,6 +210,15 @@ export class TextBox {
     }
 
 
+    public forceChangeText(newText : string) : void {
+
+        this.activeText = newText;
+        this.finished = true;
+        this.charPos = this.activeText.length;
+    }
+
+
     public getWidth = () : number => this.width;
     public getHeight = () : number => this.height;
+
 }

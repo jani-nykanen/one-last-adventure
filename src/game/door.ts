@@ -20,7 +20,7 @@ export class Door extends ActivableObject{
 
         super(x, y);
 
-        this.hitbox = new Rectangle(0, 0, 16, 16);
+        this.hitbox = new Rectangle(0, 0, 12, 16);
 
         this.facePlayer = false;
 

@@ -15,19 +15,31 @@ export class Menu {
     private cursorPos : number = 0;
     private active : boolean = false;
     
-    private maxLength : number;
+    private height : number;
+    private width : number;
+
+    private fixedSize : boolean = false;
 
 
-    constructor(buttons : Array<MenuButton>, makeActive : boolean = false) {
+    constructor(buttons : Array<MenuButton>, makeActive : boolean = false,
+        fixedSize : boolean = false, fixedWidth? : number, fixedHeight? : number) {
 
         this.buttons = buttons.map((_, i) => buttons[i].clone());
-        this.maxLength = Math.max(...this.buttons.map(b => b.getText().length));
-
+    
         this.active = makeActive;
+
+        this.fixedSize = fixedSize;
+        this.width = fixedWidth ?? Math.max(...this.buttons.map(b => b.getText().length));
+        this.height = fixedHeight ?? this.buttons.length;
     }
 
 
-    public activate(cursorPos = this.cursorPos) : void {
+    public activate(cursorPos : number = this.cursorPos) : void {
+
+        if (cursorPos == -1) {
+
+            cursorPos = this.buttons.length - 1;
+        }
 
         this.cursorPos = cursorPos % this.buttons.length;
         this.active = true;
@@ -75,8 +87,8 @@ export class Menu {
         const font = canvas.getBitmap("font");
         const charDim = (font?.width ?? 128)/16;
 
-        const w = (this.maxLength + 1)*charDim;
-        const h = this.buttons.length*yoff;
+        const w = (this.width + 1)*charDim;
+        const h = this.height*yoff;
 
         const dx = x + canvas.width/2 - w/2;
         const dy = y + canvas.height/2 - h/2; 
@@ -121,4 +133,8 @@ export class Menu {
 
         this.buttons[index].changeText(text);
     }
+
+
+    public getCursorPos = () : number => this.cursorPos;
+    public getButtonCount = () : number => this.buttons.length;
 }

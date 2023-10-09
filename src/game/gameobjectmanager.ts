@@ -20,6 +20,8 @@ import { Hint } from "./hint.js";
 import { SavePoint } from "./savepoint.js";
 import { NPC } from "./npc.js";
 import { Door } from "./door.js";
+import { Shopkeeper } from "./shopkeeper.js";
+import { Shop } from "./shop.js";
 
 
 export class GameObjectManager {
@@ -46,9 +48,11 @@ export class GameObjectManager {
 
     private readonly progress : ProgressManager;
     private readonly textbox : TextBox;
+    private readonly shop : Shop;
 
 
-    constructor(progress : ProgressManager, textbox : TextBox,
+    constructor(progress : ProgressManager, 
+        textbox : TextBox, shop : Shop,
         saveDialogueCallback? : (event : ProgramEvent) => void,
         initialPortalCallback? : (event : ProgramEvent) => void,
         doorCallback? : (event : ProgramEvent) => void) {
@@ -65,6 +69,7 @@ export class GameObjectManager {
 
         this.progress = progress;
         this.textbox = textbox;
+        this.shop = shop;
 
         this.saveDialogueCallback = saveDialogueCallback;
         this.initialPortalCallback = initialPortalCallback;
@@ -457,6 +462,16 @@ export class GameObjectManager {
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT, 
                 id, this.textbox));
+    }
+
+
+    public addShopkeeper(x : number, y : number) : void {
+
+        this.activableObjects.push(
+            new Shopkeeper(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT, 
+                this.shop));
     }
 
 

@@ -21,6 +21,7 @@
         {"name": "clouds_day", "path": "clouds_day.png"},
         {"name": "logo", "path": "logo.png"},
         {"name": "npc", "path": "npc.png"},
+        {"name": "shopkeeper", "path": "shopkeeper.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},

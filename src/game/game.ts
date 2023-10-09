@@ -15,6 +15,7 @@ import { MusicVolume } from "./musicvolume.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Story } from "./story.js";
 import { getMapName } from "./mapnames.js";
+import { Shop } from "./shop.js";
 
 
 export class Game implements Scene {
@@ -28,6 +29,7 @@ export class Game implements Scene {
 
     private progress : ProgressManager | undefined = undefined;
     private genericTextbox : TextBox | undefined = undefined;
+    private shop : Shop | undefined = undefined;
 
     private story : Story;
 
@@ -130,6 +132,8 @@ export class Game implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
+        this.shop = new Shop(event);
+
         this.progress = new ProgressManager();
         if (param === 1) {
 
@@ -148,7 +152,7 @@ export class Game implements Scene {
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
 
         this.objects = new GameObjectManager(
-            this.progress, this.genericTextbox,
+            this.progress, this.genericTextbox, this.shop,
             () => this.pause.activate(true),
             (event : ProgramEvent) => {
 
@@ -180,7 +184,14 @@ export class Game implements Scene {
         this.pause = new PauseMenu(event, 
             (event : ProgramEvent) => this.objects.killPlayer(event),
             () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY),
-            (event : ProgramEvent) => event.scenes.changeScene("titlescreen", event));
+            (event : ProgramEvent) => event.scenes.changeScene("titlescreen", event),
+            (event : ProgramEvent) => {
+
+                if (!event.audio.resumeMusic()) {
+
+                    this.playMusic(event);
+                }
+            });
 
         if (param === 1) {
 
@@ -200,6 +211,12 @@ export class Game implements Scene {
         if (!this.story.isPlayed()) {
 
             this.story.update(event);
+            return;
+        }
+
+        if (this.shop.isActive()) {
+
+            this.shop.update(event);
             return;
         }
 
@@ -271,6 +288,7 @@ export class Game implements Scene {
             return;
         }
 
+        this.shop.draw(canvas);
         this.genericTextbox.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
         this.pause.draw(canvas);
     }
