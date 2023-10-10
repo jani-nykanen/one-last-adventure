@@ -132,9 +132,9 @@ export class Game implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        this.shop = new Shop(event);
-
         this.progress = new ProgressManager();
+        this.shop = new Shop(this.progress, event);
+
         if (param === 1) {
 
             this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);

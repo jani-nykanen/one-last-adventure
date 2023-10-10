@@ -83,6 +83,14 @@ export class ConfirmationBox {
     }
 
 
+    public changeText(newText : string) : void {
+
+        this.message = newText.split("\n");
+        this.width = Math.max(...this.message.map(s => s.length));
+        this.height = this.message.length;
+    }
+
+
     public activate(cursorPos : number = 0) : void {
 
         this.menu.activate(cursorPos);
