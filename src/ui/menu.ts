@@ -18,8 +18,6 @@ export class Menu {
     private height : number;
     private width : number;
 
-    private fixedSize : boolean = false;
-
 
     constructor(buttons : Array<MenuButton>, makeActive : boolean = false,
         fixedSize : boolean = false, fixedWidth? : number, fixedHeight? : number) {
@@ -28,7 +26,7 @@ export class Menu {
     
         this.active = makeActive;
 
-        this.fixedSize = fixedSize;
+        // this.fixedSize = fixedSize;
         this.width = fixedWidth ?? Math.max(...this.buttons.map(b => b.getText().length));
         this.height = fixedHeight ?? this.buttons.length;
     }
@@ -82,6 +80,9 @@ export class Menu {
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
 
+        const BASE_COLOR = [[255, 255, 255], [73, 73, 73]];
+        const SELECTED_COLOR = [[255, 255, 73], [182, 182, 182]];
+
         if (!this.active) return;
 
         const font = canvas.getBitmap("font");
@@ -101,17 +102,14 @@ export class Menu {
                 boxColors);
         }
 
+        let buttonColor : number[];
 
         for (let i = 0; i < this.buttons.length; ++ i) {
 
-            if (i == this.cursorPos) {
-
-                canvas.setColor(255, 255, 73);
-            }
-            else {
-
-                canvas.setColor();
-            }
+            // This is a beautiful line
+            buttonColor = (i ==  this.cursorPos ? SELECTED_COLOR : BASE_COLOR)[Number(this.buttons[i].isDeactivated())];
+            canvas.setColor(...buttonColor);
+            
             canvas.drawText(font, this.buttons[i].getText(), 
                 dx + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
         } 
@@ -132,6 +130,15 @@ export class Menu {
     public changeButtonText(index : number, text : string) : void {
 
         this.buttons[index].changeText(text);
+    }
+
+
+    public toggleDeactivation(index : number, state : boolean) : void {
+
+        if (index < 0 || index >= this.buttons.length)
+            return;
+
+        this.buttons[index].toggleDeactivation(state); 
     }
 
 

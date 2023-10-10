@@ -133,7 +133,7 @@ export class Game implements Scene {
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.progress = new ProgressManager();
-        this.shop = new Shop(this.progress, event);
+        this.shop = new Shop(this.progress, this.genericTextbox, event);
 
         if (param === 1) {
 

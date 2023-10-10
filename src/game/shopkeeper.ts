@@ -39,7 +39,7 @@ export class Shopkeeper extends ActivableObject {
         
         event.audio.playSample(event.assets.getSample("select"), 0.60);
 
-        this.shop.activate();
+        this.shop.activate(player);
     }
 
 

@@ -5,6 +5,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { TextBox } from "../ui/textbox.js";
+import { Player, SpecialPlayerAnimationType } from "./player.js";
 import { ProgressManager } from "./progress.js";
 
 
@@ -36,11 +37,13 @@ export class Shop {
 
     private failMessageText : string;
     private confirmText : string;
+    private playerRef : Player | undefined = undefined; 
 
     private readonly progress : ProgressManager;
+    private readonly genericTextbox : TextBox;
 
-
-    constructor(progress : ProgressManager, event : ProgramEvent) {
+    
+    constructor(progress : ProgressManager, genericTextbox : TextBox, event : ProgramEvent) {
 
         this.menu = new Menu(this.createMenuButtons(event), true, true, 24); 
         this.description = new TextBox(true, 24, 3);
@@ -55,7 +58,17 @@ export class Shop {
             "null",
             (event : ProgramEvent) => {
 
+                const id = this.menu.getCursorPos();
+
                 this.deactivate();
+                this.progress.setProperty("shopitem" + String(id), 1);
+
+                this.playerRef?.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, id + 16,
+                    (event : ProgramEvent) => {
+        
+                        this.genericTextbox.addText(["null"]);
+                        this.genericTextbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
+                    });
             },
             (event : ProgramEvent) => {
 
@@ -69,6 +82,7 @@ export class Shop {
         this.failMessage = new TextBox();
 
         this.progress = progress;
+        this.genericTextbox = genericTextbox;
     }
 
 
@@ -195,13 +209,22 @@ export class Shop {
     }
 
 
-    public activate() : void {
+    public activate(player : Player) : void {
 
         this.active = true;
 
         this.menu.activate(-1);
         this.confirmBox.deactivate();
         this.failMessage.deactivate();
+
+        let disable : boolean;
+        for (let i = 0; i < this.menu.getButtonCount() - 1; ++ i) {
+
+            disable = this.progress.getProperty("shopitem" + String(i)) != 0;
+            this.menu.toggleDeactivation(i, disable);
+        }
+
+        this.playerRef = player;
     }
 
 
