@@ -79,7 +79,9 @@ export class ConfirmationBox {
             canvas.drawText(font, this.message[i], dx + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
         }
 
-        this.menu.draw(canvas, x, dy - menuYoff*2 - SIDE_OFFSET*2, menuYoff, false);
+        const menuY = (dy + h - canvas.height/2) - menuYoff;
+
+        this.menu.draw(canvas, x, menuY, menuYoff, false);
     }
 
 

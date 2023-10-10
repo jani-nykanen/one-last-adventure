@@ -81,7 +81,8 @@ export class AudioIntro implements Scene {
             canvas.width/2 - this.textWidth*4,
             TEXT_YOFF, 0, 2);
 
-        const menuShift = (TEXT_YOFF + this.textHeight*10) - canvas.height/2; 
+        // TODO: The number above is not even based on anything
+        const menuShift = (TEXT_YOFF + this.textHeight*16) - canvas.height/2; 
 
         this.yesNoMenu.draw(canvas, false, 0, menuShift/2 + BOX_OFF);
     }

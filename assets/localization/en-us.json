@@ -100,5 +100,10 @@
     "shop": "SHOP",
 
     "nomoney": "You don't have\nenough money to\nbuy this item!",
-    "shop_confirm": "Buy this item for\n% gold coins?"
+    "shop_confirm": "Buy this item for\n% gold coins?",
+
+    "shopitem1": [
+        "You obtain a DUMMY ITEM!", 
+        "I will implemented this\nitem later, I swear!"
+    ]
 }

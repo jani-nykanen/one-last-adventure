@@ -67,6 +67,12 @@ export class Menu {
 
         if (event.input.getAction("select") == InputState.Pressed) {
 
+            if (this.buttons[this.cursorPos].isDeactivated()) {
+
+                event.audio.playSample(event.assets.getSample("reject"), 0.50);
+                return;
+            }
+
             this.buttons[this.cursorPos].evaluateCallback(event);
             event.audio.playSample(event.assets.getSample("select"), 0.50);
         }
@@ -80,8 +86,8 @@ export class Menu {
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
 
-        const BASE_COLOR = [[255, 255, 255], [73, 73, 73]];
-        const SELECTED_COLOR = [[255, 255, 73], [182, 182, 182]];
+        const BASE_COLOR = [[255, 255, 255], [146, 146, 146]];
+        const SELECTED_COLOR = [[255, 255, 73], [182, 182, 36]];
 
         if (!this.active) return;
 
@@ -140,6 +146,9 @@ export class Menu {
 
         this.buttons[index].toggleDeactivation(state); 
     }
+
+
+    public isButtonDeactivated = (i : number) : boolean => this.buttons[i]?.isDeactivated() ?? false;
 
 
     public getCursorPos = () : number => this.cursorPos;

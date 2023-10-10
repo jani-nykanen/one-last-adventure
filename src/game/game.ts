@@ -133,6 +133,7 @@ export class Game implements Scene {
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.progress = new ProgressManager();
+        this.genericTextbox = new TextBox(true, 27, 5);
         this.shop = new Shop(this.progress, this.genericTextbox, event);
 
         if (param === 1) {
@@ -146,8 +147,6 @@ export class Game implements Scene {
             event.transition.activate(false, TransitionType.Fade, 1.0/30.0, event);
             this.story.activate(true, event);
         }
-
-        this.genericTextbox = new TextBox(true, 27, 5);
 
         this.camera = new Camera(event.screenWidth, event.screenHeight, 0, 0);
 

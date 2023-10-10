@@ -61,6 +61,7 @@
         {"name": "teleport", "path": "teleport.wav"},
         {"name": "enemy_jump", "path": "enemy_jump.wav"},
         {"name": "door", "path": "door.wav"},
+        {"name": "reject", "path": "reject.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_island", "path": "theme_island.ogg"},

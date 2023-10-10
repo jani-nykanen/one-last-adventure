@@ -601,13 +601,18 @@ export class Player extends CollisionObject {
         }
 
         let bmpItems : Bitmap | undefined;
+        let sx : number;
+        let sy : number;
         if (this.specialAnimationTimer > 0) {
 
             bmpItems = canvas.getBitmap("items");
 
+            sx = (this.specialAnimationParam - 1) % 16;
+            sy = ((this.specialAnimationParam - 1)/16) | 0;
+
             canvas.drawBitmap(bmpItems, Flip.None, 
                 dx, dy - 16, 
-                (this.specialAnimationParam - 1)*16, 0, 16, 16);
+                sx*16, sy*16, 16, 16);
         }
     }
 

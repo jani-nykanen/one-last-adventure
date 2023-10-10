@@ -34,6 +34,7 @@ export class Shop {
     private menu : Menu;
 
     private shopTitle : string = "";
+    private buttonText : string[] = [];
 
     private failMessageText : string;
     private confirmText : string;
@@ -58,15 +59,22 @@ export class Shop {
             "null",
             (event : ProgramEvent) => {
 
-                const id = this.menu.getCursorPos();
+                const price = ITEM_PRICES[this.menu.getCursorPos()];
+
+                this.playerRef.addCoins(-price);
+
+                const id = this.menu.getCursorPos() + 1;
 
                 this.deactivate();
                 this.progress.setProperty("shopitem" + String(id), 1);
+                event.audio.playSample(event.assets.getSample("item"), 0.80);
 
                 this.playerRef?.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, id + 16,
                     (event : ProgramEvent) => {
         
-                        this.genericTextbox.addText(["null"]);
+                        const text = event.localization?.getItem("shopitem" + String(id)) ?? ["null"];
+
+                        this.genericTextbox.addText(text);
                         this.genericTextbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
                     });
             },
@@ -118,6 +126,9 @@ export class Shop {
             }
         ));
 
+
+        this.buttonText = buttonText;
+
         return buttons;
     }
 
@@ -153,7 +164,11 @@ export class Shop {
 
         const text = event.localization?.getItem("shop_item_desc") ?? [];
 
-        const newText = cpos == this.menu.getButtonCount()-1 ? "" : (text[cpos] ?? "null");
+        let newText = text[cpos] ?? "null";
+        if (cpos == this.menu.getButtonCount() - 1 || this.menu.isButtonDeactivated(cpos)) {
+
+            newText = "";
+        }
         this.description.forceChangeText(newText);
     }
 
@@ -183,6 +198,9 @@ export class Shop {
         let dy : number;
         for (let i = 0; i < buttonCount - 1; ++ i) {
 
+            if (this.menu.isButtonDeactivated(i))
+                continue;
+
             dy = 24 + i*12;
 
             canvas.drawBitmap(bmpHUD, Flip.None, dx, dy, 32, 0, 16, 16);
@@ -190,9 +208,12 @@ export class Shop {
         }
 
         const cpos = this.menu.getCursorPos();
-        if (cpos < buttonCount - 1) {
+        if (cpos < buttonCount - 1 && !this.menu.isButtonDeactivated(cpos)) {
 
-            canvas.drawBitmap(bmpItems, Flip.None, canvas.width/2 + 72, canvas.height/2 + 48, cpos*16, 16, 16, 16);
+            canvas.drawBitmap(bmpItems, Flip.None, 
+                canvas.width/2 + 72, 
+                canvas.height/2 + 48, 
+                cpos*16, 16, 16, 16);
         }
 
         if (this.failMessage.isActive()) {
@@ -220,8 +241,9 @@ export class Shop {
         let disable : boolean;
         for (let i = 0; i < this.menu.getButtonCount() - 1; ++ i) {
 
-            disable = this.progress.getProperty("shopitem" + String(i)) != 0;
+            disable = this.progress.getProperty("shopitem" + String(i + 1)) != 0;
             this.menu.toggleDeactivation(i, disable);
+            this.menu.changeButtonText(i, disable ? "Sold out!" : this.buttonText[i]);
         }
 
         this.playerRef = player;
