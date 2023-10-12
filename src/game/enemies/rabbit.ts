@@ -4,7 +4,7 @@ import { Player } from "../player.js";
 import { Enemy } from "./enemy.js";
 
 
-const JUMP_TIME : number = 30;
+const JUMP_TIME : number = 45;
 
 
 export class Rabbit extends Enemy {
@@ -16,13 +16,13 @@ export class Rabbit extends Enemy {
 
         this.maxHealth = 5;
 
-        this.friction.y = 0.10;
+        this.friction.y = 0.075;
 
         this.spr.setFrame(1, 2);
 
         this.specialTimer = (Math.random()*JUMP_TIME) | 0;
 
-        this.weight = 0.95;
+        this.weight = 0.90;
     }
 
 
@@ -39,9 +39,9 @@ export class Rabbit extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
         
-        const MOVE_SPEED : number = 0.5;
-        const JUMP_SPEED : number = -2.25;
-        const FRAME_EPS : number = 0.5;
+        const MOVE_SPEED : number = 0.40;
+        const JUMP_SPEED : number = -2.0;
+        const FRAME_EPS : number = 0.33;
 
         let frame : number;
 

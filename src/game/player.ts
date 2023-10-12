@@ -58,6 +58,10 @@ export class Player extends CollisionObject {
     private health : number;
     private maxHealth : number; 
 
+    private attackPower : number = 3;
+    private attackSpeed : number = 1;
+    private armor : number = 0;
+
     private deathTimer : number = 0;
 
     private activeSavepoint : GameObject | undefined = undefined;
@@ -251,9 +255,11 @@ export class Player extends CollisionObject {
             this.target.y = 0.0;
         }
 
-        this.sprWeapon.animate(0, 0, 5, FRAME_TIME, event.tick);
+        const frameTime = (FRAME_TIME + 1) - this.attackSpeed;
+
+        this.sprWeapon.animate(0, 0, 5, frameTime, event.tick);
         this.spr.animate(2, 0, 3, 
-            this.spr.getColumn() == 2 ? (FRAME_TIME*3) : FRAME_TIME, 
+            this.spr.getColumn() == 2 ? (frameTime*3) : frameTime, 
             event.tick);
         if (this.spr.getColumn() == 3) {
 
@@ -463,6 +469,34 @@ export class Player extends CollisionObject {
     }
 
 
+    private computeStats() : void {
+
+        this.maxHealth = 5;
+        if (this.progress.getProperty("shopitem1")) {
+
+            ++ this.maxHealth;
+        }
+
+        this.attackPower = 1;
+        if (this.progress.getProperty("shopitem3")) {
+
+            ++ this.attackPower;
+        }
+
+        this.attackSpeed = 1;
+        if (this.progress.getProperty("shopitem6")) {
+
+            this.attackSpeed = 2;
+        }
+
+        this.armor = 0;
+        if (this.progress.getProperty("shopitem5")) {
+
+            ++ this.armor;
+        }
+    }
+
+
     private updateFlags() : void {
 
         this.touchLadder = false;
@@ -527,6 +561,7 @@ export class Player extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent) : void {
 
+        this.computeStats();
         this.control(event);
         this.animate(event);
         this.updateTimers(event);
@@ -722,6 +757,8 @@ export class Player extends CollisionObject {
         if (this.hurtTimer > 0)
             return;
 
+        damage = Math.max(1, damage - this.armor);
+
         this.knockbackTimer = KNOCKBACK_TIME;
         this.hurtTimer = HURT_TIME;
 
@@ -802,6 +839,11 @@ export class Player extends CollisionObject {
 
     public recoverHealth(amount : number) : void {
 
+        if (this.progress.getProperty("shopitem7")) {
+
+            ++ amount;
+        }
+
         this.health = Math.min(this.maxHealth, this.health + amount);
 
         this.flyingMessages.spawn(
@@ -813,7 +855,7 @@ export class Player extends CollisionObject {
 
     public getDamage() : number {
 
-        return this.downAttacking ? 5 : 3;
+        return (this.downAttacking ? 4 : 2) + this.attackPower;
     }
 
 

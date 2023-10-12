@@ -44,7 +44,7 @@ export class Door extends ActivableObject{
         const ppos = player.getPosition();
         player.setCheckpoint(ppos.x, ppos.y);
 
-        event.transition.activate(true, TransitionType.Circle, 1.0/60.0, event,
+        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
             (event : ProgramEvent) => this.cb?.(event), new RGBA(0, 0, 0));
 
         if (camera !== undefined) {
