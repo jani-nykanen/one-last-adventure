@@ -78,23 +78,25 @@
 
     "shop_menu": [
 
-        "Shop item 1",
-        "Shop item 2",
-        "Shop item 3",
-        "Shop item 4",
-        "Shop item 5",
-        "Shop item 6",
+        "Life Container",
+        "Magic Container",
+        "Wooden Dumbbells",
+        "Magic Beans",
+        "Shiny Armor",
+        "Broken Watch",
+        "Liver Oil",
         "Cancel"
     ],
 
     "shop_item_desc": [
 
-        "Item description 1",
-        "Item description 2",
-        "Item description 3",
-        "Item description 4",
-        "Item description 5",
-        "Item description 6"
+        "Increases your max\nhealth by 1.",
+        "Increases your max\nmagic.",
+        "Increases your\nattack power by 1.",
+        "Increases your\nmagic attack by 1.",
+        "Reduces the damage\nyou take.",
+        "Increases your\nattackspeed.",
+        "Hearts and magic\nbottles are\nmore efficient."
     ],
 
     "shop": "SHOP",
@@ -103,7 +105,42 @@
     "shop_confirm": "Buy this item for\n% gold coins?",
 
     "shopitem1": [
-        "You obtain a DUMMY ITEM!", 
-        "I will implemented this\nitem later, I swear!"
+        "You obtain a LIFE\nCONTAINER!", 
+        "It increases your maximal\nlife by one!"
+    ],
+
+    "shopitem2": [
+        "You obtain a MAGIC\nCONTAINER!", 
+        "It increases your\nmaximal magic... uh, bar."
+    ],
+
+    "shopitem3": [
+        "You obtain WOODEN\nDUMBBELLS!", 
+        "They might be made out of\nwood, but considering how\nweak you are, they still\nmake you stronger.",
+        "Your attack power\nincreases by 1."
+    ],
+
+    "shopitem4": [
+        "You obtain a can of MAGIC\nBEANS!", 
+        "These things are illegal\nin most countries, but\nthey do make you feel\nmagical!",
+        "Your magic attack\nincreases by 1!"
+    ],
+
+    "shopitem5": [
+        "You obtain a SHINY ARMOR!", 
+        "It seems to be made of\naluminum foil, but it\nboosts your confidence,\nwhich reduces the damage\nyou take."
+    ],
+
+
+    "shopitem6": [
+        "You obtain a BROKEN WATCH!", 
+        "This watch runs slightly\nslower than an ordinary\nclock, which makes your\nattacks faster. Don't\nask why, though."
+    ],
+
+
+    "shopitem7": [
+        "You obtain a bottle of\nLIVER OIL!", 
+        "Cod liver? You wish.\nIt increases your vitality,\nmaking certain pick up\nitems more efficient."
     ]
+
 }

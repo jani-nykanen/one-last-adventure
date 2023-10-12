@@ -13,11 +13,12 @@ import { ProgressManager } from "./progress.js";
 const ITEM_PRICES : number[] = [
 
     5, // Health up
-    25, // Magic up
-    50, // Attack up
-    50, // Magic attack up
-    75, // Rapid attack
-    100, // Armor
+    1, // Magic up
+    1, // Attack up
+    1, // Magic attack up
+    1, // Armor 
+    1, // Rapid attck
+    1, // Better pick ups
 ];
 
 
@@ -188,11 +189,11 @@ export class Shop {
 
         this.darken(canvas);
 
-        drawUIBox(canvas, canvas.width/2 - 32, 4, 64, 16);
-        canvas.drawText(font, this.shopTitle, canvas.width/2, 8, 0, 0, Align.Center);
+        drawUIBox(canvas, canvas.width/2 - 32, 1, 64, 16);
+        canvas.drawText(font, this.shopTitle, canvas.width/2, 6, 0, 0, Align.Center);
 
-        this.menu.draw(canvas, 0, -12, MENU_YOFF);
-        this.description.draw(canvas, 0, 56, 2, true, false);
+        this.menu.draw(canvas, 0, -11, MENU_YOFF);
+        this.description.draw(canvas, 0, 60, 2, true, false);
 
         const dx = canvas.width/2 + 56;
         let dy : number;
@@ -201,7 +202,7 @@ export class Shop {
             if (this.menu.isButtonDeactivated(i))
                 continue;
 
-            dy = 24 + i*12;
+            dy = 20 + i*12;
 
             canvas.drawBitmap(bmpHUD, Flip.None, dx, dy, 32, 0, 16, 16);
             canvas.drawText(font, String(ITEM_PRICES[i]), dx + 14, dy + 4);
@@ -212,7 +213,7 @@ export class Shop {
 
             canvas.drawBitmap(bmpItems, Flip.None, 
                 canvas.width/2 + 72, 
-                canvas.height/2 + 48, 
+                canvas.height/2 + 52, 
                 cpos*16, 16, 16, 16);
         }
 
