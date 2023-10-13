@@ -138,8 +138,9 @@ export class MapLayer {
         const MARGIN = 1;
 
         const HURT_WIDTH : number = 16;
-        const HURT_HEIGHT : number = 6;
+        const HURT_HEIGHT : number = 8;
         const HURT_DAMAGE : number = 2;
+        const HURT_COL_HEIGHT : number = 6;
 
         const opos = o.getPosition();
 
@@ -155,6 +156,7 @@ export class MapLayer {
         let dx : number;
         let dy : number;
         let hurtY : number;
+        let hurtColY : number;
 
         for (let layer = 0; layer < this.layers.length; ++ layer) {
 
@@ -209,10 +211,25 @@ export class MapLayer {
                             dx + TILE_WIDTH/2 - HURT_WIDTH/2, hurtY,
                             HURT_WIDTH, HURT_HEIGHT, HURT_DAMAGE, event);
 
-                        o.verticalCollision(dx, hurtY, TILE_WIDTH, 1, event);
-                        o.horizontalCollision(dx, hurtY, TILE_HEIGHT, 1, event);
-                        o.horizontalCollision(dx + TILE_WIDTH, hurtY, TILE_HEIGHT, -1, event);
+
+                        hurtColY = dy + TILE_HEIGHT - HURT_COL_HEIGHT;
+                        o.verticalCollision(dx, hurtColY, TILE_WIDTH, 1, event);
+                        o.horizontalCollision(dx, hurtColY, HURT_COL_HEIGHT, 1, event);
+                        o.horizontalCollision(dx + TILE_WIDTH, hurtColY, HURT_COL_HEIGHT, -1, event);
                     }
+                    if ((collisionID & Collision.HurtTop) != 0) {
+
+                        hurtY = dy;
+
+                        o.hurtCollision?.(
+                            dx + TILE_WIDTH/2 - HURT_WIDTH/2, hurtY,
+                            HURT_WIDTH, HURT_HEIGHT, HURT_DAMAGE, event);
+                            
+                        o.verticalCollision(dx, hurtY + HURT_COL_HEIGHT, TILE_WIDTH, -1, event);
+                        o.horizontalCollision(dx, hurtY, HURT_COL_HEIGHT, 1, event);
+                        o.horizontalCollision(dx + TILE_WIDTH, hurtY, HURT_COL_HEIGHT, -1, event);
+                    }
+                    // TODO: Remaining spike collisions
                 }
             }
         }

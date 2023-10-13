@@ -21,12 +21,14 @@ export class Apple extends Enemy {
 
         this.dir = (Math.floor(this.pos.x/TILE_WIDTH)) % 2 == 0 ? 1 : -1;
 
-        this.collisionBox = new Rectangle(0, 2, 12, 12);
-        this.hitbox = this.collisionBox.clone();
+        this.collisionBox = new Rectangle(0, 2, 10, 12);
+        this.hitbox = new Rectangle(0, 2, 12, 12);
 
         this.target.y = 0;
 
         this.getGravity = false;
+
+        this.bounceFactor.x = 1;
     }
 
 
@@ -47,7 +49,7 @@ export class Apple extends Enemy {
     }
 
 
-    protected horizontalCollisionEvent(dir: 1 | -1, event : ProgramEvent): void {
+    protected horizontalCollisionEvent(dir : 1 | -1, event : ProgramEvent): void {
         
         this.dir *= -1;
     }
