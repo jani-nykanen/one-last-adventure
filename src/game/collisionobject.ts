@@ -106,4 +106,8 @@ export class CollisionObject extends GameObject {
 
 
     public doesTouchSurface = () : boolean => this.touchSurface;
+
+
+
+    public isClimbing?() : boolean;
 }

@@ -198,9 +198,12 @@ export class MapLayer {
                     }
                     if ((collisionID & Collision.LadderTop) != 0) {
 
+                        if (!o.isClimbing?.()) {
+
+                            o.verticalCollision(dx, dy + TILE_HEIGHT, TILE_WIDTH, 1, event);
+                        }
                         o.ladderCollision?.(dx + 4, dy + 14, 8, 2, true, event);
                     }
-
 
                     // Hurt collision
                     if ((collisionID & Collision.HurtBottom) != 0) {

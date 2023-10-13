@@ -1012,4 +1012,10 @@ export class Player extends CollisionObject {
 
     
     public hasStrongSword = () : boolean => false; // this.progress.getProperty("item10") != 0;
+
+
+    public isClimbing() : boolean {
+        
+        return this.climbing;
+    }
 }
