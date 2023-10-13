@@ -14,7 +14,7 @@ const OBJECT_LAYER_START = 256;
 
 
 const getBackgroundType = (id : number) : BackgroundType =>
-    [BackgroundType.Void, BackgroundType.IslandDay, BackgroundType.Unknown][id] ?? BackgroundType.Unknown;
+    [BackgroundType.Void, BackgroundType.IslandDay, BackgroundType.Caves ][id] ?? BackgroundType.Unknown;
 
 
 export class Stage {

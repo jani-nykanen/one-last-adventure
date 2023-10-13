@@ -11,6 +11,7 @@ export const enum BackgroundType {
     Unknown = 0,
     Void = 1,
     IslandDay = 2,
+    Caves = 3,
 };
 
 
@@ -89,6 +90,26 @@ export class Background {
     }
 
 
+    private drawCave(canvas : Canvas, shiftx : number, shifty : number) : void {
+
+        const bmpBackground = canvas.getBitmap("cave_background");
+
+        const w = (canvas.width/32) | 0;
+        const h = (canvas.height/32) | 0;
+
+        let sx = shiftx % 32;
+        let sy = shifty % 32;
+
+        for (let y = -1; y < h + 2; ++ y) {
+
+            for (let x = -1; x < w + 2; ++ x) {
+
+                canvas.drawBitmap(bmpBackground, Flip.None, x*32 + sx, y*32 + sy);
+            }
+        }
+    }
+
+
     public update(camera : Camera | undefined = undefined, event : ProgramEvent) : void {
 
         const VORTEX_SPEED : number = Math.PI*2 / 600;
@@ -128,6 +149,11 @@ export class Background {
         case BackgroundType.IslandDay:
 
             this.drawIslandDay(canvas, shiftx, shifty);
+            break;
+
+        case BackgroundType.Caves:
+
+            this.drawCave(canvas, shiftx, shifty);
             break;
     
         default:

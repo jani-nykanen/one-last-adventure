@@ -22,6 +22,7 @@
         {"name": "logo", "path": "logo.png"},
         {"name": "npc", "path": "npc.png"},
         {"name": "shopkeeper", "path": "shopkeeper.png"},
+        {"name": "cave_background", "path": "cave_background.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},
