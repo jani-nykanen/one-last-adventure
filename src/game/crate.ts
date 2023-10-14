@@ -73,7 +73,7 @@ export class Crate extends CollisionObject {
         const dir = Vector.direction(o.getPosition(), this.pos);
 
         this.spawnParticles();
-        this.collectibles.spawnWeighted(this.pos, dir, 1.0 - weight);
+        this.collectibles.spawnWeighted(this.pos, dir, weight);
 
         this.exist = false;
 
@@ -121,7 +121,7 @@ export class Crate extends CollisionObject {
 
             // TODO: If crates are broken with projectiles, the crates never spawn
             // hearts...
-            this.breakSelf(o, 1.0, event);
+            this.breakSelf(o, 0.0, event);
         }
     }
 

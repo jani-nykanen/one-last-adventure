@@ -135,7 +135,7 @@ export class MapLayer {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
-        const MARGIN = 2;
+        const MARGIN = 1;
 
         const HURT_WIDTH : number = 16;
         const HURT_HEIGHT : number = 8;
@@ -155,7 +155,11 @@ export class MapLayer {
 
         let dx : number;
         let dy : number;
+
+        let hurtX : number;
         let hurtY : number;
+
+        let hurtColX : number;
         let hurtColY : number;
 
         for (let layer = 0; layer < this.layers.length; ++ layer) {
@@ -232,7 +236,33 @@ export class MapLayer {
                         o.horizontalCollision(dx, hurtY, HURT_COL_HEIGHT, 1, event);
                         o.horizontalCollision(dx + TILE_WIDTH, hurtY, HURT_COL_HEIGHT, -1, event);
                     }
-                    // TODO: Remaining spike collisions
+                    if ((collisionID & Collision.HurtLeft) != 0) {
+
+                        hurtX = dx;
+
+                        o.hurtCollision?.(
+                            hurtX, dy + TILE_HEIGHT/2 - HURT_WIDTH/2,
+                            HURT_HEIGHT, HURT_WIDTH, HURT_DAMAGE, event);
+
+                        o.horizontalCollision(hurtX + HURT_COL_HEIGHT, dy, TILE_WIDTH, -1, event);
+                        o.verticalCollision(hurtX, dy, HURT_COL_HEIGHT, 1, event);
+                        o.verticalCollision(hurtX, dy + TILE_HEIGHT, HURT_COL_HEIGHT, -1, event);
+                        
+                    }
+                    if ((collisionID & Collision.HurtRight) != 0) {
+
+                        hurtX = dx + TILE_WIDTH- HURT_HEIGHT;
+
+                        o.hurtCollision?.(
+                            hurtX, dy + TILE_HEIGHT/2 - HURT_WIDTH/2,
+                            HURT_HEIGHT, HURT_WIDTH, HURT_DAMAGE, event);
+
+                        hurtColX = dx + TILE_WIDTH - HURT_COL_HEIGHT;
+                        o.horizontalCollision(hurtColX, dy, TILE_WIDTH, 1, event);
+                        o.verticalCollision(hurtColX, dy, HURT_COL_HEIGHT, 1, event);
+                        o.verticalCollision(hurtColX, dy + TILE_HEIGHT, HURT_COL_HEIGHT, -1, event);
+                        
+                    }
                 }
             }
         }
