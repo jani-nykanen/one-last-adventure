@@ -22,6 +22,7 @@ import { NPC } from "./npc.js";
 import { Door } from "./door.js";
 import { Shopkeeper } from "./shopkeeper.js";
 import { Shop } from "./shop.js";
+import { ProjectileGenerator } from "./projectilegenerator.js";
 
 
 export class GameObjectManager {
@@ -39,6 +40,7 @@ export class GameObjectManager {
     private particles : ParticleGenerator;
     private collectibles : CollectibleGenerator;
     private flyingMessages : FlyingMessageGenerator;
+    private projectiles : ProjectileGenerator;
 
     private saveDialogueCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private initialPortalCallback : ((event : ProgramEvent) => void) | undefined = undefined;
@@ -66,6 +68,7 @@ export class GameObjectManager {
         this.particles = new ParticleGenerator();
         this.collectibles = new CollectibleGenerator();
         this.flyingMessages = new FlyingMessageGenerator();
+        this.projectiles = new ProjectileGenerator();
 
         this.progress = progress;
         this.textbox = textbox;
@@ -117,6 +120,8 @@ export class GameObjectManager {
 
             this.overridingHint = undefined;
         }
+
+        this.projectiles.cameraCheck(camera, event);
     }
 
 
@@ -293,6 +298,9 @@ export class GameObjectManager {
         this.collectibles.update(stage, camera, this.player, event);
         this.collectibles.crateCollision(this.crates, event);
 
+        this.projectiles.update(stage, camera, event);
+        this.projectiles.crateCollision(this.crates, event);
+
         this.updateActivableObjects(camera, event);
         this.updateHints(camera, event);
     }
@@ -353,6 +361,7 @@ export class GameObjectManager {
         this.collectibles.draw(canvas);
 
         this.player?.draw(canvas);
+        this.projectiles.draw(canvas);
         this.player?.drawIcon(canvas);
 
         this.flyingMessages.draw(canvas);
@@ -387,7 +396,7 @@ export class GameObjectManager {
 
         this.player = new Player(
             (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, 
-            this.progress, this.flyingMessages);
+            this.progress, this.flyingMessages, this.projectiles);
     }
 
 
@@ -509,6 +518,7 @@ export class GameObjectManager {
         this.particles.clear();
         this.flyingMessages.clear();
         this.collectibles.clear();
+        this.projectiles.clear();
     }
 
 

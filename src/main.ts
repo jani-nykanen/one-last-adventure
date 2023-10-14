@@ -16,6 +16,7 @@ const initialEvent = (event : ProgramEvent) : void => {
 
     event.input.addAction("jump", ["Space", "KeyZ"], [0]);
     event.input.addAction("attack", ["KeyX", "ControlLeft"], [2]);
+    event.input.addAction("magic", ["KeyC", "ShiftLeft"], [1]);
     // event.input.addAction("attack", ["KeyX"], [2]);
     event.input.addAction("pause", ["Enter"], [7]);
     event.input.addAction("select", ["Enter", "Space", "KeyZ"], [0, 7]);

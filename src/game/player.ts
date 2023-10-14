@@ -11,6 +11,7 @@ import { ProgressManager } from "./progress.js";
 import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { FlyingMessageSymbol } from "./flyingmessage.js";
 import { RGBA } from "../math/rgba.js";
+import { ProjectileGenerator } from "./projectilegenerator.js";
 
 
 const DEATH_TIME : number = 60;
@@ -37,6 +38,7 @@ export class Player extends CollisionObject {
     private ladderX : number = 0;
 
     private attacking : boolean = false;
+    private usingMagic : boolean = false;
     private downAttacking : boolean = false;
     private downAttackWait : number = 0;
 
@@ -73,12 +75,15 @@ export class Player extends CollisionObject {
 
 
     private readonly flyingMessages : FlyingMessageGenerator;
+    private readonly projectiles : ProjectileGenerator;
 
     public readonly progress : ProgressManager;
 
 
     constructor(x : number, y : number, 
-        progress : ProgressManager, flyingMessages : FlyingMessageGenerator) {
+        progress : ProgressManager, 
+        flyingMessages : FlyingMessageGenerator,
+        projectiles : ProjectileGenerator) {
 
         super(x, y, true);
 
@@ -96,6 +101,7 @@ export class Player extends CollisionObject {
         this.inCamera = true;
 
         this.flyingMessages = flyingMessages;
+        this.projectiles = projectiles;
         this.progress = progress;
 
         this.maxHealth = this.progress.getProperty("maxHealth", 6);
@@ -196,6 +202,17 @@ export class Player extends CollisionObject {
     }
 
 
+    private spawnMagic(event : ProgramEvent) : void {
+
+        const SPELL_SPEED : number = 3;
+
+        const dx = this.pos.x + this.dir*4;
+        const dy = this.pos.y + 2;
+
+        this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, true);
+    }
+
+
     private attack(event : ProgramEvent) : void {
 
         const EPS : number = 0.25;
@@ -205,12 +222,17 @@ export class Player extends CollisionObject {
             return;
 
         const hasSword = this.progress.getProperty("item1") === 1;
-        if (!hasSword)
+        const hasMagic = true; // this.progress.getProperty("item2") === 1;
+        if (!hasSword && !hasMagic)
             return;
 
-        if (event.input.getAction("attack") == InputState.Pressed) {
+        const swordButtonDown = event.input.getAction("attack") == InputState.Pressed;
+        const magicButtonDown = event.input.getAction("magic") == InputState.Pressed;
 
-            if (!this.climbing &&
+        if ((hasSword && swordButtonDown) || (hasMagic && magicButtonDown)) {
+
+            if (swordButtonDown &&
+                !this.climbing &&
                 !this.touchSurface &&
                 event.input.stick.y > EPS) {
 
@@ -225,12 +247,23 @@ export class Player extends CollisionObject {
             else {
 
                 this.attacking = true;
+                this.usingMagic = magicButtonDown && !swordButtonDown;
+
                 this.spr.setFrame(0, 2);
                 this.sprWeapon.setFrame(0, 0);
             }
-            ++ this.swordHitId;
+
+            if (this.usingMagic) {
+
+                this.spawnMagic(event);
+            }
+            else {
+
+                ++ this.swordHitId;
+            }
 
             event.audio.playSample(event.assets.getSample("sword"), 0.60);
+            // TODO: Different sound effect for magic
         }
     }
 
@@ -630,7 +663,7 @@ export class Player extends CollisionObject {
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
 
-        if (this.attacking && this.sprWeapon.getColumn() < 5) {
+        if (this.attacking && !this.usingMagic && this.sprWeapon.getColumn() < 5) {
 
             this.sprWeapon.draw(canvas, bmpWeapons, dx + WEAPON_XOFF[flip], dy - 8, flip);
         }
@@ -798,7 +831,8 @@ export class Player extends CollisionObject {
 
         const downAttack = (this.downAttacking && this.speed.y >= DOWN_ATTACK_SPEED_EPS) || 
             this.downAttackWait > 0;
-        const baseAttack = this.attacking && 
+        const baseAttack = !this.usingMagic &&
+            this.attacking && 
             targetSwordId != this.swordHitId &&
             this.sprWeapon.getColumn() <= 2;
 
