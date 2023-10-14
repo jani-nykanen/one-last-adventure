@@ -46,13 +46,20 @@
     ],
 
     "item_hints": [
-        "Press LEFT CTRL or X to\nattack."
+        "Press LEFT CTRL or X to\nattack.",
+        "Press LEFT SHIFT or C to\ncast a spell."
     ],
 
 
     "item1": [
         "You obtain a TOY SWORD!", 
         "It's a sword made of paper.\nIt might look harmless, but\nat least the risk of paper\ncuts is real."
+    ],
+
+
+    "item2": [
+        "You obtain the BOOK OF\nUNBELIEVABLE MAGIC!",
+        "The book teaches you how\nto throw purple fireballs.\nOrange fireballs requires\nmore advanced magic."
     ],
 
 

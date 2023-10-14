@@ -16,12 +16,15 @@ export class Crate extends CollisionObject {
     private readonly particles : ParticleGenerator;
     private readonly collectibles : CollectibleGenerator;
 
+    private purpleToggleCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+
     public readonly stageTileIndex : number = 0;
 
 
     constructor(x : number, y : number, stageTileIndex : number,
         particles : ParticleGenerator, collectibles : CollectibleGenerator,
-        id : number = 0) {
+        id : number = 0, 
+        purpleToggleCallback? : (event : ProgramEvent) => void) {
 
         super(x, y, true);
 
@@ -34,6 +37,8 @@ export class Crate extends CollisionObject {
 
         this.particles = particles;
         this.collectibles = collectibles;
+
+        this.purpleToggleCallback = purpleToggleCallback;
 
         this.inCamera = true;
 
@@ -73,7 +78,11 @@ export class Crate extends CollisionObject {
         const dir = Vector.direction(o.getPosition(), this.pos);
 
         this.spawnParticles();
-        this.collectibles.spawnWeighted(this.pos, dir, weight);
+
+        if (this.id == 0) {
+            
+            this.collectibles.spawnWeighted(this.pos, dir, weight);
+        }
 
         this.exist = false;
 
@@ -117,21 +126,24 @@ export class Crate extends CollisionObject {
         collided = o.horizontalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event) || collided;
         collided = o.horizontalCollision(this.pos.x + 8, this.pos.y - 8, 16, -1, event) || collided;
         
-        if (collided && forceBreak && this.id == 0) {
+        if (collided && forceBreak && this.id != 1) {
 
             // TODO: If crates are broken with projectiles, the crates never spawn
             // hearts...
             this.breakSelf(o, 0.0, event);
+
+            if (this.id == 2) {
+
+                this.purpleToggleCallback?.(event);
+            }
         }
     }
 
 
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
-        if (!this.isActive() || !player.isActive())
+        if (!this.isActive() || !player.isActive() || this.id == 2)
             return;
-
-        const dir = Vector.direction(player.getPosition(), this.pos);
 
         if ((this.id != 1 || player.hasStrongSword()) &&
             player.doesOverlaySword(this, -1)) {

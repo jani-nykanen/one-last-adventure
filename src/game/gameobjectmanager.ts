@@ -45,6 +45,7 @@ export class GameObjectManager {
     private saveDialogueCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private initialPortalCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private doorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private purpleBlockCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -57,7 +58,8 @@ export class GameObjectManager {
         textbox : TextBox, shop : Shop,
         saveDialogueCallback? : (event : ProgramEvent) => void,
         initialPortalCallback? : (event : ProgramEvent) => void,
-        doorCallback? : (event : ProgramEvent) => void) {
+        doorCallback? : (event : ProgramEvent) => void,
+        purpleBlockCallback? : (event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -77,6 +79,7 @@ export class GameObjectManager {
         this.saveDialogueCallback = saveDialogueCallback;
         this.initialPortalCallback = initialPortalCallback;
         this.doorCallback = doorCallback;
+        this.purpleBlockCallback = purpleBlockCallback;
     }
 
 
@@ -405,7 +408,7 @@ export class GameObjectManager {
         this.crates.push(
             new Crate(
                 (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
-                this.particles, this.collectibles, id));
+                this.particles, this.collectibles, id, this.purpleBlockCallback));
     }
 
 

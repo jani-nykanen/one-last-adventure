@@ -267,4 +267,32 @@ export class MapLayer {
             }
         }
     }
+
+
+    public togglePurpleBlocks(camera : Camera) : void {
+
+        const camPos = camera.getTopCorner();
+
+        const startx = Math.round(camPos.x/TILE_WIDTH);
+        const starty = Math.round(camPos.y/TILE_HEIGHT);
+
+        const endx = startx + Math.round(camera.width/TILE_WIDTH);
+        const endy = starty + Math.round(camera.height/TILE_HEIGHT);
+
+        let tileID : number;
+        for (let layer = 0; layer < this.layers.length; ++ layer) {
+
+            for (let y = starty; y < endy; ++ y) {
+
+                for (let x = startx; x < endx; ++ x) {
+
+                    tileID = this.getTile(x, y, layer);
+                    if (tileID == 255 || tileID == 256) {
+
+                        this.layers[layer][y*this.width + x] = tileID == 255 ? 256 : 255;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -71,6 +71,7 @@ export class Player extends CollisionObject {
     private specialAnimationType : SpecialPlayerAnimationType = SpecialPlayerAnimationType.None;
     private specialAnimationTimer : number = 0;
     private specialAnimationParam : number = 0;
+    private showObtainedItem : boolean = false;
     private specialAnimationCallback : ((event : ProgramEvent) => void) | undefined = undefined;;
 
 
@@ -229,7 +230,7 @@ export class Player extends CollisionObject {
             return;
 
         const hasSword = this.progress.getProperty("item1") === 1;
-        const hasMagic = true; // this.progress.getProperty("item2") === 1;
+        const hasMagic = this.progress.getProperty("item2") === 1;
         if (!hasSword && !hasMagic)
             return;
 
@@ -542,6 +543,7 @@ export class Player extends CollisionObject {
         this.touchLadder = false;
         this.touchLadderTop = false;
         this.showIcon = false;
+        this.showObtainedItem = false;
     }
 
 
@@ -678,7 +680,7 @@ export class Player extends CollisionObject {
         let bmpItems : Bitmap | undefined;
         let sx : number;
         let sy : number;
-        if (this.specialAnimationTimer > 0) {
+        if (this.showObtainedItem) {
 
             bmpItems = canvas.getBitmap("items");
 
@@ -1015,6 +1017,7 @@ export class Player extends CollisionObject {
         this.specialAnimationTimer = 1.0;
 
         this.showIcon = false;
+        this.showObtainedItem = type == SpecialPlayerAnimationType.HoldItem;
 
         this.specialAnimationCallback = cb;
     } 

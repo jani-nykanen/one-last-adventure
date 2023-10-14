@@ -9,7 +9,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10];
+const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11];
 const OBJECT_LAYER_START = 256;
 
 
@@ -76,6 +76,8 @@ export class Stage {
 
         const modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);
 
+        let crateID : number;
+
         switch (tileID) {
 
         // Player
@@ -86,9 +88,16 @@ export class Stage {
 
         // Crate
         case 8:
+        case 11:
         case 2:
 
-            objects.addCrate(x, y, y*this.width + x, tileID == 2 ? 0 : 1);
+            crateID = 0;
+            if (tileID == 8)
+                crateID = 1;
+            else if (tileID == 11)
+                crateID = 2;
+
+            objects.addCrate(x, y, y*this.width + x, crateID);
             break;
 
         // Hint
@@ -258,5 +267,11 @@ export class Stage {
     public reset() : void {
 
         this.objectCreationWaiting = this.computeCreationWaitingArray();
+    }
+
+
+    public togglePurpleBlocks(camera : Camera) : void {
+
+        this.mapLayer.togglePurpleBlocks(camera);
     }
 }

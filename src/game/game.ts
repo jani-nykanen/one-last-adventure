@@ -167,7 +167,12 @@ export class Game implements Scene {
                 this.changeMap(this.stageIndex, event, false);
 
                 this.objects.setPlayerFrame(3, 2);
-            } );
+            },
+            (event : ProgramEvent) => {
+
+                this.stage.togglePurpleBlocks(this.camera);
+            }
+            );
         if (param === 1) {
 
             this.createInitialPlayer();
