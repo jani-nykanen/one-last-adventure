@@ -9,7 +9,8 @@ import { CollisionObject } from "./collisionobject.js";
 export class Particle extends CollisionObject {
 
 
-    private id : number = 0;
+    private column : number = 0;
+    private row : number = 0;
     private lifeTimer : number = 0;
 
     
@@ -42,7 +43,8 @@ export class Particle extends CollisionObject {
     }
 
 
-    public spawn(x : number, y : number, speedx : number, speedy : number, id : number) : void {
+    public spawn(x : number, y : number, speedx : number, speedy : number, 
+        column : number, row : number,) : void {
 
         const DEFAULT_LIFETIME : number = 180;
         const BASE_GRAVITY : number = 4.0;
@@ -53,7 +55,8 @@ export class Particle extends CollisionObject {
         this.target.x = 0;
         this.target.y = BASE_GRAVITY;
 
-        this.id = id;
+        this.column = column;
+        this.row = row;
 
         this.exist = true;
         this.inCamera = true;
@@ -70,6 +73,6 @@ export class Particle extends CollisionObject {
         const dx = Math.round(this.pos.x) - 4;
         const dy = Math.round(this.pos.y) - 4;
 
-        canvas.drawBitmap(bmp, Flip.None, dx, dy, this.id*8, 0, 8, 8);
+        canvas.drawBitmap(bmp, Flip.None, dx, dy, this.column*8, this.row*8, 8, 8);
     }
 }

@@ -68,7 +68,8 @@ export class Crate extends CollisionObject {
                 this.pos.y + DY[i], 
                 SPEED_X[i] + noisex, 
                 SPEED_Y[i] + noisey, 
-                (Math.random()*4) | 0);
+                (Math.random()*4) | 0,
+                this.id);
         }
     }
  

@@ -390,7 +390,7 @@ export class GameObjectManager {
 
             if (this.relocatePlayer) {
 
-                this.player.respawn((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
+                this.player?.respawn((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
                 this.relocatePlayer = false;
                 return;
             }
@@ -525,19 +525,19 @@ export class GameObjectManager {
     }
 
 
-    public getPlayerHealth = () : number => this.player.getHealth();
-    public getPlayerMaxHealth = () : number => this.player.getMaxHealth();
+    public getPlayerHealth = () : number => this.player?.getHealth();
+    public getPlayerMaxHealth = () : number => this.player?.getMaxHealth();
 
 
     public hasPlayerDied() : boolean {
 
-        return !this.player.doesExist();
+        return !this.player?.doesExist() ?? false;
     }
 
 
     public getRelativePlayerPosition = (camera : Camera) : Vector => {
 
-        const o = this.player.getPosition();
+        const o = this.player?.getPosition() ?? new Vector();
 
         return new Vector(o.x % camera.width, o.y % camera.height);
     }
@@ -554,7 +554,7 @@ export class GameObjectManager {
 
     public killPlayer(event : ProgramEvent) : void {
 
-        this.player.kill(event);
+        this.player?.kill(event);
     }
 
 

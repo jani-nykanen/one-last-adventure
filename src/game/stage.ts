@@ -26,7 +26,7 @@ export class Stage {
 
     private background : Background;
 
-    private index : number;
+    private index : number; // Unused?
     private mapName : string;
     
     public readonly width : number;
@@ -137,6 +137,33 @@ export class Stage {
             }
             break;
         }
+    }
+
+
+    private removePurpleSwitches(camera : Camera) : void {
+
+        const camPos = camera.getTopCorner();
+
+        const startx = Math.round(camPos.x/TILE_WIDTH);
+        const starty = Math.round(camPos.y/TILE_HEIGHT);
+
+        const endx = startx + Math.round(camera.width/TILE_WIDTH);
+        const endy = starty + Math.round(camera.height/TILE_HEIGHT);
+
+        let objID : number;
+
+        for (let y = starty; y < endy; ++ y) {
+
+            for (let x = startx; x < endx; ++ x) {
+
+                objID = this.objectLayer[y*this.width + x] ?? -1;
+                if (objID == 256 + 11) {
+
+                    this.objectLayer[y*this.width + x] = 0;
+                }
+            }
+        }
+        
     }
 
 
@@ -273,5 +300,9 @@ export class Stage {
     public togglePurpleBlocks(camera : Camera) : void {
 
         this.mapLayer.togglePurpleBlocks(camera);
+    
+        // Also remove the "block switches" to avoid deadlock
+        // situations
+        this.removePurpleSwitches(camera);
     }
 }

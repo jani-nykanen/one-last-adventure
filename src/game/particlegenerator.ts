@@ -20,9 +20,11 @@ export class ParticleGenerator {
     }
 
 
-    public spawn(x : number, y : number, speedx : number, speedy : number, id : number) : void {
+    public spawn(x : number, y : number, 
+        speedx : number, speedy : number, 
+        column : number, row : number) : void {
 
-        (next(this.particles, Particle) as Particle).spawn(x, y, speedx, speedy, id);
+        (next(this.particles, Particle) as Particle).spawn(x, y, speedx, speedy, column, row);
     }
 
 
