@@ -68,6 +68,19 @@ export class Crate extends CollisionObject {
     }
  
 
+    private breakSelf(o : CollisionObject, weight : number, event : ProgramEvent) : void {
+
+        const dir = Vector.direction(o.getPosition(), this.pos);
+
+        this.spawnParticles();
+        this.collectibles.spawnWeighted(this.pos, dir, 1.0 - weight);
+
+        this.exist = false;
+
+        event.audio.playSample(event.assets.getSample("break"), 0.60);
+    }
+
+
     protected updateEvent(event : ProgramEvent) : void {
         
         const GRAVITY = 4.0;
@@ -88,7 +101,7 @@ export class Crate extends CollisionObject {
     }
 
 
-    public collisionObjectCollision(o : CollisionObject, event : ProgramEvent) : void {
+    public collisionObjectCollision(o : CollisionObject, event : ProgramEvent, forceBreak : boolean = false) : void {
 
         if (!this.isActive() || !o.isActive())
             return;
@@ -97,10 +110,19 @@ export class Crate extends CollisionObject {
         // making four function calls (that will check the same thing, anyway,
         // though)?
 
-        o.verticalCollision(this.pos.x - 7, this.pos.y - 8, 14, 1, event);
-        o.verticalCollision(this.pos.x - 7, this.pos.y + 8, 14, -1, event);
-        o.horizontalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event);
-        o.horizontalCollision(this.pos.x + 8, this.pos.y - 8, 16, -1, event);
+        let collided = false;
+
+        collided = o.verticalCollision(this.pos.x - 7, this.pos.y - 8, 14, 1, event) || collided;
+        collided = o.verticalCollision(this.pos.x - 7, this.pos.y + 8, 14, -1, event) || collided;
+        collided = o.horizontalCollision(this.pos.x - 8, this.pos.y - 8, 16, 1, event) || collided;
+        collided = o.horizontalCollision(this.pos.x + 8, this.pos.y - 8, 16, -1, event) || collided;
+        
+        if (collided && forceBreak && this.id == 0) {
+
+            // TODO: If crates are broken with projectiles, the crates never spawn
+            // hearts...
+            this.breakSelf(o, 1.0, event);
+        }
     }
 
 
@@ -114,14 +136,8 @@ export class Crate extends CollisionObject {
         if ((this.id != 1 || player.hasStrongSword()) &&
             player.doesOverlaySword(this, -1)) {
             
-            this.spawnParticles();
-            this.collectibles.spawnWeighted(
-                this.pos, dir, 1.0 - player.getHealth()/player.getMaxHealth());
-
+            this.breakSelf(player, 1.0 - player.getHealth()/player.getMaxHealth(), event);
             player.downAttackBounce();
-            this.exist = false;
-
-            event.audio.playSample(event.assets.getSample("break"), 0.60);
         }
     }
 

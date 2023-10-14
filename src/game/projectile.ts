@@ -28,7 +28,7 @@ export class Projectile extends CollisionObject {
         this.spr = new Sprite(16, 16);
 
         this.collisionBox = new Rectangle(0, 0, 4, 4);
-        this.hitbox = new Rectangle(0, 0, 8, 8);
+        this.hitbox = new Rectangle(0, 0, 4, 4);
     }
 
 
@@ -39,6 +39,8 @@ export class Projectile extends CollisionObject {
 
         this.dying = true;
         this.spr.setFrame(4, this.id);
+
+        event.audio.playSample(event.assets.getSample("magic_hit"), 0.60);
     }
 
 
@@ -57,7 +59,7 @@ export class Projectile extends CollisionObject {
         if (!this.inCamera) {
 
             this.exist = false;
-            console.log("Projectile destroyed");
+            // console.log("Projectile destroyed");
         }
     }
 
@@ -71,6 +73,15 @@ export class Projectile extends CollisionObject {
     protected horizontalCollisionEvent(dir : 1 | -1, event : ProgramEvent): void {
         
         this.kill(event);
+    }
+
+
+    protected updateEvent(event : ProgramEvent): void {
+
+        const LAST_FRAME : number[] = [2];
+        const ANIM_SPEED : number[] = [4];
+
+        this.spr.animate(this.id, 0, LAST_FRAME[this.id] ?? 3, ANIM_SPEED[this.id] ?? 4, event.tick);
     }
 
 

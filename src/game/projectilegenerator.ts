@@ -46,7 +46,7 @@ export class ProjectileGenerator {
 
             for (let o of crates) {
 
-                o.collisionObjectCollision(p, event);
+                o.collisionObjectCollision(p, event, true);
             }
         }
     }

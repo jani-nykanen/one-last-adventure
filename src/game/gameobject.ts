@@ -10,6 +10,8 @@ import { Camera } from "./camera.js";
 export class GameObject implements ExistingObject {
 
 
+    protected oldPos : Vector;
+
     protected pos : Vector;
     protected speed : Vector;
     protected target : Vector;
@@ -30,6 +32,8 @@ export class GameObject implements ExistingObject {
         this.speed = new Vector();
         this.target = new Vector();
         this.friction = new Vector(1, 1);
+
+        this.oldPos = this.pos.clone();
 
         this.hitbox = new Rectangle();
 
@@ -79,6 +83,9 @@ export class GameObject implements ExistingObject {
             }
             return;
         }
+
+        this.oldPos.x = this.pos.x;
+        this.oldPos.y = this.pos.y;
 
         this.updateEvent?.(event);
         this.updateMovement(event);
@@ -130,4 +137,11 @@ export class GameObject implements ExistingObject {
 
     public overlayRect = (shift : Vector, hitbox : Rectangle) : boolean => overlayRect(this.pos, this.hitbox, shift, hitbox);
     public overlay = (o : GameObject) : boolean => overlayRect(this.pos, this.hitbox, o.pos, o.hitbox);
+
+
+    public setOldPos(x : number, y : number) : void {
+
+        this.oldPos.x = x;
+        this.oldPos.y = y;
+    }
 }

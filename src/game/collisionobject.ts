@@ -46,13 +46,34 @@ export class CollisionObject extends GameObject {
         const FAR_MARGIN = 4;
 
         if (!this.exist || this.dying || 
-            this.speed.y*dir < 0 || 
+            this.speed.y*dir <= 0 || 
             this.pos.x + this.collisionBox.x + this.collisionBox.w/2 < x ||
             this.pos.x + this.collisionBox.x - this.collisionBox.w/2 > x + w)
             return false;
 
-        const border = this.pos.y + this.collisionBox.y + this.collisionBox.h/2*dir;
 
+        const oldEdge = this.oldPos.y + this.collisionBox.y + this.collisionBox.h/2*dir;
+        const edge = this.pos.y + this.collisionBox.y + this.collisionBox.h/2*dir;
+
+        if ((dir == 1 &&
+            oldEdge < y + (FAR_MARGIN + this.speed.y)*event.tick &&
+            edge >= y - NEAR_MARGIN*event.tick) ||
+            (dir == -1 &&
+            oldEdge > y - (FAR_MARGIN + Math.abs(this.speed.y))*event.tick &&
+            edge <= y + NEAR_MARGIN*event.tick)){
+
+            this.pos.y = y - this.collisionBox.y - this.collisionBox.h/2*dir;
+            this.speed.y *= -this.bounceFactor.y;
+
+            this.touchSurface ||= dir == 1;
+
+            this.verticalCollisionEvent?.(dir, event);
+
+            return true;
+        }
+
+        /*    
+        const border = this.pos.y + this.collisionBox.y + this.collisionBox.h/2*dir;
         if (border*dir >= (y - dir*NEAR_MARGIN)*dir && 
             border*dir < (y + dir*FAR_MARGIN + Math.abs(this.speed.y)*event.tick)*dir) {
 
@@ -65,6 +86,7 @@ export class CollisionObject extends GameObject {
 
             return true;
         }
+        */
         return false;
     }
 
@@ -86,11 +108,28 @@ export class CollisionObject extends GameObject {
             this.pos.y + this.collisionBox.y - this.collisionBox.h/2 > y + h - TINY_OFFSET)
             return false;
 
-        const border = this.pos.x + this.collisionBox.x + this.collisionBox.w/2*dir;
+        // 
 
-        // TODO: Replace one of the borders with "old pos border" to properly support
-        // projectiles
+        const oldEdge = this.oldPos.x + this.collisionBox.x + this.collisionBox.w/2*dir;
+        const edge = this.pos.x + this.collisionBox.x + this.collisionBox.w/2*dir;
 
+        if ((dir == 1 &&
+            oldEdge < x + (FAR_MARGIN + this.speed.x)*event.tick &&
+            edge >= x - NEAR_MARGIN*event.tick) ||
+            (dir == -1 &&
+            oldEdge > x - (FAR_MARGIN + Math.abs(this.speed.x))*event.tick &&
+            edge <= x + NEAR_MARGIN*event.tick)){
+
+            this.pos.x = x - this.collisionBox.x - this.collisionBox.w/2*dir;
+            this.speed.x *= -this.bounceFactor.x;
+
+            this.horizontalCollisionEvent?.(dir, event);
+
+            return true;
+        }
+
+/*  // This did not work
+        
         if (border*dir >= (x - NEAR_MARGIN*dir)*dir && 
             border*dir < (x + FAR_MARGIN*dir + Math.abs(this.speed.x)*event.tick)*dir) {
 
@@ -101,6 +140,7 @@ export class CollisionObject extends GameObject {
 
             return true;
         }
+        */
         return false;
     }
 

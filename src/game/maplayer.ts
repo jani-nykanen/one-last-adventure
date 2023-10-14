@@ -135,7 +135,7 @@ export class MapLayer {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
-        const MARGIN = 1;
+        const MARGIN = 2;
 
         const HURT_WIDTH : number = 16;
         const HURT_HEIGHT : number = 8;

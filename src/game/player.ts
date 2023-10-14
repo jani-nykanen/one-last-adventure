@@ -153,10 +153,15 @@ export class Player extends CollisionObject {
 
             this.pos.x = this.ladderX;
 
+            event.audio.playSample(event.assets.getSample("climb"), 0.60);
+
+            this.spr.setFrame(4, 1);
+
             if (this.touchLadderTop) {
 
                 this.touchLadder = true;
                 this.pos.y += SHIFT_DOWN;
+                this.oldPos.y += SHIFT_DOWN;
             }
             return true;
         }
@@ -168,7 +173,7 @@ export class Player extends CollisionObject {
 
         const CLIMB_SPEED : number = 0.75;
         const CLIMB_JUMP_TIME : number = 8;
-        const JUMP_STICK_EPS = 0.05;
+        const JUMP_STICK_EPS : number = 0.05;
 
         if (!this.climbing)
             return false;
@@ -202,7 +207,7 @@ export class Player extends CollisionObject {
     }
 
 
-    private spawnMagic(event : ProgramEvent) : void {
+    private castSpell(event : ProgramEvent) : void {
 
         const SPELL_SPEED : number = 3;
 
@@ -210,6 +215,8 @@ export class Player extends CollisionObject {
         const dy = this.pos.y + 2;
 
         this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, true);
+
+        event.audio.playSample(event.assets.getSample("magic"), 0.60);
     }
 
 
@@ -230,6 +237,8 @@ export class Player extends CollisionObject {
         const magicButtonDown = event.input.getAction("magic") == InputState.Pressed;
 
         if ((hasSword && swordButtonDown) || (hasMagic && magicButtonDown)) {
+
+            this.usingMagic = false;
 
             if (swordButtonDown &&
                 !this.climbing &&
@@ -255,15 +264,13 @@ export class Player extends CollisionObject {
 
             if (this.usingMagic) {
 
-                this.spawnMagic(event);
+                this.castSpell(event);
             }
             else {
 
                 ++ this.swordHitId;
+                event.audio.playSample(event.assets.getSample("sword"), 0.60);
             }
-
-            event.audio.playSample(event.assets.getSample("sword"), 0.60);
-            // TODO: Different sound effect for magic
         }
     }
 

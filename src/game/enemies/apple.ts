@@ -29,6 +29,8 @@ export class Apple extends Enemy {
         this.getGravity = false;
 
         this.bounceFactor.x = 1;
+
+        this.weight = 0.80;
     }
 
 
