@@ -67,9 +67,11 @@
         {"name": "magic", "path": "magic.wav"},
         {"name": "throw", "path": "throw.wav"},
         {"name": "magic_hit", "path": "magic_hit.wav"},
+        {"name": "potion", "path": "potion.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_island", "path": "theme_island.ogg"},
+        {"name": "theme_caves", "path": "theme_caves.ogg"},
         {"name": "theme_void", "path": "theme_void.ogg"}
     ],
 

@@ -83,7 +83,7 @@ export class Crate extends CollisionObject {
         if (this.id == 0) {
             
             this.collectibles.spawnWeighted(this.pos, dir, 
-                1.0 - player.getHealth()/player.getMaxHealth());
+                0.50, player.getHealthWeight(), player.getMagicWeight());
         }
 
         this.exist = false;

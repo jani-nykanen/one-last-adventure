@@ -42,6 +42,8 @@ export class Enemy extends CollisionObject {
 
     protected didTouchSurface : boolean = false;
 
+    protected dropProbability : number = 0.50;
+
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
     protected readonly projectiles : ProjectileGenerator;
@@ -98,7 +100,8 @@ export class Enemy extends CollisionObject {
             this.collectibles.spawnWeighted(
                 this.pos, 
                 Vector.direction(player.getPosition(), this.pos),
-                1.0 - player.getHealth()/player.getMaxHealth());
+                this.dropProbability,
+                player.getHealthWeight(), player.getMagicWeight());
 
             return;
         }
@@ -117,7 +120,8 @@ export class Enemy extends CollisionObject {
     protected die(event : ProgramEvent) : boolean {
         
         const DEATH_SPEED : number = 5;
-
+        
+        this.flip = Flip.None;
         this.spr.animate(0, 0, 4, DEATH_SPEED, event.tick);
 
         return this.spr.getColumn() == 4;
@@ -182,7 +186,7 @@ export class Enemy extends CollisionObject {
             this.hurt(damage, player, event);
             if (!player.downAttackBounce()) {
 
-                this.speed.x = KNOCKBACK_SPEED*dir.x/this.weight;
+                this.speed.x = KNOCKBACK_SPEED*dir.x*this.weight;
             }
 
             this.messages.spawn(this.pos.x, this.pos.y - 6, -damage);

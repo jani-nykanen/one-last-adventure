@@ -111,7 +111,7 @@ export class Projectile extends CollisionObject {
         const dx = Math.round(this.pos.x) - this.spr.width/2;
         const dy = Math.round(this.pos.y) - this.spr.height/2;
 
-        const flip = this.dying || this.speed.x > 0 ? Flip.None : Flip.Horizontal;
+        const flip = this.dying || this.speed.x < 0 ? Flip.None : Flip.Horizontal;
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
     }

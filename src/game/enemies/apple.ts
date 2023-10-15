@@ -30,7 +30,7 @@ export class Apple extends Enemy {
 
         this.bounceFactor.x = 1;
 
-        this.weight = 0.80;
+        this.weight = 1.10;
     }
 
 

@@ -31,15 +31,18 @@ export class CollectibleGenerator {
     }
 
 
-    public spawnWeighted(pos : Vector, dir : Vector, healthWeight : number = 0.0) : void {
+    public spawnWeighted(pos : Vector, dir : Vector, 
+        dropProbability : number = 0.50,
+        healthWeight : number = 0.0,
+        magicWeight : number = 0.0) : void {
 
-        const DROP_PROB : number = 0.50; // TODO: pass as parameter
-        const HEALTH_BASE_PROB : number = 0.5;
+        const HEALTH_BASE_PROB : number = 0.33;
+        const MAGIC_BASE_PROB : number = 0.33;
 
         // TODO: Spawn hearts/magic potions depending on player
         // health & magic count?
 
-        if (Math.random() > DROP_PROB)
+        if (Math.random() > dropProbability)
             return;
 
         const speedx = dir.x*(0.5 + Math.random()*1.0);
@@ -48,6 +51,8 @@ export class CollectibleGenerator {
         let type = CollectibleType.Coin;
         if (Math.random() < HEALTH_BASE_PROB*healthWeight)
             type = CollectibleType.Heart;
+        else if (Math.random() < MAGIC_BASE_PROB*magicWeight)
+            type = CollectibleType.MagicPotion;
 
         this.spawn(pos.x, pos.y, speedx, speedy, type);
     }

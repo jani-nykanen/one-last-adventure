@@ -488,7 +488,7 @@ export class Player extends CollisionObject {
     private updateTimers(event : ProgramEvent) : void {
 
         const JUMP_SPEED : number = -2.25;
-        const MAGIC_RECOVER_SPEED : number = 1.0/240.0;
+        const MAGIC_RECOVER_SPEED : number = 1.0/300.0;
 
         if (this.knockbackTimer > 0) {
 
@@ -947,6 +947,22 @@ export class Player extends CollisionObject {
     }
 
 
+    public recoverMagic(amount : number) : void {
+
+        if (this.progress.getProperty("shopitem7")) {
+
+            amount *= 2.0;
+        }
+
+        this.magic = Math.min(this.maxMagic, this.magic + amount);
+
+        this.flyingMessages.spawn(
+            this.pos.x, this.pos.y - 8, 
+            amount, FlyingMessageSymbol.Magic,
+            new RGBA(182, 255, 0));
+    }
+
+
     public getDamage() : number {
 
         return (this.downAttacking ? 4 : 2) + this.attackPower;
@@ -1127,4 +1143,8 @@ export class Player extends CollisionObject {
 
 
     public getMaxMagic = () : number => this.maxMagic;
+
+
+    public getHealthWeight = () : number => 1.0 - this.health/this.maxHealth;
+    public getMagicWeight = () : number => 1.0 - this.magic/this.maxMagic;
 }

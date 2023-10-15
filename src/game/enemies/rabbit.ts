@@ -24,7 +24,7 @@ export class Rabbit extends Enemy {
 
         this.specialTimer = (Math.random()*JUMP_TIME) | 0;
 
-        this.weight = 0.90;
+        this.weight = 1.10;
     }
 
 

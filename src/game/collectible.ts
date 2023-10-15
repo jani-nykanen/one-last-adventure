@@ -98,8 +98,10 @@ export class Collectible extends CollisionObject {
         if (!this.exist)
             return;
 
+        const shifty = this.type == CollectibleType.MagicPotion ? -1 : 0;
+
         const dx = Math.round(this.pos.x) - 8;
-        const dy = Math.round(this.pos.y) - 7;
+        const dy = Math.round(this.pos.y) - 7 + shifty;
 
         this.spr.draw(canvas, bmp, dx, dy);
     }
@@ -127,6 +129,12 @@ export class Collectible extends CollisionObject {
 
                 event.audio.playSample(event.assets.getSample("heal"), 0.60);
                 player.recoverHealth(2);
+                break;
+
+            case CollectibleType.MagicPotion:
+
+                event.audio.playSample(event.assets.getSample("potion"), 0.60);
+                player.recoverMagic(1.0);
                 break;
 
             default:

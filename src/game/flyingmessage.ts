@@ -9,7 +9,8 @@ export const enum FlyingMessageSymbol {
 
     None = 0,
     Coin = 1,
-    Heart = 2
+    Heart = 2,
+    Magic = 3,
 };
 
 
