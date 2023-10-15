@@ -60,9 +60,13 @@ export class Player extends CollisionObject {
     private health : number;
     private maxHealth : number; 
 
+    private magic : number;
+    private maxMagic : number;
+
     private attackPower : number = 3;
     private attackSpeed : number = 1;
     private armor : number = 0;
+    private magicPower : number = 2;
 
     private deathTimer : number = 0;
 
@@ -105,8 +109,11 @@ export class Player extends CollisionObject {
         this.projectiles = projectiles;
         this.progress = progress;
 
-        this.maxHealth = this.progress.getProperty("maxHealth", 6);
+        this.maxHealth = this.progress.getProperty("maxHealth", 5);
         this.health = this.maxHealth;
+        
+        this.maxMagic = this.progress.getProperty("maxMagic", 3.0);
+        this.magic = this.maxMagic;
 
         progress.setProperty("checkpointx", x);
         progress.setProperty("checkpointy", y);
@@ -215,7 +222,7 @@ export class Player extends CollisionObject {
         const dx = this.pos.x + this.dir*4;
         const dy = this.pos.y + 2;
 
-        this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, true);
+        this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, this.magicPower, true);
 
         event.audio.playSample(event.assets.getSample("magic"), 0.60);
     }
@@ -256,15 +263,22 @@ export class Player extends CollisionObject {
             }
             else {
 
-                this.attacking = true;
                 this.usingMagic = magicButtonDown && !swordButtonDown;
+                if (this.usingMagic && this.magic < 1.0) {
 
+                    event.audio.playSample(event.assets.getSample("reject"), 0.60);
+                    return;
+                }
+
+                this.attacking = true;
+                
                 this.spr.setFrame(0, 2);
                 this.sprWeapon.setFrame(0, 0);
             }
 
             if (this.usingMagic) {
 
+                this.magic -= 1.0;
                 this.castSpell(event);
             }
             else {
@@ -471,7 +485,8 @@ export class Player extends CollisionObject {
 
     private updateTimers(event : ProgramEvent) : void {
 
-        const JUMP_SPEED = -2.25;
+        const JUMP_SPEED : number = -2.25;
+        const MAGIC_RECOVER_SPEED : number = 1.0/240.0;
 
         if (this.knockbackTimer > 0) {
 
@@ -507,6 +522,11 @@ export class Player extends CollisionObject {
 
             this.downAttackWait -= event.tick;
         }
+
+        if (this.magic < this.maxMagic) {
+
+            this.magic = Math.min(this.maxMagic, this.magic + MAGIC_RECOVER_SPEED*event.tick);
+        }
     }
 
 
@@ -534,6 +554,18 @@ export class Player extends CollisionObject {
         if (this.progress.getProperty("shopitem5")) {
 
             ++ this.armor;
+        }
+
+        this.magicPower = 2;
+        if (this.progress.getProperty("shopitem4")) {
+
+            ++ this.magicPower;
+        }
+
+        this.maxMagic = 3;
+        if (this.progress.getProperty("shopitem2")) {
+
+            ++ this.maxMagic;
         }
     }
 
@@ -1062,4 +1094,18 @@ export class Player extends CollisionObject {
         
         return this.climbing;
     }
+
+
+    public getMagicAmount() : number | undefined {
+
+        if (this.progress.getProperty("item2") != 1) {
+
+            return undefined;
+        }
+
+        return this.magic;
+    }
+
+
+    public getMaxMagic = () : number => this.maxMagic;
 }

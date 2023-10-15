@@ -5,6 +5,7 @@ import { CollisionObject } from "./collisionobject.js";
 import { Crate } from "./crate.js";
 import { next } from "./existingobject.js";
 import { Particle } from "./particle.js";
+import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 
 
@@ -39,7 +40,7 @@ export class ParticleGenerator {
     }
 
 
-    public crateCollision(crates : Crate[], event : ProgramEvent) : void {
+    public crateCollision(crates : Crate[], player : Player, event : ProgramEvent) : void {
 
         for (let p of this.particles) {
             
@@ -48,7 +49,7 @@ export class ParticleGenerator {
 
             for (let o of crates) {
 
-                o.collisionObjectCollision(p, event);
+                o.collisionObjectCollision(p, player, event);
             }
         }
     }

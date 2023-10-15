@@ -65,6 +65,7 @@
         {"name": "door", "path": "door.wav"},
         {"name": "reject", "path": "reject.wav"},
         {"name": "magic", "path": "magic.wav"},
+        {"name": "throw", "path": "throw.wav"},
         {"name": "magic_hit", "path": "magic_hit.wav"},
 
         {"name": "item", "path": "item.ogg"},

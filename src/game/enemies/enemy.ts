@@ -8,6 +8,7 @@ import { FlyingMessageGenerator } from "../flyingmessagegenerator.js";
 import { CollectibleGenerator } from "../collectiblegenerator.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Camera } from "../camera.js";
+import { Projectile } from "../projectile.js";
 
 
 export class Enemy extends CollisionObject {
@@ -28,7 +29,14 @@ export class Enemy extends CollisionObject {
     protected weight : number = 1.0;
     protected getGravity : boolean = true;
 
+    // All the enemies share these special properties since
+    // I don't want to repeat the constructor for each enemy type
+    // separetely, and that certain code compressor like Closure
+    // do not always like if some member variables are first time
+    // defined outside the constructor
     protected specialTimer : number = 0;
+    protected specialActionActive : boolean = false;
+
     protected dir : number = 0;
 
     protected didTouchSurface : boolean = false;
@@ -180,6 +188,28 @@ export class Enemy extends CollisionObject {
 
             player.hurt(-dir.x, this.damage, event);
         }
+    }
+
+
+    public projectileCollision(o : Projectile, player : Player, event : ProgramEvent) : boolean {
+
+        const KNOCKBACK_SPEED : number = 1.5;
+
+        if (!o.isActive() || !this.isActive || !o.isFriendly())
+            return false;
+
+            
+        if (o.overlay(this)) {
+
+            o.kill(event);
+            this.hurt(o.getDamage(), player, event);
+            this.messages.spawn(this.pos.x, this.pos.y - 6, -o.getDamage());
+
+            this.speed.x = -KNOCKBACK_SPEED*Math.sign(o.getPosition().x - this.pos.x)/this.weight;
+
+            return true;
+        }
+        return false;
     }
 
 

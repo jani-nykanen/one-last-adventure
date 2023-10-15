@@ -3,7 +3,9 @@ import { Canvas } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
 import { CollisionObject } from "./collisionobject.js";
 import { Crate } from "./crate.js";
+import { Enemy } from "./enemies/enemy.js";
 import { next } from "./existingobject.js";
+import { Player } from "./player.js";
 import { Projectile } from "./projectile.js";
 import { Stage } from "./stage.js";
 
@@ -20,9 +22,10 @@ export class ProjectileGenerator {
     }
 
 
-    public spawn(x : number, y : number, speedx : number, speedy : number, id : number, friendly : boolean = true) : void {
+    public spawn(x : number, y : number, speedx : number, speedy : number, 
+        id : number, damage : number, friendly : boolean = true) : void {
 
-        (next(this.projectiles, Projectile) as Projectile).spawn(x, y, speedx, speedy, id, friendly);
+        (next(this.projectiles, Projectile) as Projectile).spawn(x, y, speedx, speedy, id, damage, friendly);
     }
 
 
@@ -37,7 +40,7 @@ export class ProjectileGenerator {
     }
 
 
-    public crateCollision(crates : Crate[], event : ProgramEvent) : void {
+    public crateCollision(crates : Crate[], player : Player, event : ProgramEvent) : void {
 
         for (let p of this.projectiles) {
             
@@ -46,7 +49,22 @@ export class ProjectileGenerator {
 
             for (let o of crates) {
 
-                o.collisionObjectCollision(p, event, true);
+                o.collisionObjectCollision(p, player, event, true);
+            }
+        }
+    }
+
+
+    public enemyCollision(enemies : Enemy[], player : Player, event : ProgramEvent) : void {
+
+        for (let p of this.projectiles) {
+
+            if (!p.isActive())
+                continue;
+
+            for (let e of enemies) {
+
+                e.projectileCollision(p, player, event);
             }
         }
     }

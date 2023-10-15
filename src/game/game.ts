@@ -16,6 +16,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Story } from "./story.js";
 import { getMapName } from "./mapnames.js";
 import { Shop } from "./shop.js";
+import { updateSpeedAxis } from "./utility.js";
 
 
 export class Game implements Scene {
@@ -34,6 +35,8 @@ export class Game implements Scene {
     private story : Story;
 
     private stageIndex : number = 0;
+
+    private oldMagic : number = 0;
 
 
     constructor() {
@@ -72,6 +75,8 @@ export class Game implements Scene {
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
 
         this.playMusic(event);
+
+        this.oldMagic = this.objects.getPlayerMagic() ?? 3.0;
     }
 
 
@@ -87,6 +92,48 @@ export class Game implements Scene {
         this.reset(event, recreatePlayer);
     }
 
+
+    private drawMagicBar(canvas : Canvas, cannotUse : boolean,
+        t : number, dx : number, dy : number, dw : number, dh : number) : void {
+
+        // Backround
+        canvas.setColor(0, 0, 0);
+        canvas.fillRect(dx, dy, dw, dh);
+        canvas.setColor(73, 73, 73);
+        canvas.fillRect(dx + 1, dy + 1, dw - 2, dh - 2);
+        canvas.setColor(146, 146, 146);
+        canvas.fillRect(dx + 1, dy + 1, dw - 3, dh - 3);
+
+        // Actual bar
+        const w = (t*(dw - 2)) | 0;
+
+        if (cannotUse) {
+            
+            canvas.setColor(146, 0, 109);
+        }
+        else {
+
+            canvas.setColor(219, 36, 182);
+        }
+        canvas.fillRect(dx + 1, dy + 1, w, dh - 2);
+
+        if (w > 1) {
+
+            if (cannotUse) {
+
+                canvas.setColor(219, 36, 182);
+            }
+            else {
+
+                canvas.setColor(255, 146, 255);
+            }
+
+            canvas.fillRect(dx + 1, dy +1, w - 1, dh - 3);
+        }
+
+        canvas.setColor();
+    }
+
     
 
     private drawHUD(canvas : Canvas) : void {
@@ -98,6 +145,9 @@ export class Game implements Scene {
         const maxHealth = this.objects.getPlayerMaxHealth();
         const coins = this.progress.getProperty("coins", 0);
 
+        const magic = this.objects.getPlayerMagic();
+        const maxMagic = this.objects.getPlayerMaxMagic();
+
         let dx : number;
 
         canvas.setColor();
@@ -107,6 +157,19 @@ export class Game implements Scene {
 
         canvas.drawBitmap(bmp, Flip.None, -1, -2, 0, 0, 16, 16);
         canvas.drawText(bmpFont, healthStr, 12, -1, -7);
+
+        // Magic
+
+        let t : number;
+        if (magic !== undefined) {
+
+            canvas.drawBitmap(bmp, Flip.None, -1, canvas.height - 15, 48, 0, 16, 16);
+        
+            t = this.oldMagic / maxMagic;
+            this.drawMagicBar(canvas, magic < 1.0, this.oldMagic/maxMagic,
+                14, canvas.height - 10, maxMagic*10, 8);
+
+        }
 
         // Coins
         const coinStr = "*" + String(coins); 
@@ -128,6 +191,14 @@ export class Game implements Scene {
             this.objects.addPlayer((cx/TILE_WIDTH) | 0, (cy/TILE_HEIGHT) | 0);
         }
     } 
+
+
+    private updateHUD(event : ProgramEvent) : void {
+
+        const BAR_UPDATE_SPEED : number = 1.0/10.0;
+
+        this.oldMagic = updateSpeedAxis(this.oldMagic, this.objects.getPlayerMagic() ?? 3.0, BAR_UPDATE_SPEED*event.tick);
+    }
 
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
@@ -204,6 +275,8 @@ export class Game implements Scene {
                 undefined, new RGBA(0, 0, 0),
                 this.objects.getRelativePlayerPosition(this.camera));
         }
+
+        this.oldMagic = this.objects.getPlayerMaxMagic();
     }
 
 
@@ -244,6 +317,8 @@ export class Game implements Scene {
             this.pause.activate();
             return;
         }
+
+        this.updateHUD(event);
 
         this.objects?.update(this.camera, this.stage, event);
         this.camera?.update(event);

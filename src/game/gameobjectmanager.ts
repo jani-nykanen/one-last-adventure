@@ -179,12 +179,12 @@ export class GameObjectManager {
             for (let j = i; j < this.crates.length; ++ j) {
 
                 c2 = this.crates[j];
-                c2.collisionObjectCollision(c1, event);
+                c2.collisionObjectCollision(c1, this.player, event);
             }
 
             if (this.player !== undefined) {
 
-                c1.collisionObjectCollision(this.player, event);
+                c1.collisionObjectCollision(this.player, this.player, event);
                 c1.playerCollision(this.player, event);
 
                 if (!c1.doesExist()) {
@@ -244,9 +244,11 @@ export class GameObjectManager {
 
             for (let c of this.crates) {
 
-                c.collisionObjectCollision(e1, event);
+                c.collisionObjectCollision(e1, this.player, event);
             }
         }
+
+        this.projectiles.enemyCollision(this.enemies, this.player, event);
     }
 
 
@@ -296,13 +298,13 @@ export class GameObjectManager {
         this.updateEnemies(camera, stage, event);
 
         this.particles.update(stage, camera, event);
-        this.particles.crateCollision(this.crates, event);
+        this.particles.crateCollision(this.crates, this.player, event);
 
         this.collectibles.update(stage, camera, this.player, event);
-        this.collectibles.crateCollision(this.crates, event);
+        this.collectibles.crateCollision(this.crates, this.player, event);
 
         this.projectiles.update(stage, camera, event);
-        this.projectiles.crateCollision(this.crates, event);
+        this.projectiles.crateCollision(this.crates, this.player, event);
 
         this.updateActivableObjects(camera, event);
         this.updateHints(camera, event);
@@ -525,8 +527,12 @@ export class GameObjectManager {
     }
 
 
-    public getPlayerHealth = () : number => this.player?.getHealth();
-    public getPlayerMaxHealth = () : number => this.player?.getMaxHealth();
+    public getPlayerHealth = () : number => this.player?.getHealth() ?? 0;
+    public getPlayerMaxHealth = () : number => this.player?.getMaxHealth() ?? 0;
+
+    
+    public getPlayerMagic = () : number | undefined => this.player?.getMagicAmount();
+    public getPlayerMaxMagic = () : number => this.player?.getMaxMagic() ?? 0;
 
 
     public hasPlayerDied() : boolean {

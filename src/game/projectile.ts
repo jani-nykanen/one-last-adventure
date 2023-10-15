@@ -7,7 +7,7 @@ import { CollisionObject } from "./collisionobject.js";
 import { Sprite } from "../gfx/sprite.js";
 
 
-const DAMAGE : number[] = [2];
+// const DAMAGE : number[] = [2];
 
 
 export class Projectile extends CollisionObject {
@@ -28,19 +28,9 @@ export class Projectile extends CollisionObject {
         this.spr = new Sprite(16, 16);
 
         this.collisionBox = new Rectangle(0, 0, 4, 4);
-        this.hitbox = new Rectangle(0, 0, 4, 4);
-    }
 
-
-    private kill(event : ProgramEvent) : void {
-
-        if (this.dying)
-            return;
-
-        this.dying = true;
-        this.spr.setFrame(4, this.id);
-
-        event.audio.playSample(event.assets.getSample("magic_hit"), 0.60);
+        // TODO: Different hitbox for different types of projectiles!
+        this.hitbox = new Rectangle(0, 0, 8, 8);
     }
 
 
@@ -86,7 +76,7 @@ export class Projectile extends CollisionObject {
 
 
     public spawn(x : number, y : number, speedx : number, speedy : number, 
-        id : number, friendly : boolean = true) : void {
+        id : number, damage : number, friendly : boolean = true) : void {
 
         this.pos = new Vector(x, y);
         this.speed = new Vector(speedx, speedy);
@@ -97,7 +87,7 @@ export class Projectile extends CollisionObject {
         this.friendly = friendly;
         this.id = id;
 
-        this.damage = DAMAGE[id] ?? 1;
+        this.damage = damage; // DAMAGE[id] ?? 1;
 
         this.exist = true;
         this.inCamera = true;
@@ -115,6 +105,18 @@ export class Projectile extends CollisionObject {
         const dy = Math.round(this.pos.y) - this.spr.height/2;
 
         this.spr.draw(canvas, bmp, dx, dy, Flip.None);
+    }
+
+
+    public kill(event : ProgramEvent) : void {
+
+        if (this.dying)
+            return;
+
+        this.dying = true;
+        this.spr.setFrame(4, this.id);
+
+        event.audio.playSample(event.assets.getSample("magic_hit"), 0.60);
     }
 
 

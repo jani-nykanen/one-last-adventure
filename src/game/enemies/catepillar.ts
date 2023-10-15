@@ -13,7 +13,7 @@ export class Caterpillar extends Enemy {
         
         this.damage = 1;
 
-        this.maxHealth = 3;
+        this.maxHealth = 2;
 
         this.spr.setFrame(0, 3);
 

@@ -74,7 +74,7 @@ export class Crate extends CollisionObject {
     }
  
 
-    private breakSelf(o : CollisionObject, weight : number, event : ProgramEvent) : void {
+    private breakSelf(o : CollisionObject, player : Player, event : ProgramEvent) : void {
 
         const dir = Vector.direction(o.getPosition(), this.pos);
 
@@ -82,7 +82,8 @@ export class Crate extends CollisionObject {
 
         if (this.id == 0) {
             
-            this.collectibles.spawnWeighted(this.pos, dir, weight);
+            this.collectibles.spawnWeighted(this.pos, dir, 
+                1.0 - player.getHealth()/player.getMaxHealth());
         }
 
         this.exist = false;
@@ -111,7 +112,7 @@ export class Crate extends CollisionObject {
     }
 
 
-    public collisionObjectCollision(o : CollisionObject, event : ProgramEvent, forceBreak : boolean = false) : void {
+    public collisionObjectCollision(o : CollisionObject, player : Player, event : ProgramEvent, forceBreak : boolean = false) : void {
 
         if (!this.isActive() || !o.isActive())
             return;
@@ -131,7 +132,7 @@ export class Crate extends CollisionObject {
 
             // TODO: If crates are broken with projectiles, the crates never spawn
             // hearts...
-            this.breakSelf(o, 0.0, event);
+            this.breakSelf(o, player, event);
 
             if (this.id == 2) {
 
@@ -149,7 +150,7 @@ export class Crate extends CollisionObject {
         if ((this.id != 1 || player.hasStrongSword()) &&
             player.doesOverlaySword(this, -1)) {
             
-            this.breakSelf(player, 1.0 - player.getHealth()/player.getMaxHealth(), event);
+            this.breakSelf(player, player, event);
             player.downAttackBounce();
         }
     }

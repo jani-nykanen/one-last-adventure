@@ -65,7 +65,7 @@ export class CollectibleGenerator {
     }
 
 
-    public crateCollision(crates : Crate[], event : ProgramEvent) : void {
+    public crateCollision(crates : Crate[], player : Player, event : ProgramEvent) : void {
 
         for (let p of this.collectibles) {
             
@@ -74,7 +74,7 @@ export class CollectibleGenerator {
 
             for (let o of crates) {
 
-                o.collisionObjectCollision(p, event);
+                o.collisionObjectCollision(p, player, event);
             }
         }
     }
