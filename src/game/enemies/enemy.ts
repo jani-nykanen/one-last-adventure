@@ -9,6 +9,7 @@ import { CollectibleGenerator } from "../collectiblegenerator.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Camera } from "../camera.js";
 import { Projectile } from "../projectile.js";
+import { ProjectileGenerator } from "../projectilegenerator.js";
 
 
 export class Enemy extends CollisionObject {
@@ -43,6 +44,7 @@ export class Enemy extends CollisionObject {
 
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
+    protected readonly projectiles : ProjectileGenerator;
 
     public readonly stageTileIndex : number;
 
@@ -50,7 +52,8 @@ export class Enemy extends CollisionObject {
     constructor(x : number, y : number, 
         stageTileIndex : number,
         messages : FlyingMessageGenerator,
-        collectibles : CollectibleGenerator) {
+        collectibles : CollectibleGenerator,
+        projectiles : ProjectileGenerator) {
 
         super(x, y, true);
 
@@ -58,6 +61,7 @@ export class Enemy extends CollisionObject {
 
         this.messages = messages;
         this.collectibles = collectibles;
+        this.projectiles = projectiles;
 
         this.spr = new Sprite(16, 16);
 

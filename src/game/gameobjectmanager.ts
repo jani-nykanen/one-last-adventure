@@ -303,7 +303,7 @@ export class GameObjectManager {
         this.collectibles.update(stage, camera, this.player, event);
         this.collectibles.crateCollision(this.crates, this.player, event);
 
-        this.projectiles.update(stage, camera, event);
+        this.projectiles.update(stage, camera, this.player, event);
         this.projectiles.crateCollision(this.crates, this.player, event);
 
         this.updateActivableObjects(camera, event);
@@ -421,7 +421,7 @@ export class GameObjectManager {
         this.enemies.push(
             new type.prototype.constructor(
                 (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
-                this.flyingMessages, this.collectibles));
+                this.flyingMessages, this.collectibles, this.projectiles));
     }
 
 

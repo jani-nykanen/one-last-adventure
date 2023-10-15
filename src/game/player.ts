@@ -12,6 +12,7 @@ import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { FlyingMessageSymbol } from "./flyingmessage.js";
 import { RGBA } from "../math/rgba.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
+import { Projectile } from "./projectile.js";
 
 
 const DEATH_TIME : number = 60;
@@ -222,7 +223,8 @@ export class Player extends CollisionObject {
         const dx = this.pos.x + this.dir*4;
         const dy = this.pos.y + 2;
 
-        this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, this.magicPower, true);
+        const p = this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, this.magicPower, true);
+        p.setOldPos(this.pos.y, dy);
 
         event.audio.playSample(event.assets.getSample("magic"), 0.60);
     }
@@ -860,6 +862,23 @@ export class Player extends CollisionObject {
         if (overlayRect(this.pos, this.collisionBox, new Vector(), new Rectangle(x + w/2, y + h/2, w, h)) ) {
 
             this.hurt(-this.dir, damage, event);
+            return true;
+        }
+        return false;
+    }
+
+
+    public projectileCollision(o : Projectile, event : ProgramEvent) : boolean {
+
+
+        if (!o.isActive() || !this.isActive || o.isFriendly() || this.hurtTimer > 0)
+            return false;
+            
+        if (o.overlay(this)) {
+
+            o.kill(event);
+            this.hurt(this.pos.x > o.getPosition().x ? 1: -1, o.getDamage(), event);
+
             return true;
         }
         return false;

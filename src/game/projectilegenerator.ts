@@ -23,19 +23,25 @@ export class ProjectileGenerator {
 
 
     public spawn(x : number, y : number, speedx : number, speedy : number, 
-        id : number, damage : number, friendly : boolean = true) : void {
+        id : number, damage : number, friendly : boolean = true) : Projectile {
 
-        (next(this.projectiles, Projectile) as Projectile).spawn(x, y, speedx, speedy, id, damage, friendly);
+        const p = next(this.projectiles, Projectile) as Projectile;
+        
+        p.spawn(x, y, speedx, speedy, id, damage, friendly);
+
+        return p;
     }
 
 
-    public update(stage : Stage, camera : Camera, event : ProgramEvent) : void {
+    public update(stage : Stage, camera : Camera, player : Player, event : ProgramEvent) : void {
 
         for (let p of this.projectiles) {
 
             p.cameraCheck(camera, event);
             p.update(event);
             stage.objectCollision(p, event);
+
+            player.projectileCollision(p, event);
         }
     }
 

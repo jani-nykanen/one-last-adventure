@@ -10,6 +10,10 @@ import { Sprite } from "../gfx/sprite.js";
 // const DAMAGE : number[] = [2];
 
 
+const PROJECTILE_WIDTH : number[] = [8, 4];
+const PROJECTILE_HEIGHT : number[] = [8, 4];
+
+
 export class Projectile extends CollisionObject {
 
 
@@ -68,8 +72,8 @@ export class Projectile extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent): void {
 
-        const LAST_FRAME : number[] = [2];
-        const ANIM_SPEED : number[] = [4];
+        const LAST_FRAME : number[] = [2, 3];
+        const ANIM_SPEED : number[] = [4, 5];
 
         this.spr.animate(this.id, 0, LAST_FRAME[this.id] ?? 3, ANIM_SPEED[this.id] ?? 4, event.tick);
     }
@@ -93,6 +97,9 @@ export class Projectile extends CollisionObject {
         this.inCamera = true;
 
         this.spr.setFrame(0, this.id);
+
+        this.hitbox.w = PROJECTILE_WIDTH[this.id] ?? 8;
+        this.hitbox.h = PROJECTILE_HEIGHT[this.id] ?? 8;
     }
 
 
@@ -104,7 +111,9 @@ export class Projectile extends CollisionObject {
         const dx = Math.round(this.pos.x) - this.spr.width/2;
         const dy = Math.round(this.pos.y) - this.spr.height/2;
 
-        this.spr.draw(canvas, bmp, dx, dy, Flip.None);
+        const flip = this.dying || this.speed.x > 0 ? Flip.None : Flip.Horizontal;
+
+        this.spr.draw(canvas, bmp, dx, dy, flip);
     }
 
 
