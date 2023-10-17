@@ -53,6 +53,9 @@ export class Apple extends Enemy {
 
     protected horizontalCollisionEvent(dir : 1 | -1, event : ProgramEvent): void {
         
-        this.dir *= -1;
+        if (this.hurtTimer > 0)
+            return;
+
+        this.dir = -dir;
     }
 }
