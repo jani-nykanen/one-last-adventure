@@ -29,7 +29,7 @@ export class PinkThing extends Enemy {
 
     protected playerEvent(player: Player, event: ProgramEvent): void {
         
-        this.dir = player.getPosition().x - this.pos.x > 0 ? 1 : -1;
+        this.dir = Math.sign(player.getPosition().x - this.pos.x);
         if (this.touchSurface) {
 
             this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;

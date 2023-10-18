@@ -6,6 +6,8 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
+const MOVE_SPEED : number = 0.25;
+
 
 export class Apple extends Enemy {
 
@@ -28,15 +30,12 @@ export class Apple extends Enemy {
 
         this.getGravity = false;
 
-        this.bounceFactor.x = 1;
-
-        this.weight = 1.10;
+        this.weight = 1.05;
     }
 
 
     protected updateAI(event : ProgramEvent) : void {
         
-        const MOVE_SPEED : number = 0.25;
         const WAVE_SPEED : number = Math.PI*2/120.0;
 
         this.spr.animate(5, 0, 3, 6, event.tick);
@@ -51,10 +50,11 @@ export class Apple extends Enemy {
 
 
     protected horizontalCollisionEvent(dir : 1 | -1, event : ProgramEvent): void {
-        
-        if (this.hurtTimer > 0)
-            return;
 
         this.dir = -dir;
+        if (this.hurtTimer <= 0) {
+
+            this.speed.x = this.dir*MOVE_SPEED;
+        }
     }
 }

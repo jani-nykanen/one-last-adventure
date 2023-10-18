@@ -212,7 +212,7 @@ export class Enemy extends CollisionObject {
             this.hurt(o.getDamage(), player, event);
             this.messages.spawn(this.pos.x, this.pos.y - 6, -o.getDamage());
 
-            this.speed.x = -KNOCKBACK_SPEED*Math.sign(o.getPosition().x - this.pos.x)/this.weight;
+            this.speed.x = -KNOCKBACK_SPEED*Math.sign(o.getPosition().x - this.pos.x)*this.weight;
 
             return true;
         }

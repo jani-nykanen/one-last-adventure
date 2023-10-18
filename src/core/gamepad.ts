@@ -12,6 +12,10 @@ import { InputState } from "./inputstate.js";
 import { Vector } from "../math/vector.js";
 
 
+// TODO: Some weird type stuff going here,
+// pad can be undefined
+
+
 // Gamepad was taken...
 export class GamePad {
 
@@ -50,7 +54,7 @@ export class GamePad {
                 return;
             }
 
-            const gp = navigator.getGamepads()[ev["gamepad"].index];
+            const gp = navigator.getGamepads()[ev["gamepad"].index] ?? null;
             this.index = ev["gamepad"].index;
             this.pad = gp;
 
@@ -69,12 +73,12 @@ export class GamePad {
     }
 
 
-    private updateButtons(pad : Gamepad | null) : void {
+    private updateButtons(pad : Gamepad | null | undefined) : void {
 
         // TODO: What is the purpose of this...?
         // TODO 2: The TODO above is six months old, and I still have no idea.
         // Maybe if gamepad is disconnected this is needed?
-        if (pad === null) {
+        if (pad === null || pad === undefined) {
 
             for (let k in this.buttons) {
 
@@ -117,11 +121,11 @@ export class GamePad {
     }
 
 
-    private updateStick(pad : Gamepad | null) : void {
+    private updateStick(pad : Gamepad | null | undefined) : void {
         
         const DEADZONE = 0.25;
 
-        if (pad === null)
+        if (pad === null || pad === undefined)
             return;
 
         let noLeftStick = true;
@@ -156,7 +160,7 @@ export class GamePad {
     }
 
 
-    private updateGamepad(pad : Gamepad | null) : void {
+    private updateGamepad(pad : Gamepad | null | undefined) : void {
         
         this.updateStick(pad);
         this.updateButtons(pad);

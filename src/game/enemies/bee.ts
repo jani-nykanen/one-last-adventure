@@ -26,7 +26,7 @@ export class Bee extends Enemy {
 
         this.getGravity = false;
 
-        this.weight = 0.60;
+        this.weight = 0.50;
 
         this.checkVerticalCameraCollision = true;
         this.disableCollisions = true;
