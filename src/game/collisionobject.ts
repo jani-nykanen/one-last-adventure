@@ -12,7 +12,7 @@ export class CollisionObject extends GameObject {
     protected touchSurface : boolean = false;
 
     protected bounceFactor : Vector;
-
+    
 
     constructor(x : number = 0, y : number = 0, exist : boolean = true) {
 

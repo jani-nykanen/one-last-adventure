@@ -46,7 +46,6 @@ export class Apple extends Enemy {
         this.specialTimer = (this.specialTimer + WAVE_SPEED*event.tick) % (Math.PI*2);
 
         this.target.x = this.dir*MOVE_SPEED;
-
         this.target.y = Math.sin(this.specialTimer)*0.25;
     }
 

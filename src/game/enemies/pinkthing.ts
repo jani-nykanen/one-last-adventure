@@ -9,7 +9,7 @@ import { Enemy } from "./enemy.js";
 export class PinkThing extends Enemy {
 
 
-    protected playerDiff : number = 0;
+    // protected playerDiff : number = 0;
 
 
     protected init() : void {
@@ -18,7 +18,7 @@ export class PinkThing extends Enemy {
 
         this.maxHealth = 6;
 
-        this.spr.setFrame(0, 9);
+        this.spr.setFrame(0, 8);
 
         this.collisionBox.w = 8;
 
@@ -35,22 +35,22 @@ export class PinkThing extends Enemy {
             this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
         }
 
-        this.playerDiff = this.pos.y - player.getPosition().y;
+        // this.playerDiff = this.pos.y - player.getPosition().y;
     }
 
 
     protected updateAI(event : ProgramEvent) : void {
         
-        const MOVE_SPEED : number = 0.5;
+        const MOVE_SPEED : number = 1.0;
         const LEDGE_JUMP_HEIGHT : number = -1.5;
-        const NORMAL_JUMP_HEIGHT : number = -3.0;
-        const JUMP_TRIGGER_DISTANCE : number = 48;
+        const NORMAL_JUMP_HEIGHT : number = -2.5;
+        // const JUMP_TRIGGER_DISTANCE : number = 64;
         const JUMP_ANIM_EPS : number = 0.5;
 
         let frame : number;
         if (this.touchSurface) {
 
-            this.spr.animate(this.spr.getRow(), 0, 3, 4, event.tick);
+            this.spr.animate(this.spr.getRow(), 0, 3, 5, event.tick);
             this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
 
             this.target.x = this.dir*MOVE_SPEED*event.tick;
@@ -67,11 +67,12 @@ export class PinkThing extends Enemy {
         }
 
         const jumpCond1 = (this.didTouchSurface && !this.touchSurface) ;
-        const jumpCond2 = this.playerDiff > JUMP_TRIGGER_DISTANCE;
+        // const jumpCond2 = this.playerDiff > JUMP_TRIGGER_DISTANCE;
 
-        if (this.hurtTimer <= 0 && (jumpCond1 || jumpCond2)) {
+        if (this.hurtTimer <= 0 && jumpCond1) { // (jumpCond1 || jumpCond2)) {
 
             this.speed.y = jumpCond1 ? LEDGE_JUMP_HEIGHT : NORMAL_JUMP_HEIGHT;
+            event.audio.playSample(event.assets.getSample("enemy_jump"), 0.40);
         }
     }
 

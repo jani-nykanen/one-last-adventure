@@ -41,6 +41,8 @@ export class Enemy extends CollisionObject {
 
     protected dropProbability : number = 0.50;
 
+    protected checkVerticalCameraCollision : boolean = false;
+
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
     protected readonly projectiles : ProjectileGenerator;
@@ -237,7 +239,13 @@ export class Enemy extends CollisionObject {
         const cpos = camera.getTopCorner();
 
         this.horizontalCollision(cpos.x, cpos.y, camera.height, -1 ,event);
-        this.horizontalCollision(cpos.x + camera.width, cpos.y, camera.height, 1 ,event);
+        this.horizontalCollision(cpos.x + camera.width, cpos.y, camera.height, 1, event);
+
+        if (this.checkVerticalCameraCollision) {
+
+            this.verticalCollision(cpos.x, cpos.y, camera.width, -1, event);
+            this.verticalCollision(cpos.x, cpos.y + camera.height, camera.width, 1, event);
+        }
     }
     
 }
