@@ -9,7 +9,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11];
+const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 const OBJECT_LAYER_START = 256;
 
 
@@ -127,6 +127,18 @@ export class Stage {
         case 10:
 
             objects.addShopkeeper(x, y);
+            break;
+
+        // Fan
+        case 12:
+
+            objects.addFan(x, y, y*this.width + x);
+            break;
+
+        // Switch
+        case 13:
+
+            objects.addSwitch(x, y);
             break;
 
         default:

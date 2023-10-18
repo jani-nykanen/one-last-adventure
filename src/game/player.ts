@@ -13,6 +13,7 @@ import { FlyingMessageSymbol } from "./flyingmessage.js";
 import { RGBA } from "../math/rgba.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { Projectile } from "./projectile.js";
+import { clamp } from "../math/utility.js";
 
 
 const DEATH_TIME : number = 60;
@@ -1147,4 +1148,10 @@ export class Player extends CollisionObject {
 
     public getHealthWeight = () : number => 1.0 - this.health/this.maxHealth;
     public getMagicWeight = () : number => 1.0 - this.magic/this.maxMagic;
+
+
+    public updateSpeedYAxis(delta : number, upperLimit : number, event : ProgramEvent) : void {
+
+        this.speed.y = Math.max(upperLimit, this.speed.y + delta*event.tick);
+    }
 }

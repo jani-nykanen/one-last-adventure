@@ -207,6 +207,9 @@ export class Game implements Scene {
         this.genericTextbox = new TextBox(true, 27, 5);
         this.shop = new Shop(this.progress, this.genericTextbox, event);
 
+        this.story = new Story();
+        this.stageIndex = 0;
+
         if (param === 1) {
 
             this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);

@@ -11,6 +11,8 @@ export class ActivableObject extends GameObject {
     protected dir : -1 | 1 = -1;
     protected facePlayer : boolean = false;
 
+    protected activated : boolean = false;
+
 
     constructor(x : number, y : number) {
 
@@ -35,7 +37,8 @@ export class ActivableObject extends GameObject {
 
         this.generalPlayerEvent?.(player, event);
 
-        if (player.overlay(this) && (player.doesTouchSurface() || initial)) {
+        if (!this.activated && 
+            (player.overlay(this) && (player.doesTouchSurface() || initial))) {
             
             this.playerTouchEvent?.(player, event, initial);
             if (initial)

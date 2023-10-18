@@ -23,6 +23,8 @@ import { Door } from "./door.js";
 import { Shopkeeper } from "./shopkeeper.js";
 import { Shop } from "./shop.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
+import { Fan } from "./fan.js";
+import { Switch } from "./switch.js";
 
 
 export class GameObjectManager {
@@ -31,6 +33,7 @@ export class GameObjectManager {
     private player : Player | undefined = undefined;
     private crates : Crate[];
     private enemies : Enemy[];
+    private fans : Fan[];
     private hints : Hint[];
 
     private activableObjects : ActivableObject[];
@@ -63,6 +66,7 @@ export class GameObjectManager {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+        this.fans = new Array<Fan> ();
         this.hints = new Array<Hint> ();
 
         this.activableObjects = new Array<ActivableObject> ();
@@ -107,6 +111,11 @@ export class GameObjectManager {
         }
 
         for (let o of this.activableObjects) {
+
+            o.cameraCheck(camera, event);
+        }
+
+        for (let o of this.fans) {
 
             o.cameraCheck(camera, event);
         }
@@ -252,6 +261,33 @@ export class GameObjectManager {
     }
 
 
+    private updateFans(camera : Camera, stage : Stage, event : ProgramEvent) : void {
+
+        let o : Fan;
+ 
+        for (let i = 0; i < this.fans.length; ++ i) {
+
+            o = this.fans[i];
+            o.cameraCheck(camera, event);
+            if (!o.isInCamera()) {
+
+                stage.remarkCreatableObject(o.stageTileIndex);
+                this.fans.splice(i, 1);
+                continue;
+            }
+
+            if (!o.isActive())
+                continue;
+
+            o.update(event);
+            if (this.player !== undefined) {
+
+                o.playerCollision(this.player, event);
+            }
+        }
+    }
+
+
     private updateHints(camera : Camera, event : ProgramEvent) : void {
 
         let h : Hint;
@@ -296,6 +332,7 @@ export class GameObjectManager {
 
         this.updateCrates(camera, stage, event);
         this.updateEnemies(camera, stage, event);
+        this.updateFans(camera, stage, event);
 
         this.particles.update(stage, camera, event);
         this.particles.crateCollision(this.crates, this.player, event);
@@ -346,6 +383,12 @@ export class GameObjectManager {
 
         const bmpCrate = canvas.getBitmap("crate");
         const bmpEnemies = canvas.getBitmap("enemies_small");
+        const bmpFan = canvas.getBitmap("fan");
+
+        for (let o of this.fans) {
+
+            o.draw(canvas, bmpFan);
+        }
 
         for (let o of this.activableObjects) {
 
@@ -489,6 +532,27 @@ export class GameObjectManager {
     }
 
 
+    public addFan(x : number, y : number, stageIndex : number) : void {
+
+        this.fans.push(
+            new Fan(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                stageIndex));
+    }
+
+
+    public addSwitch(x : number, y : number) : void {
+
+        this.activableObjects.push(
+            new Switch(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                this.textbox));
+    }
+
+
+
     public addHint(x : number, y : number, id : number, event : ProgramEvent) : void {
 
         const hintStr = "hint" + String(id);
@@ -513,6 +577,7 @@ export class GameObjectManager {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
+        this.fans = new Array<Fan> ();
         this.hints = new Array<Hint> ();
 
         this.overridingHint = undefined;
