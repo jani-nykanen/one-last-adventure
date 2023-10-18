@@ -6,9 +6,11 @@ import { Caterpillar } from "./catepillar.js";
 import { Apple } from "./apple.js";
 import { Miner } from "./miner.js";
 import { Bat } from "./bat.js";
+import { Bee } from "./bee.js";
+import { PinkThing } from "./pinkthing.js";
 
 
-const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat];
+const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee];
 
 
 export const getEnemyType = (id : number) => ENEMY_TYPES[clamp(id, 0, ENEMY_TYPES.length-1)];

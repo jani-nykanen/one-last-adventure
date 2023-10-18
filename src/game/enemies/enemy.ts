@@ -30,11 +30,8 @@ export class Enemy extends CollisionObject {
     protected weight : number = 1.0;
     protected getGravity : boolean = true;
 
-    // All the enemies share these special properties since
-    // I don't want to repeat the constructor for each enemy type
-    // separetely, and that certain code compressor like Closure
-    // do not always like if some member variables are first time
-    // defined outside the constructor
+    // Don't ask why these are here, not inside the enemy classes
+    // that *actually* use them. Stupid reasons.
     protected specialTimer : number = 0;
     protected specialActionActive : boolean = false;
 
