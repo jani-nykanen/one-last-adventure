@@ -222,11 +222,25 @@ export class Enemy extends CollisionObject {
 
     public enemyToEnemyCollision(o : Enemy, event : ProgramEvent) : boolean {
 
+        const HIT_RADIUS : number = 8;
+
         if (!o.isActive() || !this.isActive)
             return false;
 
-        // TODO: Implement
+        const dist = Vector.distance(o.pos, this.pos);
+        const dir = Vector.direction(o.pos, this.pos);
 
+        // NOTE: Might result going through walls?
+        if (dist < HIT_RADIUS) {
+
+            this.pos.x += dir.x*(HIT_RADIUS - dist);
+            this.pos.y += dir.y*(HIT_RADIUS - dist);
+
+            o.pos.x -= dir.x*(HIT_RADIUS - dist);
+            o.pos.x -= dir.y*(HIT_RADIUS - dist);
+
+            return true;
+        }
         return false;
     }
 
@@ -238,6 +252,10 @@ export class Enemy extends CollisionObject {
 
         const cpos = camera.getTopCorner();
 
+        // This is what I call a "hacky workaround"
+        const collisionsDisabled = this.disableCollisions;
+        this.disableCollisions = false;
+
         this.horizontalCollision(cpos.x, cpos.y, camera.height, -1 ,event);
         this.horizontalCollision(cpos.x + camera.width, cpos.y, camera.height, 1, event);
 
@@ -246,6 +264,8 @@ export class Enemy extends CollisionObject {
             this.verticalCollision(cpos.x, cpos.y, camera.width, -1, event);
             this.verticalCollision(cpos.x, cpos.y + camera.height, camera.width, 1, event);
         }
+
+        this.disableCollisions = collisionsDisabled;
     }
     
 }

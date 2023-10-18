@@ -42,36 +42,22 @@ export class PinkThing extends Enemy {
     protected updateAI(event : ProgramEvent) : void {
         
         const MOVE_SPEED : number = 1.0;
-        const LEDGE_JUMP_HEIGHT : number = -1.5;
-        const NORMAL_JUMP_HEIGHT : number = -2.5;
-        // const JUMP_TRIGGER_DISTANCE : number = 64;
-        const JUMP_ANIM_EPS : number = 0.5;
+        const LEDGE_JUMP_HEIGHT : number = -2.5;
 
-        let frame : number;
         if (this.touchSurface) {
 
-            this.spr.animate(this.spr.getRow(), 0, 3, 5, event.tick);
             this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
-
             this.target.x = this.dir*MOVE_SPEED*event.tick;
         }
-        else {
 
-            frame = 0;
-            if (this.speed.y < -JUMP_ANIM_EPS)
-                frame = 4;
-            else if (this.speed.y > JUMP_ANIM_EPS)
-                frame = 5;
-
-            this.spr.setFrame(frame, this.spr.getRow());
-        }
+        this.spr.animate(this.spr.getRow(), 0, 3, 5, event.tick);
 
         const jumpCond1 = (this.didTouchSurface && !this.touchSurface) ;
         // const jumpCond2 = this.playerDiff > JUMP_TRIGGER_DISTANCE;
 
         if (this.hurtTimer <= 0 && jumpCond1) { // (jumpCond1 || jumpCond2)) {
 
-            this.speed.y = jumpCond1 ? LEDGE_JUMP_HEIGHT : NORMAL_JUMP_HEIGHT;
+            this.speed.y = LEDGE_JUMP_HEIGHT;
             event.audio.playSample(event.assets.getSample("enemy_jump"), 0.40);
         }
     }

@@ -12,6 +12,8 @@ export class CollisionObject extends GameObject {
     protected touchSurface : boolean = false;
 
     protected bounceFactor : Vector;
+
+    protected disableCollisions : boolean = false;
     
 
     constructor(x : number = 0, y : number = 0, exist : boolean = true) {
@@ -45,7 +47,8 @@ export class CollisionObject extends GameObject {
         const NEAR_MARGIN = 2;
         const FAR_MARGIN = 4;
 
-        if (!this.exist || this.dying || 
+        if (this.disableCollisions ||
+            !this.exist || this.dying || 
             this.speed.y*dir <= 0 || 
             this.pos.x + this.collisionBox.x + this.collisionBox.w/2 < x ||
             this.pos.x + this.collisionBox.x - this.collisionBox.w/2 > x + w)
@@ -102,7 +105,8 @@ export class CollisionObject extends GameObject {
 
         const TINY_OFFSET = 1;
 
-        if (!this.exist || this.dying || 
+        if (this.disableCollisions ||
+            !this.exist || this.dying || 
             this.speed.x*dir < 0 || 
             this.pos.y + this.collisionBox.y + this.collisionBox.h/2 < y + TINY_OFFSET ||
             this.pos.y + this.collisionBox.y - this.collisionBox.h/2 > y + h - TINY_OFFSET)
