@@ -81,6 +81,7 @@ export class TitleScreen implements Scene {
         new MenuButton(text[0] ?? "null",
         (event : ProgramEvent) => {
 
+            event.audio.stopMusic();
             this.goToGame(false, event);
         }),
 
@@ -96,6 +97,7 @@ export class TitleScreen implements Scene {
                 return;
             }
 
+            event.audio.stopMusic();
             this.goToGame(true, event);
         }),
 
@@ -107,6 +109,8 @@ export class TitleScreen implements Scene {
             this.menu.changeButtonText(2, this.getAudioText(text, event));
         }),
         ], true);
+
+        event.audio.fadeInMusic(event.assets.getSample("theme_title"), 0.50, 1000);
     }
 
 
