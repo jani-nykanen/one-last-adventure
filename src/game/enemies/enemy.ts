@@ -15,6 +15,8 @@ import { ProjectileGenerator } from "../projectilegenerator.js";
 export class Enemy extends CollisionObject {
 
 
+    protected initialPos : Vector;
+
     protected spr : Sprite;
     protected flip : Flip = Flip.None;
 
@@ -25,6 +27,7 @@ export class Enemy extends CollisionObject {
 
     protected swordHitId : number = -1;
 
+    protected canBeHurt : boolean = true;
     protected hurtTimer : number = 0;
 
     protected weight : number = 1.0;
@@ -42,6 +45,7 @@ export class Enemy extends CollisionObject {
     protected dropProbability : number = 0.50;
 
     protected checkVerticalCameraCollision : boolean = false;
+    protected canBeMoved : boolean = true;
 
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
@@ -57,6 +61,8 @@ export class Enemy extends CollisionObject {
         projectiles : ProjectileGenerator) {
 
         super(x, y, true);
+
+        this.initialPos = this.pos.clone();
 
         this.stageTileIndex = stageTileIndex;
 
@@ -86,6 +92,9 @@ export class Enemy extends CollisionObject {
     private hurt(damage : number, player : Player, event : ProgramEvent) : void {
 
         const HURT_TIME : number = 30;
+
+        if (!this.canBeHurt)
+            return;
 
         if ((this.health -= damage) <= 0) {
 
@@ -187,8 +196,11 @@ export class Enemy extends CollisionObject {
 
                 this.speed.x = KNOCKBACK_SPEED*dir.x*this.weight;
             }
+            
+            if (this.canBeHurt) {
 
-            this.messages.spawn(this.pos.x, this.pos.y - 6, -damage);
+                this.messages.spawn(this.pos.x, this.pos.y - 6, -damage);
+            }
         }
 
         if (this.overlay(player)) {
@@ -205,7 +217,6 @@ export class Enemy extends CollisionObject {
         if (!o.isActive() || !this.isActive || !o.isFriendly())
             return false;
 
-            
         if (o.overlay(this)) {
 
             o.kill(event);
@@ -232,12 +243,21 @@ export class Enemy extends CollisionObject {
 
         // NOTE: Might result going through walls?
         if (dist < HIT_RADIUS) {
+            
+            // TODO: Divide distance by 2? (unless the other one
+            // cannot be moved?)
 
-            this.pos.x += dir.x*(HIT_RADIUS - dist);
-            this.pos.y += dir.y*(HIT_RADIUS - dist);
+            if (this.canBeMoved) {
 
-            o.pos.x -= dir.x*(HIT_RADIUS - dist);
-            o.pos.x -= dir.y*(HIT_RADIUS - dist);
+                this.pos.x += dir.x*(HIT_RADIUS - dist);
+                this.pos.y += dir.y*(HIT_RADIUS - dist);
+            }
+
+            if (o.canBeMoved) {
+
+                o.pos.x -= dir.x*(HIT_RADIUS - dist);
+                o.pos.x -= dir.y*(HIT_RADIUS - dist);
+            }
 
             return true;
         }
