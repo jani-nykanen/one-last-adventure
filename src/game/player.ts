@@ -25,6 +25,7 @@ export const enum SpecialPlayerAnimationType {
 
     None = 0,
     HoldItem = 1,
+    Use = 2,
 };
 
 
@@ -1052,7 +1053,7 @@ export class Player extends CollisionObject {
 
     public updateSpecialAnimation(event : ProgramEvent) : void {
 
-        const ANIM_SPEED : number[] = [0, 1.0/90.0];
+        const ANIM_SPEED : number[] = [0, 1.0/90.0, 1.0/45.0];
 
         if (this.specialAnimationTimer <= 0)
             return;
@@ -1070,6 +1071,11 @@ export class Player extends CollisionObject {
 
             this.spr.setFrame(5, 3);
             break;
+
+        case SpecialPlayerAnimationType.Use:
+
+            this.spr.setFrame(4, 2);
+            break;    
 
         default:
             break;

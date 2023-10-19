@@ -43,12 +43,20 @@ export class Switch extends ActivableObject {
 
     protected activationEvent(player : Player, event : ProgramEvent): void {
         
-        // event.audio.playSample(event.assets.getSample("select"), 0.60);
+        event.audio.playSample(event.assets.getSample("switch"), 0.70);
+        event.audio.pauseMusic();
 
-        player.progress.setProperty("fans_active", 1);
+        this.activated = true;
+        this.spr.setFrame(1, 0);
 
-        this.textbox.addText(event.localization?.getItem("switch") ?? []);
-        this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
+        player.toggleSpecialAnimation(SpecialPlayerAnimationType.Use, 0,
+            (event : ProgramEvent) => {
+
+            player.progress.setProperty("fans_active", 1);
+
+            this.textbox.addText(event.localization?.getItem("switch") ?? []);
+            this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
+        });
     }
 
 

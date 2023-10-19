@@ -74,5 +74,15 @@ export class Fan extends GameObject {
         const dy = Math.round(this.pos.y) - 8;
 
         this.spr.draw(canvas, bmp, dx, dy);
+
+        let frame : number;
+        if (this.active) {
+
+            frame = this.spr.getColumn();
+            for (let y = 0; y < 2; ++ y) {
+
+                canvas.drawBitmap(bmp, Flip.None, dx, dy - y*16 - 12, frame*16, 16, 16, 16);
+            }
+        }
     }
 }
