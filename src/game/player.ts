@@ -70,6 +70,7 @@ export class Player extends CollisionObject {
     private attackSpeed : number = 1;
     private armor : number = 0;
     private magicPower : number = 2;
+    private runSpeed : number = 1.0;
 
     private deathTimer : number = 0;
 
@@ -408,7 +409,7 @@ export class Player extends CollisionObject {
             return;
         }
 
-        this.target.x = WALK_SPEED*stick.x;
+        this.target.x = WALK_SPEED*stick.x*this.runSpeed;
 
         this.checkJump(event);
     }
@@ -571,6 +572,14 @@ export class Player extends CollisionObject {
 
             ++ this.maxMagic;
         }
+
+        this.runSpeed = 1.0;
+        if (this.progress.getProperty("item3")) {
+
+            this.runSpeed += 0.5;
+        }
+
+        this.friction.x = 0.15*this.runSpeed;
     }
 
 

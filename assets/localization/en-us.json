@@ -58,8 +58,13 @@
 
 
     "item2": [
-        "You obtain the BOOK OF\nUNBELIEVABLE MAGIC!",
+        "You obtain the TOME OF\nUNBELIEVABLE MAGIC!",
         "The book teaches you how\nto throw purple fireballs.\nOrange fireballs requires\nmore advanced magic."
+    ],
+
+    "item3": [
+        "You obtain LEATHER BOOTS OF\nSPEED!",
+        "These footwear are not real\nleather and barely even\nboots, but hey, now you\ncan run fast!"
     ],
 
 

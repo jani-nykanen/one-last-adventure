@@ -23,7 +23,7 @@ export class Brick extends Enemy {
         this.collisionBox = new Rectangle(0, 1, 12, 14);
         this.hitbox = new Rectangle(0, 0, 12, 12);
 
-        this.friction.y = 0.5;
+        this.friction.y = 0.25;
 
         this.weight = 0;
 
@@ -36,7 +36,7 @@ export class Brick extends Enemy {
 
     protected playerEvent(player : Player, event : ProgramEvent) : void {
 
-        const DROP_SPEED : number = 4.0;
+        const DROP_SPEED : number = 6.0;
         const X_DIST : number = 32;
 
         if (this.attackPhase != 0)
