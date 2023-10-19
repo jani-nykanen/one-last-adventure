@@ -69,6 +69,8 @@ export class TitleScreen implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent): void {
         
+        const MUSIC_VOLUME : number = 0.50;
+
         const text = event.localization?.getItem("titlescreen") ?? [];
         const errors = event.localization?.getItem("save_result") ?? [];
 
@@ -105,12 +107,20 @@ export class TitleScreen implements Scene {
         new MenuButton(this.getAudioText(text, event),
         (event : ProgramEvent) => {
 
-            event.audio.toggle();
+            if (event.audio.isEnabled()) {
+
+                event.audio.stopMusic();
+            }
+
+            if (event.audio.toggle()) {
+
+                event.audio.playMusic(event.assets.getSample("theme_title"), MUSIC_VOLUME);
+            }
             this.menu.changeButtonText(2, this.getAudioText(text, event));
         }),
         ], true);
 
-        event.audio.fadeInMusic(event.assets.getSample("theme_title"), 0.50, 1000);
+        event.audio.fadeInMusic(event.assets.getSample("theme_title"), MUSIC_VOLUME, 1000);
     }
 
 

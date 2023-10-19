@@ -55,7 +55,7 @@ export class AudioPlayer {
         if (!this.enabled || sample === undefined) 
             return;
 
-        this.fadeInMusic(sample, vol, 0.0);
+        this.fadeInMusic(sample, vol);
     }
 
 
@@ -66,6 +66,9 @@ export class AudioPlayer {
         if (this.ctx === undefined ||
             !this.enabled || this.globalVolume <= EPS) 
             return;
+
+        // For some reason 0 fade time does not work
+        fadeTime = Math.max(0.1, fadeTime);
 
         if (this.musicTrack !== undefined) {
 

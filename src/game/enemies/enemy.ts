@@ -241,22 +241,21 @@ export class Enemy extends CollisionObject {
         const dist = Vector.distance(o.pos, this.pos);
         const dir = Vector.direction(o.pos, this.pos);
 
+        const div = this.canBeMoved && o.canBeMoved ? 2 : 1;
+
         // NOTE: Might result going through walls?
         if (dist < HIT_RADIUS) {
             
-            // TODO: Divide distance by 2? (unless the other one
-            // cannot be moved?)
-
             if (this.canBeMoved) {
 
-                this.pos.x += dir.x*(HIT_RADIUS - dist);
-                this.pos.y += dir.y*(HIT_RADIUS - dist);
+                this.pos.x += dir.x*(HIT_RADIUS - dist)/div;
+                this.pos.y += dir.y*(HIT_RADIUS - dist)/div;
             }
 
             if (o.canBeMoved) {
 
-                o.pos.x -= dir.x*(HIT_RADIUS - dist);
-                o.pos.x -= dir.y*(HIT_RADIUS - dist);
+                o.pos.x -= dir.x*(HIT_RADIUS - dist)/div;
+                o.pos.x -= dir.y*(HIT_RADIUS - dist)/div;
             }
 
             return true;

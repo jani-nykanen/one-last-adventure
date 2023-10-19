@@ -18,7 +18,7 @@ export class Rabbit extends Enemy {
 
         this.friction.y = 0.075;
 
-        this.collisionBox.w = 10;
+        this.collisionBox.w = 8;
 
         this.spr.setFrame(1, 2);
 

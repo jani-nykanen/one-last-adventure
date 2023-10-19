@@ -9,9 +9,10 @@ import { Bat } from "./bat.js";
 import { Bee } from "./bee.js";
 import { PinkThing } from "./pinkthing.js";
 import { Brick } from "./brick.js";
+import { Ball } from "./ball.js";
 
 
-const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee, Brick];
+const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee, Brick, Ball];
 
 
 export const getEnemyType = (id : number) => ENEMY_TYPES[clamp(id, 0, ENEMY_TYPES.length-1)];
