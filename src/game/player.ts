@@ -228,7 +228,7 @@ export class Player extends CollisionObject {
         const p = this.projectiles.spawn(dx, dy, SPELL_SPEED*this.dir, 0, 0, this.magicPower, true);
         p.setOldPos(this.pos.y, dy);
 
-        event.audio.playSample(event.assets.getSample("magic"), 0.60);
+        event.audio.playSample(event.assets.getSample("magic"), 0.50);
     }
 
 

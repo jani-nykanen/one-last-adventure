@@ -125,7 +125,7 @@ export class Projectile extends CollisionObject {
         this.dying = true;
         this.spr.setFrame(4, this.id);
 
-        event.audio.playSample(event.assets.getSample("magic_hit"), 0.60);
+        event.audio.playSample(event.assets.getSample("magic_hit"), 0.50);
     }
 
 

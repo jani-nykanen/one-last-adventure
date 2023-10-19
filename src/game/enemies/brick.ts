@@ -20,12 +20,17 @@ export class Brick extends Enemy {
 
         this.spr.setFrame(0, 10);
 
-        this.collisionBox = new Rectangle(0, 1, 16, 14);
+        this.collisionBox = new Rectangle(0, 1, 12, 14);
         this.hitbox = new Rectangle(0, 0, 12, 12);
 
         this.friction.y = 0.5;
 
         this.weight = 0;
+
+        this.pos.y -= 2;
+        this.initialPos.y = -2;
+
+        this.canBeHurt = false;
     }
 
 
@@ -38,7 +43,7 @@ export class Brick extends Enemy {
             return;
 
         const p = player.getPosition();
-        if (Math.abs(p.x - this.pos.x) < X_DIST && p.y <= this.pos.y - 8) {
+        if (Math.abs(p.x - this.pos.x) < X_DIST && p.y > this.pos.y - 8) {
             
             this.attackPhase = 1;
             this.target.y = DROP_SPEED;
@@ -48,11 +53,11 @@ export class Brick extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
 
-        const WAIT_TIME : number = 60;
+        const WAIT_TIME : number = 30;
         const RETURN_SPEED : number = -0.5;
-        const FRAME : number[] = [0, 1, 1, 2];
+        // const FRAME : number[] = [0, 1, 1, 2];
 
-        this.spr.setFrame(FRAME[this.attackPhase], this.spr.getRow());
+        this.spr.setFrame(this.attackPhase, this.spr.getRow());
 
         // TODO: Use switch
         if (this.attackPhase == 0) {
@@ -72,9 +77,14 @@ export class Brick extends Enemy {
         else if (this.attackPhase == 3) {
 
             this.speed.y = RETURN_SPEED;
+            this.target.y = RETURN_SPEED;
             if (this.pos.y <= this.initialPos.y) {
 
                 this.pos = this.initialPos.clone();
+                this.attackPhase = 0;
+
+                this.target.zeros();
+                this.speed.zeros();
             }
         }
 
@@ -88,6 +98,16 @@ export class Brick extends Enemy {
 
             this.attackPhase = 2;
             this.specialTimer = 0;
+
+            event.audio.playSample(event.assets.getSample("quake"), 0.55);
+        }
+        else if (this.attackPhase == 3 && dir == -1) {
+
+            // this.pos = this.initialPos.clone();
+            this.attackPhase = 0;
+
+            this.target.zeros();
+            this.speed.zeros();
         }
     }
 }

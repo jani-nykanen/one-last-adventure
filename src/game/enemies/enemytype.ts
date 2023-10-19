@@ -8,9 +8,10 @@ import { Miner } from "./miner.js";
 import { Bat } from "./bat.js";
 import { Bee } from "./bee.js";
 import { PinkThing } from "./pinkthing.js";
+import { Brick } from "./brick.js";
 
 
-const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee];
+const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee, Brick];
 
 
 export const getEnemyType = (id : number) => ENEMY_TYPES[clamp(id, 0, ENEMY_TYPES.length-1)];

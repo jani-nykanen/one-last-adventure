@@ -22,7 +22,7 @@ export class Bat extends Enemy {
         this.spr.setFrame(4, 7);
 
         this.collisionBox = new Rectangle(0, 0, 8, 8);
-        this.hitbox = new Rectangle(0, 0, 8, 8);
+        this.hitbox = new Rectangle(0, 0, 12, 12);
 
         this.getGravity = false;
 

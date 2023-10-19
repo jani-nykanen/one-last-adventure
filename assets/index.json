@@ -71,6 +71,7 @@
         {"name": "magic_hit", "path": "magic_hit.wav"},
         {"name": "potion", "path": "potion.wav"},
         {"name": "switch", "path": "switch.wav"},
+        {"name": "quake", "path": "quake.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_title", "path": "theme_title.ogg"},
