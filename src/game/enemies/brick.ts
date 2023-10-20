@@ -31,6 +31,7 @@ export class Brick extends Enemy {
         this.initialPos.y = -2;
 
         this.canBeHurt = false;
+        this.canBeMoved = false;
     }
 
 
