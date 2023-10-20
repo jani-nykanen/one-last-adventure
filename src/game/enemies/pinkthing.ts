@@ -23,6 +23,7 @@ export class PinkThing extends Enemy {
         this.collisionBox.w = 8;
 
         this.friction.x = 0.025;
+        this.friction.y = 0.10;
         this.weight = 0.50;
     }
 
@@ -41,8 +42,8 @@ export class PinkThing extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
         
-        const MOVE_SPEED : number = 1.0;
-        const LEDGE_JUMP_HEIGHT : number = -2.5;
+        const MOVE_SPEED : number = 0.75;
+        const LEDGE_JUMP_HEIGHT : number = -1.75;
 
         if (this.touchSurface) {
 

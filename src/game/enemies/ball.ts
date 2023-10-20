@@ -4,7 +4,7 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const MOVE_SPEED : number = 0.75;
+const MOVE_SPEED : number = 0.65;
 
 
 export class Ball extends Enemy {

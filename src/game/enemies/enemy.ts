@@ -233,7 +233,7 @@ export class Enemy extends CollisionObject {
 
     public enemyToEnemyCollision(o : Enemy, event : ProgramEvent) : boolean {
 
-        const HIT_RADIUS : number = 8;
+        const MAX_DISTANCE : number = 12;
 
         if (!o.isActive() || !this.isActive)
             return false;
@@ -244,18 +244,18 @@ export class Enemy extends CollisionObject {
         const div = this.canBeMoved && o.canBeMoved ? 2 : 1;
 
         // NOTE: Might result going through walls?
-        if (dist < HIT_RADIUS) {
+        if (dist < MAX_DISTANCE) {
             
             if (this.canBeMoved) {
 
-                this.pos.x += dir.x*(HIT_RADIUS - dist)/div;
-                this.pos.y += dir.y*(HIT_RADIUS - dist)/div;
+                this.pos.x += dir.x*(MAX_DISTANCE - dist)/div;
+                this.pos.y += dir.y*(MAX_DISTANCE - dist)/div;
             }
 
             if (o.canBeMoved) {
 
-                o.pos.x -= dir.x*(HIT_RADIUS - dist)/div;
-                o.pos.x -= dir.y*(HIT_RADIUS - dist)/div;
+                o.pos.x -= dir.x*(MAX_DISTANCE - dist)/div;
+                o.pos.x -= dir.y*(MAX_DISTANCE - dist)/div;
             }
 
             return true;
