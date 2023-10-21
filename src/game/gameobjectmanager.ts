@@ -91,6 +91,9 @@ export class GameObjectManager {
 
         const text = event.localization?.getItem("item_hints")?.[id - 1] ?? "";
 
+        if (text.length == 0)
+            return;
+
         this.overridingHint = new Hint(x, y, text, true);
     }
 

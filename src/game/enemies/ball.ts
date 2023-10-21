@@ -12,7 +12,7 @@ export class Ball extends Enemy {
 
     protected init() : void {
         
-        const even = ((this.pos.x/TILE_WIDTH)) % 2 == 0;
+        const even = Math.floor(this.pos.x/TILE_WIDTH) % 2 == 0;
 
         this.damage = 2;
 
