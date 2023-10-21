@@ -9,7 +9,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 const OBJECT_LAYER_START = 256;
 
 
@@ -118,9 +118,10 @@ export class Stage {
             break;
 
         // Door
+        case 14:
         case 9:
 
-            objects.addDoor(x, y);
+            objects.addDoor(x, y, tileID == 14);
             break;
 
         // Shopkeeper

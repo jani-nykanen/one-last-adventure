@@ -10,8 +10,8 @@ import { Sprite } from "../gfx/sprite.js";
 // const DAMAGE : number[] = [2];
 
 
-const PROJECTILE_WIDTH : number[] = [8, 4];
-const PROJECTILE_HEIGHT : number[] = [8, 4];
+const PROJECTILE_WIDTH : number[] = [8, 4, 8];
+const PROJECTILE_HEIGHT : number[] = [8, 4, 8];
 
 
 export class Projectile extends CollisionObject {
@@ -35,6 +35,9 @@ export class Projectile extends CollisionObject {
 
         // TODO: Different hitbox for different types of projectiles!
         this.hitbox = new Rectangle(0, 0, 8, 8);
+
+        this.friction.x = 0.10;
+        this.friction.y = 0.10;
     }
 
 
@@ -72,15 +75,18 @@ export class Projectile extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent): void {
 
-        const LAST_FRAME : number[] = [2, 3];
-        const ANIM_SPEED : number[] = [4, 5];
+        const LAST_FRAME : number[] = [2, 3, 2];
+        const ANIM_SPEED : number[] = [4, 5, 4];
 
         this.spr.animate(this.id, 0, LAST_FRAME[this.id] ?? 3, ANIM_SPEED[this.id] ?? 4, event.tick);
     }
 
 
     public spawn(x : number, y : number, speedx : number, speedy : number, 
-        id : number, damage : number, friendly : boolean = true) : void {
+        id : number, damage : number, friendly : boolean = true,
+        getGravity : boolean = false) : void {
+
+        const BASE_GRAVITY : number = 4.0;
 
         this.pos = new Vector(x, y);
         this.speed = new Vector(speedx, speedy);
@@ -100,6 +106,11 @@ export class Projectile extends CollisionObject {
 
         this.hitbox.w = PROJECTILE_WIDTH[this.id] ?? 8;
         this.hitbox.h = PROJECTILE_HEIGHT[this.id] ?? 8;
+
+        if (getGravity) {
+
+            this.target.y = BASE_GRAVITY;
+        }
     }
 
 

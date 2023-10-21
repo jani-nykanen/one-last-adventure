@@ -23,11 +23,12 @@ export class ProjectileGenerator {
 
 
     public spawn(x : number, y : number, speedx : number, speedy : number, 
-        id : number, damage : number, friendly : boolean = true) : Projectile {
+        id : number, damage : number, friendly : boolean = true,
+        getGravity : boolean = false) : Projectile {
 
         const p = next(this.projectiles, Projectile) as Projectile;
         
-        p.spawn(x, y, speedx, speedy, id, damage, friendly);
+        p.spawn(x, y, speedx, speedy, id, damage, friendly, getGravity);
 
         return p;
     }

@@ -29,7 +29,10 @@ export class Plant extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
         
-        // let p : Projectile;
+        const SHOOT_SPEED_X : number = 0.75;
+        const SHOOT_SPEED_Y : number = -2.5;
+
+        let p : Projectile;
 
         if (!this.specialActionActive) {
 
@@ -40,10 +43,13 @@ export class Plant extends Enemy {
                 this.spr.setFrame(1, this.spr.getRow());
 
                 event.audio.playSample(event.assets.getSample("throw"), 0.60);
-/*
-                p = this.projectiles.spawn(this.pos.x + this.dir*4, this.pos.y + 1, this.dir*THROW_SPEED, 0.0, 1, 2, false);
-                p.setOldPos(this.pos.x, this.pos.y + 1);
-                */
+
+                for (let i = 0; i < 2; ++ i) {
+
+                    p = this.projectiles.spawn(this.pos.x, this.pos.y - 4, (-1 + 2*i)*SHOOT_SPEED_X , SHOOT_SPEED_Y, 2, 2, false, true);
+                    p.setOldPos(this.pos.x, this.pos.y + 1);
+                }
+                
             }
         }
         else {

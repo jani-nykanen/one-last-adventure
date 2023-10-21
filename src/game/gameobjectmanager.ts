@@ -495,13 +495,17 @@ export class GameObjectManager {
     }
 
 
-    public addDoor(x : number, y : number) : void {
+    public addDoor(x : number, y : number, locked : boolean = false) : void {
+
+        locked &&= !(this.player?.progress.getProperty("door_unlocked") === 1);
 
         this.activableObjects.push(
             new Door(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
-                this.doorCallback));
+                this.doorCallback,
+                this.textbox,
+                locked));
     }
 
 
