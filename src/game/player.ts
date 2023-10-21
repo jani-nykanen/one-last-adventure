@@ -249,6 +249,8 @@ export class Player extends CollisionObject {
         const swordButtonDown = event.input.getAction("attack") == InputState.Pressed;
         const magicButtonDown = event.input.getAction("magic") == InputState.Pressed;
 
+        const weaponRow = this.progress.getProperty("item5") == 1 ? 1 : 0;
+
         if ((hasSword && swordButtonDown) || (hasMagic && magicButtonDown)) {
 
             this.usingMagic = false;
@@ -278,7 +280,7 @@ export class Player extends CollisionObject {
                 this.attacking = true;
                 
                 this.spr.setFrame(0, 2);
-                this.sprWeapon.setFrame(0, 0);
+                this.sprWeapon.setFrame(0, weaponRow);
             }
 
             if (this.usingMagic) {
@@ -297,8 +299,8 @@ export class Player extends CollisionObject {
 
     private updateAttacking(event : ProgramEvent) : boolean {
 
-        const SWORDHIT_WIDTH = 14;
-        const SWORDHIT_HEIGHT = 16;
+        const SWORDHIT_WIDTH = [14, 18];
+        const SWORDHIT_HEIGHT = [16, 20];
 
         const FRAME_TIME : number = 4;
 
@@ -317,7 +319,7 @@ export class Player extends CollisionObject {
 
         const frameTime = (FRAME_TIME + 1) - this.attackSpeed;
 
-        this.sprWeapon.animate(0, 0, 5, frameTime, event.tick);
+        this.sprWeapon.animate(this.sprWeapon.getRow(), 0, 5, frameTime, event.tick);
         this.spr.animate(2, 0, 3, 
             this.spr.getColumn() == 2 ? (frameTime*3) : frameTime, 
             event.tick);
@@ -328,10 +330,12 @@ export class Player extends CollisionObject {
             return false;
         }
 
-        this.swordHitArea.x = this.pos.x + 14*this.dir;
+        const swordType = Number(this.progress.getProperty("item5"));
+
+        this.swordHitArea.x = this.pos.x + SWORDHIT_WIDTH[swordType]*this.dir;
         this.swordHitArea.y = this.pos.y;
-        this.swordHitArea.w = SWORDHIT_WIDTH;
-        this.swordHitArea.h = SWORDHIT_HEIGHT;
+        this.swordHitArea.w = SWORDHIT_WIDTH[swordType];
+        this.swordHitArea.h = SWORDHIT_HEIGHT[swordType];
 
         return true;
     }
@@ -545,6 +549,10 @@ export class Player extends CollisionObject {
 
         this.attackPower = 1;
         if (this.progress.getProperty("shopitem3")) {
+
+            ++ this.attackPower;
+        }
+        if (this.progress.getProperty("item5")) {
 
             ++ this.attackPower;
         }
@@ -1138,7 +1146,7 @@ export class Player extends CollisionObject {
     }
 
     
-    public hasStrongSword = () : boolean => false; // this.progress.getProperty("item10") != 0;
+    public hasStrongSword = () : boolean => this.progress.getProperty("item5") == 1;
 
 
     public isClimbing() : boolean {
