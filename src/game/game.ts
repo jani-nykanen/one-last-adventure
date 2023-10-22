@@ -208,7 +208,7 @@ export class Game implements Scene {
         event.transition.deactivate();
 
         this.objects.setPlayerFrame(3, 2);
-        this.objects.setPlayerPosition(newPos.x, newPos.y);
+        this.objects.setPlayerPosition(newPos.x, newPos.y, true);
         this.objects.centerCameraToPlayer(this.camera);
         
         this.stage.cameraCheck(this.camera, this.objects, event);

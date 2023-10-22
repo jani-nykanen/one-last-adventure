@@ -1139,10 +1139,15 @@ export class Player extends CollisionObject {
     }
 
 
-    public setPosition(x : number, y : number) : void {
+    public setPosition(x : number, y : number, setCheckpoint : boolean = false) : void {
 
         this.pos.x = x;
         this.pos.y = y;
+
+        if (setCheckpoint) {
+
+            this.setCheckpoint(x, y);
+        }
     }
 
     

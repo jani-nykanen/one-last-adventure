@@ -662,8 +662,8 @@ export class GameObjectManager {
     }
 
 
-    public setPlayerPosition(x : number, y : number) : void {
+    public setPlayerPosition(x : number, y : number, setCheckpoint : boolean = false) : void {
 
-        this.player?.setPosition((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
+        this.player?.setPosition((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, setCheckpoint);
     }
 }
