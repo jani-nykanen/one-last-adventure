@@ -8,6 +8,9 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 
 
+const PROPERTY_NAME : string[] = ["fans_activate", "teleporters_active" ]
+
+
 export class Switch extends ActivableObject {
 
     
@@ -15,10 +18,14 @@ export class Switch extends ActivableObject {
 
     private spr : Sprite;
 
+    private id : number;
 
-    constructor(x : number, y : number, textbox : TextBox) {
+
+    constructor(x : number, y : number, id : number, textbox : TextBox) {
 
         super(x, y);
+
+        this.id = id - 1;
 
         this.textbox = textbox;
 
@@ -36,7 +43,7 @@ export class Switch extends ActivableObject {
 
     protected generalPlayerEvent(player : Player, event : ProgramEvent) : void {
         
-        this.activated = player.progress.getProperty("fans_active") == 1;
+        this.activated = player.progress.getProperty(PROPERTY_NAME[this.id]) == 1;
         this.spr.setFrame(Number(this.activated), 0);
     }
 
@@ -52,9 +59,9 @@ export class Switch extends ActivableObject {
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.Use, 0,
             (event : ProgramEvent) => {
 
-            player.progress.setProperty("fans_active", 1);
+            player.progress.setProperty(PROPERTY_NAME[this.id], 1);
 
-            this.textbox.addText(event.localization?.getItem("switch") ?? []);
+            this.textbox.addText([ (event.localization?.getItem("switch") ?? ["null", "null"]) [this.id]] );
             this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
         });
     }

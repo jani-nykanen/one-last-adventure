@@ -7,9 +7,10 @@ import { MapLayer } from "./maplayer.js";
 import { Background, BackgroundType } from "./background.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
+import { Vector } from "../math/vector.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 const OBJECT_LAYER_START = 256;
 
 
@@ -139,7 +140,13 @@ export class Stage {
         // Switch
         case 13:
 
-            objects.addSwitch(x, y);
+            objects.addSwitch(x, y, modifier);
+            break;
+
+        // Teleporter
+        case 15:
+
+            objects.addTeleport(x, y, modifier);
             break;
 
         default:
@@ -317,5 +324,36 @@ export class Stage {
         // Also remove the "block switches" to avoid deadlock
         // situations
         this.removePurpleSwitches(camera);
+    }
+
+
+    public findTeleporter(id : number, startx : number, starty : number) : Vector {
+
+        let mod : number;
+        let tileID : number;
+
+        let i : number;
+
+        for (let y = 1; y < this.height; ++ y) {
+
+            for (let x = 0; x < this.width; ++ x) {
+
+                if (x == startx && y == starty)
+                    continue;
+
+                i = y*this.width + x;
+                tileID = this.objectLayer[i]
+                if (tileID == 271) {
+
+                    mod = this.objectLayer[i - this.width] - 368;
+                    if (mod == id) {
+
+                        return new Vector(x, y);
+                    }
+                }
+            }
+        }
+
+        return new Vector(startx, starty);
     }
 }

@@ -25,6 +25,7 @@ import { Shop } from "./shop.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { Fan } from "./fan.js";
 import { Switch } from "./switch.js";
+import { Teleporter } from "./teleporter.js";
 
 
 export class GameObjectManager {
@@ -49,6 +50,7 @@ export class GameObjectManager {
     private initialPortalCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private doorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private purpleBlockCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private teleporterCallback : ((x : number, y : number, id : number, event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -62,7 +64,8 @@ export class GameObjectManager {
         saveDialogueCallback? : (event : ProgramEvent) => void,
         initialPortalCallback? : (event : ProgramEvent) => void,
         doorCallback? : (event : ProgramEvent) => void,
-        purpleBlockCallback? : (event : ProgramEvent) => void) {
+        purpleBlockCallback? : (event : ProgramEvent) => void,
+        teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -84,6 +87,7 @@ export class GameObjectManager {
         this.initialPortalCallback = initialPortalCallback;
         this.doorCallback = doorCallback;
         this.purpleBlockCallback = purpleBlockCallback;
+        this.teleporterCallback = teleporterCallback;
     }
 
 
@@ -549,15 +553,25 @@ export class GameObjectManager {
     }
 
 
-    public addSwitch(x : number, y : number) : void {
+    public addSwitch(x : number, y : number, id : number) : void {
 
         this.activableObjects.push(
             new Switch(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
+                id,
                 this.textbox));
     }
 
+    public addTeleport(x : number, y : number, id : number) : void {
+
+        this.activableObjects.push(
+            new Teleporter(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                x, y, id,
+                this.teleporterCallback));
+    }
 
 
     public addHint(x : number, y : number, id : number, event : ProgramEvent) : void {
@@ -645,5 +659,11 @@ export class GameObjectManager {
     public setPlayerFrame(column : number, row : number) : void {
 
         this.player?.setFrame(column, row);
+    }
+
+
+    public setPlayerPosition(x : number, y : number) : void {
+
+        this.player?.setPosition((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT);
     }
 }

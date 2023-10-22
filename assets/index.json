@@ -27,6 +27,7 @@
         {"name": "fan", "path": "fan.png"},
         {"name": "switch", "path": "switch.png"},
         {"name": "locked_door", "path": "locked_door.png"},
+        {"name": "teleporter", "path": "teleporter.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},

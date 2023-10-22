@@ -108,6 +108,12 @@
         "They never believe me\nwhen I tell them that\nthese caverns were\nnaturally built by the\nhumans."
     ],
 
+    "npc4": [
+        "See that teleporter over\nthere? It might still\nwork, at least if you\nfind a way to turn it on\nfirst.",
+        "We built the teleportation\nsystem long time ago.\nNowadays we have no use\nfor it since we have\nstopped travelling.",
+        "I mean, look at me: I have\nbeen standing here, in\nthe same spot, for the\nlast hundred years!"
+    ],
+
 
     "shop_menu": [
 
@@ -137,7 +143,10 @@
     "nomoney": "You don't have\nenough money to\nbuy this item!",
     "shop_confirm": "Buy this item for\n% gold coins?",
 
-    "switch": "You have activated the...\nthe... uh, air circulation\nsystem? Well, whatever it\nis, the fans are spinning\nnow!" ,
+    "switch": [
+        "You have activated the...\nthe... uh, air circulation\nsystem? Well, whatever it\nis, the fans are spinning\nnow!" ,
+        "You have activated the...\nthe... uh, global tele-\nportation system?"
+    ],
 
     "shopitem1": [
         "You obtain a LIFE\nCONTAINER!", 

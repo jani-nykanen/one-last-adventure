@@ -201,6 +201,27 @@ export class Game implements Scene {
     }
 
 
+    private teleport(x : number, y : number, id : number, event : ProgramEvent) : void {
+
+        const newPos = this.stage.findTeleporter(id, x, y);
+
+        event.transition.deactivate();
+
+        this.objects.setPlayerFrame(3, 2);
+        this.objects.setPlayerPosition(newPos.x, newPos.y);
+        this.objects.centerCameraToPlayer(this.camera);
+        
+        this.stage.cameraCheck(this.camera, this.objects, event);
+        this.objects.initialCameraCheck(this.camera, event);
+        this.objects.initialActivableObjectCheck(this.camera, event);
+
+        event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
+            undefined, new RGBA(255, 255, 255));
+
+        event.audio.resumeMusic();
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.progress = new ProgressManager();
@@ -245,7 +266,8 @@ export class Game implements Scene {
             (event : ProgramEvent) => {
 
                 this.stage.togglePurpleBlocks(this.camera);
-            }
+            },
+            (x : number, y : number, id : number, event : ProgramEvent) => this.teleport(x, y, id, event)
             );
         if (param === 1) {
 
