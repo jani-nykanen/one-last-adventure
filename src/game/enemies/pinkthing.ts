@@ -62,10 +62,4 @@ export class PinkThing extends Enemy {
             event.audio.playSample(event.assets.getSample("enemy_jump"), 0.40);
         }
     }
-
-
-    protected horizontalCollisionEvent(dir: 1 | -1, event : ProgramEvent): void {
-        
-        this.dir *= -1;
-    }
 }

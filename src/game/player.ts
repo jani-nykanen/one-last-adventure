@@ -13,7 +13,6 @@ import { FlyingMessageSymbol } from "./flyingmessage.js";
 import { RGBA } from "../math/rgba.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { Projectile } from "./projectile.js";
-import { clamp } from "../math/utility.js";
 
 
 const DEATH_TIME : number = 60;
@@ -34,6 +33,8 @@ export class Player extends CollisionObject {
 
     private jumpTimer : number = 0;
     private ledgeTimer : number = 0;
+    private canDoubleJump : boolean = false;
+    private doubleJumping : boolean = false;
 
     private touchLadder : boolean = false;
     private climbing : boolean = false;
@@ -128,14 +129,19 @@ export class Player extends CollisionObject {
 
     private checkJump(event : ProgramEvent) : void {
 
-        const JUMP_TIME = 12;
+        const JUMP_TIME : number = 12;
+        const DOUBLE_JUMP_TIME : number = 4;
 
         const jumpButton = event.input.getAction("jump");
 
-        if (this.ledgeTimer > 0 && 
+        if ((this.ledgeTimer > 0 || this.canDoubleJump) && 
             jumpButton == InputState.Pressed) {
 
-            this.jumpTimer = JUMP_TIME;
+            this.jumpTimer = this.ledgeTimer > 0 ? JUMP_TIME : DOUBLE_JUMP_TIME;
+            
+            this.doubleJumping = this.ledgeTimer <= 0;
+            this.canDoubleJump &&= !this.doubleJumping;
+            
             this.ledgeTimer = 0;
             this.touchSurface = false;
 
@@ -206,6 +212,9 @@ export class Player extends CollisionObject {
                 this.jumpTimer = CLIMB_JUMP_TIME;
             }
             event.audio.playSample(event.assets.getSample("jump"), JUMP_VOLUME);
+
+            this.doubleJumping = false;
+            this.canDoubleJump = true;
 
             return;
         }
@@ -426,6 +435,7 @@ export class Player extends CollisionObject {
         const ANIM_EPS = 0.01;
         const JUMP_EPS = 0.5;
         const ICON_ANIM_SPEED : number = 20;
+        const DOUBLE_JUMP_ANIM_EPS : number = 0.5;
 
         if (this.showIcon) {
 
@@ -480,6 +490,12 @@ export class Player extends CollisionObject {
         }
         // Jumping
         else {
+
+            if (this.doubleJumping && this.speed.y < DOUBLE_JUMP_ANIM_EPS) {
+
+                this.spr.animate(5, 0, 3, 4, event.tick);
+                return;
+            }
 
             frame = 1;
             if (this.speed.y < -JUMP_EPS)
@@ -630,9 +646,13 @@ export class Player extends CollisionObject {
         const DOWN_ATTACK_WAIT : number = 15;
 
         if (dir == 1) {
+
+            this.canDoubleJump = this.progress.getProperty("item6") == 1;
             
             this.ledgeTimer = LEDGE_TIME;
             this.climbing = false;
+
+            this.doubleJumping = false;
 
             if (this.downAttacking) {
 
@@ -717,9 +737,13 @@ export class Player extends CollisionObject {
 
         const flip = (this.climbing && !this.attacking) ? Flip.None : this.flip;
 
+        let sx : number;
+        let sy : number;
+
         if (this.downAttacking || this.downAttackWait > 0) {
 
-            canvas.drawBitmap(bmp, flip, dx, dy, 96, 32, 16, 32);
+            sy = 32 + Number(this.hasStrongSword())*32;
+            canvas.drawBitmap(bmp, flip, dx, dy, 96, sy, 16, 32);
             return;
         }
 
@@ -731,8 +755,6 @@ export class Player extends CollisionObject {
         }
 
         let bmpItems : Bitmap | undefined;
-        let sx : number;
-        let sy : number;
         if (this.showObtainedItem) {
 
             bmpItems = canvas.getBitmap("items");
@@ -1182,4 +1204,7 @@ export class Player extends CollisionObject {
 
         this.speed.y = Math.max(upperLimit, this.speed.y + delta*event.tick);
     }
+
+
+    public isAttacking = () : boolean => this.attacking && !this.downAttacking;
 }

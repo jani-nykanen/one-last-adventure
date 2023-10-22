@@ -51,7 +51,11 @@
 
     "item_hints": [
         "Press LEFT CTRL or X to\nattack.",
-        "Press LEFT SHIFT or C to\ncast a spell."
+        "Press LEFT SHIFT or C to\ncast a spell.",
+        "",
+        "",
+        "",
+        "Press JUMP BUTTON TWICE\nto do a double jump."
     ],
 
 
@@ -81,6 +85,13 @@
         "You obtain FINALLY A GOOD\nSWORD!",
         "Like its name suggests, it\nis finally a good sword.\nExcellent, even.",
         "In fact, this sword is so\ngood it can even break\nrocks!"
+    ],
+
+
+    "item6": [
+        "You obtain a DOUBLE (PAIR\nOF) JUMPING SHOES!!",
+        "I'm seeing double here,\nfour jumping shoes!",
+        "Or, in fact, two pairs of\njumping shoes. They grant\nyou a double jump ability."
     ],
 
 
