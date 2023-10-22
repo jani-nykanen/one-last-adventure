@@ -214,8 +214,7 @@ export class Player extends CollisionObject {
             event.audio.playSample(event.assets.getSample("jump"), JUMP_VOLUME);
 
             this.doubleJumping = false;
-            this.canDoubleJump = true;
-
+            this.canDoubleJump = this.progress.getProperty("item6") == 1;
             return;
         }
 
@@ -416,6 +415,8 @@ export class Player extends CollisionObject {
             this.dir = stick.x > 0 ? 1 : -1;
         }
 
+        const wasClimbing = this.climbing;
+
         this.startClimbing(event);
         if (this.updateClimbing(event)) {
 
@@ -424,7 +425,10 @@ export class Player extends CollisionObject {
 
         this.target.x = WALK_SPEED*stick.x*this.runSpeed;
 
-        this.checkJump(event);
+        if (!wasClimbing) {
+        
+            this.checkJump(event);
+        }
     }
 
 
@@ -491,7 +495,8 @@ export class Player extends CollisionObject {
         // Jumping
         else {
 
-            if (this.doubleJumping && this.speed.y < DOUBLE_JUMP_ANIM_EPS) {
+            if (this.doubleJumping && 
+                this.speed.y < DOUBLE_JUMP_ANIM_EPS) {
 
                 this.spr.animate(5, 0, 3, 4, event.tick);
                 return;
