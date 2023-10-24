@@ -196,6 +196,12 @@
     "shopitem7": [
         "You obtain a bottle of\nLIVER OIL!", 
         "Cod liver? You wish.\nIt increases your vitality,\nmaking certain pick up\nitems more efficient."
+    ],
+
+
+    "gem": [
+        "You obtain a CRIMSON GEM!",
+        "What an odd item to hide\ninside a purple chest."
     ]
 
 }

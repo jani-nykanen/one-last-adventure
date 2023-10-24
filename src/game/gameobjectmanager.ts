@@ -12,7 +12,7 @@ import { FlyingMessageGenerator } from "./flyingmessagegenerator.js";
 import { Enemy } from "./enemies/enemy.js";
 import { getEnemyType } from "./enemies/enemytype.js";
 import { Vector } from "../math/vector.js";
-import { Chest } from "./chest.js";
+import { Chest, ChestType } from "./chest.js";
 import { ActivableObject } from "./activableobject.js";
 import { TextBox } from "../ui/textbox.js";
 import { Portal } from "./portal.js";
@@ -475,16 +475,18 @@ export class GameObjectManager {
     }
 
 
-    public addChest(x : number, y : number, id : number) : void {
+    public addChest(x : number, y : number, type : ChestType, id : number) : void {
 
-        if (this.progress.getProperty("item" + String(id), 0) != 0)
+        if ((type == ChestType.Item && this.progress.getProperty("item" + String(id), 0) != 0) ||
+            (type == ChestType.Gem && this.progress.getProperty("gem" + String(id), 0) != 0) )
             return;
 
         this.activableObjects.push(
             new Chest(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT, 
-                id, this.textbox,
+                id, type,
+                this.textbox,
                 (x : number, y : number, id : number, event : ProgramEvent) => this.createItemHint(x, y, id, event)));
     }
 

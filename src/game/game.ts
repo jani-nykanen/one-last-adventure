@@ -144,6 +144,7 @@ export class Game implements Scene {
         const health = this.objects.getPlayerHealth();
         const maxHealth = this.objects.getPlayerMaxHealth();
         const coins = this.progress.getProperty("coins", 0);
+        const gems = this.progress.getProperty("gems", 0);
 
         const magic = this.objects.getPlayerMagic();
         const maxMagic = this.objects.getPlayerMaxMagic();
@@ -178,6 +179,16 @@ export class Game implements Scene {
         canvas.drawText(bmpFont, coinStr, dx + 12, -1, -7);
 
         canvas.drawBitmap(bmp, Flip.None, dx + 3, -1, 32, 0, 16, 16);
+
+        if (gems <= 0)
+            return;
+
+        const gemStr = "*" + String(gems); 
+
+        dx = canvas.width - ((gemStr.length)*11 + 12) - 2;
+        canvas.drawText(bmpFont, gemStr, dx + 12, canvas.height - 14, -7);
+
+        canvas.drawBitmap(bmp, Flip.None, dx + 3, canvas.height - 14, 64, 0, 16, 16);
     }
 
 

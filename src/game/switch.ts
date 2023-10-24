@@ -8,7 +8,7 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 
 
-const PROPERTY_NAME : string[] = ["fans_activate", "teleporters_active" ]
+const PROPERTY_NAME : string[] = ["fans_active", "teleporters_active" ]
 
 
 export class Switch extends ActivableObject {

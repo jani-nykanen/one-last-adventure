@@ -8,10 +8,24 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 
 
+
+export const enum ChestType {
+
+    Item = 0,
+    Gem = 1,
+    Life = 2,
+    Magic = 3
+};
+
+
+const TYPE_NAMES : string[] = ["item", "gem", "life", "magic"];
+
+
 export class Chest extends ActivableObject {
 
     
     private id : number;
+    private type : ChestType;
 
     private textbox : TextBox;
 
@@ -20,15 +34,18 @@ export class Chest extends ActivableObject {
     private hintCb : (x : number, y : number, id : number, event : ProgramEvent) => void;
 
 
-    constructor(x : number, y : number, id : number, textbox : TextBox,
+    constructor(x : number, y : number, id : number, type : ChestType, textbox : TextBox,
         createHintCb : (x : number, y : number, id : number, event : ProgramEvent) => void) {
 
         super(x, y);
 
         this.id = id;
+        this.type = type;
+
         this.textbox = textbox;
 
         this.spr = new Sprite(32, 32);
+        this.spr.setFrame(0, this.type*2);
 
         this.hitbox = new Rectangle(0, 2, 20, 20);
 
@@ -46,7 +63,7 @@ export class Chest extends ActivableObject {
         
         const DEATH_SPEED : number = 5;
 
-        this.spr.animate(1, 0, 7, DEATH_SPEED, event.tick);
+        this.spr.animate(this.type*2 + 1, 0, 7, DEATH_SPEED, event.tick);
 
         return this.spr.getColumn() == 7;
     }
@@ -55,23 +72,48 @@ export class Chest extends ActivableObject {
     protected activationEvent(player : Player, event : ProgramEvent): void {
         
         this.dying = true;
-        this.spr.setFrame(0, 1);
+        this.spr.setFrame(0, this.type*2 + 1);
 
         event.audio.pauseMusic();
         event.audio.playSample(event.assets.getSample("item"), 0.80);
 
-        player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, this.id,
+        let itemSpriteID = this.id;
+        if (this.type == ChestType.Gem)
+            itemSpriteID = 7;
+
+        player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, itemSpriteID,
             (event : ProgramEvent) => {
 
-                const itemIDStr = "item" + String(this.id);
+                const itemIDStr = TYPE_NAMES[this.type] + String(this.id);
 
                 player.progress.setProperty(itemIDStr, 1);
-                this.textbox.addText(event.localization?.getItem(itemIDStr) ?? []);
+
+                switch (this.type) {
+
+                case ChestType.Item:
+
+                    this.textbox.addText(event.localization?.getItem(itemIDStr) ?? []);
+                    break;
+
+                case ChestType.Gem:
+
+                    this.textbox.addText(event.localization?.getItem("gem") ?? []);
+                    player.progress.updateProperty("gems", 1);
+
+                    break;
+
+                default:
+                    break;
+                }
+                
                 this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
 
                 player.setCheckpoint(this.pos.x, this.pos.y);
+                
+                if (this.type == ChestType.Item) {
 
-                this.hintCb(this.pos.x, this.pos.y, this.id, event);
+                    this.hintCb(this.pos.x, this.pos.y, this.id, event);
+                }
             });
     }
 
@@ -80,7 +122,7 @@ export class Chest extends ActivableObject {
 
         const ANIM_SPEED : number = 15;
 
-        this.spr.animate(0, 0, 3, ANIM_SPEED, event.tick);
+        this.spr.animate(this.type*2, 0, 3, ANIM_SPEED, event.tick);
     }
 
 

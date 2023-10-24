@@ -8,9 +8,10 @@ import { Background, BackgroundType } from "./background.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 import { Vector } from "../math/vector.js";
+import { ChestType } from "./chest.js";
 
 
-const CREATABLE_OBJECTS = [2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+const CREATABLE_OBJECTS = [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 const OBJECT_LAYER_START = 256;
 
 
@@ -65,7 +66,7 @@ export class Stage {
         return this.objectLayer.map( (v : number) : boolean => {
             
             const i = v - OBJECT_LAYER_START;
-            return (CREATABLE_OBJECTS.includes(i) || (i >= 16 && i <= 32));
+            return (CREATABLE_OBJECTS.includes(i) || (i >= 17 && i <= 32));
         });
     }
 
@@ -149,9 +150,21 @@ export class Stage {
             objects.addTeleport(x, y, modifier);
             break;
 
+        // Chest
+        case 3:
+
+            objects.addChest(x, y, ChestType.Item, modifier);
+            break;
+
+        // Gem chest
+        case 16:
+
+            objects.addChest(x, y, ChestType.Gem, modifier);
+            break;
+
         default:
 
-            if (tileID >= 16 && tileID <= 32) {
+            if (tileID >= 17 && tileID <= 32) {
 
                 objects.addEnemy(x, y, y*this.width + x, tileID - 16);
             }
@@ -283,12 +296,6 @@ export class Stage {
                 case 1:
 
                     objects.addPlayer(x, y);
-                    break;
-
-                // Chest
-                case 3:
-
-                    objects.addChest(x, y, modifier);
                     break;
 
                 // Portal
