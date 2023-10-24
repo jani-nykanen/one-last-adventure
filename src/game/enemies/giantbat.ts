@@ -16,7 +16,7 @@ export class GiantBat extends Enemy {
         
         this.damage = 3;
 
-        this.maxHealth = 8;
+        this.maxHealth = 9;
 
         this.spr.setFrame(4, 15);
 
