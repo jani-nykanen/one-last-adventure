@@ -56,7 +56,6 @@ export class Projectile extends CollisionObject {
         if (!this.inCamera) {
 
             this.exist = false;
-            // console.log("Projectile destroyed");
         }
     }
 
@@ -84,7 +83,7 @@ export class Projectile extends CollisionObject {
 
     public spawn(x : number, y : number, speedx : number, speedy : number, 
         id : number, damage : number, friendly : boolean = true,
-        getGravity : boolean = false) : void {
+        getGravity : boolean = false, getCollisions : boolean = true) : void {
 
         const BASE_GRAVITY : number = 4.0;
 
@@ -92,7 +91,7 @@ export class Projectile extends CollisionObject {
         this.speed = new Vector(speedx, speedy);
     
         this.target.x = this.speed.x;
-        this.target.y = 0;
+        this.target.y = this.speed.y;
 
         this.friendly = friendly;
         this.id = id;
@@ -111,6 +110,8 @@ export class Projectile extends CollisionObject {
 
             this.target.y = BASE_GRAVITY;
         }
+
+        this.disableCollisions = !getCollisions;
     }
 
 
