@@ -917,7 +917,7 @@ export class Player extends CollisionObject {
     public projectileCollision(o : Projectile, event : ProgramEvent) : boolean {
 
 
-        if (!o.isActive() || !this.isActive || o.isFriendly() || this.hurtTimer > 0)
+        if (!o.isActive() || !this.isActive() || o.isFriendly() || this.hurtTimer > 0)
             return false;
             
         if (o.overlay(this)) {

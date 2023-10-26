@@ -214,7 +214,7 @@ export class Enemy extends CollisionObject {
 
         const KNOCKBACK_SPEED : number = 1.5;
 
-        if (!o.isActive() || !this.isActive || !o.isFriendly())
+        if (!o.isActive() || !this.isActive() || !o.isFriendly())
             return false;
 
         if (o.overlay(this)) {
@@ -235,7 +235,7 @@ export class Enemy extends CollisionObject {
 
         const MAX_DISTANCE : number = 12;
 
-        if (!o.isActive() || !this.isActive)
+        if (!o.isActive() || !this.isActive())
             return false;
 
         const dist = Vector.distance(o.pos, this.pos);
