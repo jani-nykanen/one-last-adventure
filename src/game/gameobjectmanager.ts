@@ -25,6 +25,7 @@ import { Shop } from "./shop.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { Fan } from "./fan.js";
 import { Switch } from "./switch.js";
+import { GiantDoor } from "./giantdoor.js";
 import { Teleporter } from "./teleporter.js";
 
 
@@ -512,6 +513,18 @@ export class GameObjectManager {
                 this.doorCallback,
                 this.textbox,
                 locked));
+    }
+
+
+    public addGiantDoor(x : number, y : number) : void {
+
+        this.activableObjects.push(
+            new GiantDoor(
+                (x + 0.5)*TILE_WIDTH, 
+                (y + 0.5)*TILE_HEIGHT,
+                undefined, // TODO: Add callback
+                this.textbox,
+                this.progress,));
     }
 
 

@@ -43,6 +43,8 @@ export class NPC extends ActivableObject {
 
         const idStr = "npc" + String(this.id);
 
+        player.showActionIcon(-1);
+
         this.textbox.addText(event.localization?.getItem(idStr) ?? []);
         this.textbox.activate(false, (event : ProgramEvent) => event.audio.resumeMusic());
     }

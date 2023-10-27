@@ -11,7 +11,7 @@ import { Vector } from "../math/vector.js";
 import { ChestType } from "./chest.js";
 
 
-const CREATABLE_OBJECTS = [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+const CREATABLE_OBJECTS = [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 49, 50, 51];
 const OBJECT_LAYER_START = 256;
 
 
@@ -302,6 +302,12 @@ export class Stage {
                 case 4:
 
                     objects.addPortal(x, y);
+                    break;
+
+                // Giant door
+                case 51:
+
+                    objects.addGiantDoor(x, y);
                     break;
 
                 default:

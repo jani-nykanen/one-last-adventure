@@ -40,6 +40,10 @@
     "locked_door": "You need a rusty key to\nunlock this door.",
     "unlock_door": "You unlock the door with\nyour rusty key.",
 
+    "locked_giant_door": [
+        "This is the second most\nlocked giant door with\nmoustaches you have ever\nseen."  
+    ],
+
 
     "static_hints": [
         "Use LEFT and RIGHT\nARROW KEYS to walk.",
