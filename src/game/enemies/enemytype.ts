@@ -2,7 +2,7 @@ import { clamp } from "../../math/utility.js";
 import { Slime } from "./slime.js";
 import { Rabbit } from "./rabbit.js";
 import { Turtle } from "./turtle.js";
-import { Caterpillar } from "./catepillar.js";
+import { Caterpillar } from "./caterpillar.js";
 import { Apple } from "./apple.js";
 import { Miner } from "./miner.js";
 import { Bat } from "./bat.js";

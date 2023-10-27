@@ -402,13 +402,19 @@ export class Player extends CollisionObject {
             this.target.y = BASE_GRAVITY;
         }
 
+        const stick = event.input.stick;
+
         this.attack(event);
         if (this.updateAttacking(event)) {
 
+            // If on air, still update the movement, but not the facing direction
+            if (!this.touchSurface) {
+                
+                this.target.x = WALK_SPEED*stick.x*this.runSpeed;
+            }
             return;
         }
-
-        const stick = event.input.stick;
+        
         if (Math.abs(stick.x) >= EPS) {
 
             this.flip = stick.x > 0 ? Flip.None : Flip.Horizontal;

@@ -184,7 +184,7 @@ export class MapLayer {
                     }
                     if ((collisionID & Collision.Bottom) != 0) {
 
-                        o.verticalCollision(dx, dy + TILE_HEIGHT, TILE_WIDTH, -1, event);
+                        o.verticalCollision(dx + 1, dy + TILE_HEIGHT, TILE_WIDTH - 2, -1, event);
                     }
                     if ((collisionID & Collision.Right) != 0) {
 

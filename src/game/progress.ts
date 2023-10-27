@@ -46,7 +46,7 @@ export class ProgressManager {
 
             // In past Closure had problems with these, so let us do
             // things in a funny way
-            window["localStorage"]["setItem"](key, data);
+            window["localStorage"]?.["setItem"]?.(key, data);
         }
         catch (e : any) {
 
@@ -64,7 +64,7 @@ export class ProgressManager {
 
         try {
 
-            dataStr = window["localStorage"]["getItem"](key);
+            dataStr = window["localStorage"]?.["getItem"]?.(key);
             dataJson = JSON.parse(dataStr);
 
             for (let k of Object.keys(dataJson)) {

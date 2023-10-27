@@ -19,6 +19,8 @@ export class Caterpillar extends Enemy {
 
         this.dir = (Math.floor(this.pos.x/TILE_WIDTH)) % 2 == 0 ? 1 : -1;
         this.collisionBox.w = 8;
+
+        this.dropProbability = 0.1;
     }
 
 

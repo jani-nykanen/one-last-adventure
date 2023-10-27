@@ -59,7 +59,9 @@
         "",
         "",
         "",
-        "Press JUMP BUTTON TWICE\nto do a double jump."
+        "Press JUMP BUTTON TWICE\nto do a double jump.",
+        "",
+        "Press RIGHT SHIFT or M\nto open the map."
     ],
 
 
@@ -93,9 +95,15 @@
 
 
     "item6": [
-        "You obtain a DOUBLE (PAIR\nOF) JUMPING SHOES!!",
+        "You obtain a DOUBLE (PAIR\nOF) JUMPING SHOES!",
         "I'm seeing double here,\nfour jumping shoes!",
         "Or, in fact, two pairs of\njumping shoes. They grant\nyou a double jump ability."
+    ],
+
+
+    "item8": [
+        "You obtain a MAGIC MAP!",
+        "It will automatically map\nthe area you have\nvisited."
     ],
 
 

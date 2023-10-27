@@ -14,6 +14,8 @@ export class Slime extends Enemy {
 
         this.maxHealth = 5;
 
+        this.dropProbability = 0.25;
+
         this.spr.setFrame((Math.random()*4) | 0, 1);
     }
 

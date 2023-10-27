@@ -98,6 +98,7 @@ export class Camera {
 
 
     public getTopCorner = () : Vector => this.interpolatedPos.clone();
+    public getTarget = () : Vector => this.target.clone();
 
 
     public isMoving = () : boolean => this.moving;

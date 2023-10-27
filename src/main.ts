@@ -20,6 +20,7 @@ const initialEvent = (event : ProgramEvent) : void => {
     // event.input.addAction("attack", ["KeyX"], [2]);
     event.input.addAction("pause", ["Enter"], [7]);
     event.input.addAction("select", ["Enter", "Space", "KeyZ"], [0, 7]);
+    event.input.addAction("map", ["ShiftRight", "KeyM"], [6]);
 
     event.audio.setGlobalVolume(0.60);
 }

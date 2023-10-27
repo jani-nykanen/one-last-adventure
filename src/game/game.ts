@@ -9,7 +9,7 @@ import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { PauseMenu } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
-import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
+import { LOCAL_STORAGE_MAP_KEY, LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
@@ -17,6 +17,7 @@ import { Story } from "./story.js";
 import { getMapName } from "./mapnames.js";
 import { Shop } from "./shop.js";
 import { updateSpeedAxis } from "./utility.js";
+import { GameMap, MapArea } from "./map.js";
 
 
 export class Game implements Scene {
@@ -25,6 +26,7 @@ export class Game implements Scene {
     private objects : GameObjectManager | undefined = undefined;
     private stage : Stage | undefined = undefined;
     private camera : Camera | undefined = undefined;
+    private map : GameMap | undefined = undefined;
 
     private pause : PauseMenu | undefined = undefined;
 
@@ -80,6 +82,18 @@ export class Game implements Scene {
     }
 
 
+    private setMapArea() : void {
+
+        let area = MapArea.Uncharted;
+        if (this.stageIndex == 1)
+            area = MapArea.Island;
+        else if (this.stageIndex == 2)
+            area = MapArea.Caves;
+
+        this.map?.setArea(area);
+    }
+
+
     private changeMap(index : number, event : ProgramEvent, recreatePlayer : boolean = true) : void {
 
         this.stageIndex = index;
@@ -90,6 +104,7 @@ export class Game implements Scene {
         this.stage = new Stage(index, event);
 
         this.reset(event, recreatePlayer);
+        this.setMapArea();
     }
 
 
@@ -160,7 +175,6 @@ export class Game implements Scene {
         canvas.drawText(bmpFont, healthStr, 12, -1, -7);
 
         // Magic
-
         let t : number;
         if (magic !== undefined) {
 
@@ -233,6 +247,32 @@ export class Game implements Scene {
     }
 
 
+    private createMap(event : ProgramEvent) : void {
+
+        const baseMap = event.assets.getTilemap("island");
+        if (baseMap === undefined) {
+
+            console.warn("Missing the island tilemap, could not create a game map!");
+            return;
+        }
+
+        const roomWidth = (event.screenWidth/TILE_WIDTH) | 0;
+        const roomHeight = (event.screenHeight/TILE_HEIGHT) | 0
+
+        const width = baseMap.width/roomWidth;
+        const height = baseMap.height/roomHeight;
+
+        this.map = new GameMap(width, height, roomWidth, roomHeight);
+    }
+
+
+    private save() : boolean {
+
+        return this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) &&
+               this.map.save(LOCAL_STORAGE_MAP_KEY);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.progress = new ProgressManager();
@@ -242,9 +282,13 @@ export class Game implements Scene {
         this.story = new Story();
         this.stageIndex = 0;
 
+        this.createMap(event);
+
         if (param === 1) {
 
             this.progress.loadFromLocalStorage(LOCAL_STORAGE_SAVE_KEY);
+            this.map.load(LOCAL_STORAGE_MAP_KEY);
+
             this.stageIndex = this.progress.getProperty("area");
             this.playMusic(event);
         }
@@ -294,7 +338,7 @@ export class Game implements Scene {
 
         this.pause = new PauseMenu(event, 
             (event : ProgramEvent) => this.objects.killPlayer(event),
-            () => this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY),
+            () => this.save(),
             (event : ProgramEvent) => event.scenes.changeScene("titlescreen", event),
             (event : ProgramEvent) => {
 
@@ -313,6 +357,8 @@ export class Game implements Scene {
         }
 
         this.oldMagic = this.objects.getPlayerMaxMagic();
+
+        this.setMapArea();
     }
 
 
@@ -352,6 +398,31 @@ export class Game implements Scene {
             event.audio.pauseMusic();
             this.pause.activate();
             return;
+        }
+
+        this.map?.update(this.camera);
+        if (this.map?.isActive()) {
+
+            if (event.input.isAnyPressed()) {
+
+                this.map?.deactivate();
+                event.audio.playSample(event.assets.getSample("select"), 0.55);
+            }
+            return;
+        }
+
+        if (event.input.getAction("map") == InputState.Pressed) {
+
+            if (this.progress.getProperty("item8") == 0) {
+
+                event.audio.playSample(event.assets.getSample("reject"), 0.50);
+            }
+            else {
+            
+                event.audio.playSample(event.assets.getSample("pause"), 0.40);
+                this.map?.activate();
+                return;
+            }
         }
 
         this.updateHUD(event);
@@ -403,9 +474,10 @@ export class Game implements Scene {
             return;
         }
 
-        this.shop.draw(canvas);
-        this.genericTextbox.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
-        this.pause.draw(canvas);
+        this.shop?.draw(canvas);
+        this.genericTextbox?.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
+        this.pause?.draw(canvas);
+        this.map?.draw(canvas);
     }
 
 
