@@ -103,8 +103,12 @@ export class Game implements Scene {
         // TODO: Recreate stage with a bit more memory-friendly way?
         this.stage = new Stage(index, event);
 
+        const oldHealth = this.objects?.getPlayerHealth() ?? 1;
+
         this.reset(event, recreatePlayer);
         this.setMapArea();
+
+        this.objects?.setPlayerHealth(oldHealth);
     }
 
 
@@ -153,6 +157,8 @@ export class Game implements Scene {
 
     private drawHUD(canvas : Canvas) : void {
 
+        const MAGIC_BAR_WIDTH_FACTOR = 9;
+
         const bmp = canvas.getBitmap("hud");
         const bmpFont = canvas.getBitmap("font_outlines");
 
@@ -182,8 +188,7 @@ export class Game implements Scene {
         
             t = this.oldMagic / maxMagic;
             this.drawMagicBar(canvas, magic < 1.0, this.oldMagic/maxMagic,
-                14, canvas.height - 10, maxMagic*10, 8);
-
+                14, canvas.height - 10, maxMagic*MAGIC_BAR_WIDTH_FACTOR, 8);
         }
 
         // Coins

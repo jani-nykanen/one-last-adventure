@@ -109,6 +109,6 @@ export class Door extends ActivableObject{
         const dx = Math.round(this.pos.x) - 8;
         const dy = Math.round(this.pos.y) - 16;
 
-        canvas.drawBitmap(bmp, Flip.None, dx, dy);
+        canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, 0, 16, 24);
     }
 }

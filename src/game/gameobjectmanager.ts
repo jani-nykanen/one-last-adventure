@@ -691,4 +691,7 @@ export class GameObjectManager {
 
         this.player?.setPosition((x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, setCheckpoint);
     }
+
+
+    public setPlayerHealth = (amount : number) : void => this.player?.setHealth(amount);
 }

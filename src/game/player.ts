@@ -115,11 +115,10 @@ export class Player extends CollisionObject {
         this.progress = progress;
 
         this.maxHealth = 5 ; //this.progress.getProperty("maxHealth", 5);
+        this.maxMagic = 3; // this.progress.getProperty("maxMagic", 3.0);
             
         this.computeStats();
         this.health = this.maxHealth;
-        
-        this.maxMagic = this.progress.getProperty("maxMagic", 3.0);
         this.magic = this.maxMagic;
 
         progress.setProperty("checkpointx", x);
@@ -524,7 +523,7 @@ export class Player extends CollisionObject {
     private updateTimers(event : ProgramEvent) : void {
 
         const JUMP_SPEED : number = -2.25;
-        const MAGIC_RECOVER_SPEED : number = 1.0/300.0;
+        const MAGIC_RECOVER_SPEED : number = 1.0/210.0;
 
         if (this.knockbackTimer > 0) {
 
@@ -598,13 +597,13 @@ export class Player extends CollisionObject {
             ++ this.armor;
         }
 
-        this.magicPower = 2  + this.progress.getProperty("magic_containers");;
+        this.magicPower = 2;
         if (this.progress.getProperty("shopitem4")) {
 
             ++ this.magicPower;
         }
 
-        this.maxMagic = 3;
+        this.maxMagic = 3 + this.progress.getProperty("magic_containers");
         if (this.progress.getProperty("shopitem2")) {
 
             ++ this.maxMagic;
@@ -1220,4 +1219,10 @@ export class Player extends CollisionObject {
 
 
     public isAttacking = () : boolean => this.attacking && !this.downAttacking;
+
+
+    public setHealth(amount : number) : void {
+
+        this.health = amount;
+    }
 }

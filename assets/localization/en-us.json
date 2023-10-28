@@ -41,7 +41,7 @@
     "unlock_door": "You unlock the door with\nyour rusty key.",
 
     "locked_giant_door": [
-        "This is the second most\nlocked giant door with\nmoustaches you have ever\nseen."  
+        "This is the second most\nlocked giant door with\na moustache you have\never seen."  
     ],
 
 
@@ -158,6 +158,13 @@
     ],
 
 
+    "npc8": [
+        
+        "These caves are in a\ndifferent plane of\nexistence than the rest\nof the island.",
+        "I have no idea what do\nthese words mean, this\nis just the official\nexplanation we were given."
+    ],
+
+
     "shop_menu": [
 
         "Life Container",
@@ -198,7 +205,7 @@
 
     "shopitem2": [
         "You obtain a MAGIC\nCONTAINER!", 
-        "It increases your\nmaximal magic... uh, bar."
+        "It increases your maximal\nmagic... umm, capacity,\nI think?"
     ],
 
     "shopitem3": [

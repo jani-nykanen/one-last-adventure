@@ -10,8 +10,8 @@ import { Sprite } from "../gfx/sprite.js";
 // const DAMAGE : number[] = [2];
 
 
-const PROJECTILE_WIDTH : number[] = [8, 4, 8];
-const PROJECTILE_HEIGHT : number[] = [8, 4, 8];
+const PROJECTILE_WIDTH : number[] = [10, 4, 8];
+const PROJECTILE_HEIGHT : number[] = [10, 4, 8];
 
 
 export class Projectile extends CollisionObject {
