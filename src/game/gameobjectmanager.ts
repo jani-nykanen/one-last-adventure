@@ -52,6 +52,7 @@ export class GameObjectManager {
     private doorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private purpleBlockCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private teleporterCallback : ((x : number, y : number, id : number, event : ProgramEvent) => void) | undefined = undefined;
+    private shakeCallback : ((amount : number, time : number) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -66,7 +67,8 @@ export class GameObjectManager {
         initialPortalCallback? : (event : ProgramEvent) => void,
         doorCallback? : (event : ProgramEvent) => void,
         purpleBlockCallback? : (event : ProgramEvent) => void,
-        teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void) {
+        teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void,
+        shakeCallback? : (amount : number, time : number) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -89,6 +91,7 @@ export class GameObjectManager {
         this.doorCallback = doorCallback;
         this.purpleBlockCallback = purpleBlockCallback;
         this.teleporterCallback = teleporterCallback;
+        this.shakeCallback = shakeCallback;
     }
 
 
@@ -472,7 +475,8 @@ export class GameObjectManager {
         this.enemies.push(
             new type.prototype.constructor(
                 (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, stageIndex,
-                this.flyingMessages, this.collectibles, this.projectiles));
+                this.flyingMessages, this.collectibles, this.projectiles,
+                this.shakeCallback));
     }
 
 

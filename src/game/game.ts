@@ -322,7 +322,8 @@ export class Game implements Scene {
 
                 this.stage.togglePurpleBlocks(this.camera);
             },
-            (x : number, y : number, id : number, event : ProgramEvent) => this.teleport(x, y, id, event)
+            (x : number, y : number, id : number, event : ProgramEvent) => this.teleport(x, y, id, event),
+            (amount : number, time : number) => this.camera.shake(amount, time)
             );
         if (param === 1) {
 

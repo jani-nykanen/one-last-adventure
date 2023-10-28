@@ -47,6 +47,8 @@ export class Enemy extends CollisionObject {
     protected checkVerticalCameraCollision : boolean = false;
     protected canBeMoved : boolean = true;
 
+    protected shakeCallback : ((amount : number, time : number) => void) | undefined = undefined;
+
     protected readonly messages : FlyingMessageGenerator;
     protected readonly collectibles : CollectibleGenerator;
     protected readonly projectiles : ProjectileGenerator;
@@ -58,7 +60,8 @@ export class Enemy extends CollisionObject {
         stageTileIndex : number,
         messages : FlyingMessageGenerator,
         collectibles : CollectibleGenerator,
-        projectiles : ProjectileGenerator) {
+        projectiles : ProjectileGenerator,
+        shakeCallback : ((amount : number, time : number) => void) | undefined = undefined) {
 
         super(x, y, true);
 
@@ -83,6 +86,8 @@ export class Enemy extends CollisionObject {
         this.health = this.maxHealth;
 
         this.inCamera = true;
+
+        this.shakeCallback = shakeCallback;
     }
 
 

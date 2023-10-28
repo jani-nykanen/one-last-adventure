@@ -101,6 +101,8 @@ export class Brick extends Enemy {
             this.specialTimer = 0;
 
             event.audio.playSample(event.assets.getSample("quake"), 0.55);
+
+            this.shakeCallback?.(2, 30);
         }
         else if (this.attackPhase == 3 && dir == -1) {
 

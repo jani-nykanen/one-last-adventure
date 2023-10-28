@@ -410,7 +410,7 @@ export class Player extends CollisionObject {
         if (this.updateAttacking(event)) {
 
             // If on air, still update the movement, but not the facing direction
-            if (!this.touchSurface) {
+            if (!this.touchSurface && !this.climbing) {
                 
                 this.target.x = WALK_SPEED*stick.x*this.runSpeed;
             }

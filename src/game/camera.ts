@@ -17,6 +17,9 @@ export class Camera {
 
     private stoppedMoving : boolean = false;
 
+    private shakeAmount : number = 0;
+    private shakeTimer : number = 0;
+
     public readonly width : number;
     public readonly height : number;
 
@@ -38,8 +41,16 @@ export class Camera {
 
         this.stoppedMoving = false;
 
-        if (!this.moving)
+        if (!this.moving) {
+
+            if (this.shakeTimer > 0) {
+
+                this.shakeTimer -= event.tick;
+            }
+
             return;
+        }
+        this.shakeTimer = 0;
 
         if ((this.moveTimer -= this.moveSpeed*event.tick) <= 0) {
 
@@ -89,10 +100,19 @@ export class Camera {
 
     public use(canvas : Canvas) : void {
 
+        let shiftx = 0;
+        let shifty = 0;
+
+        if (this.shakeTimer > 0) {
+
+            shiftx = Math.round((-1 + Math.random()*2)*this.shakeAmount);
+            shifty = Math.round((-1 + Math.random()*2)*this.shakeAmount);
+        }
+
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.translate(
-            -Math.round(this.interpolatedPos.x), 
-            -Math.round(this.interpolatedPos.y));
+            -Math.round(this.interpolatedPos.x) + shiftx, 
+            -Math.round(this.interpolatedPos.y) + shifty);
         canvas.applyTransform();
     }
 
@@ -140,4 +160,11 @@ export class Camera {
 
 
     public didStopMoving = () : boolean => this.stoppedMoving; 
+
+
+    public shake(amount : number, time : number) : void {
+
+        this.shakeAmount = amount;
+        this.shakeTimer = time;
+    }
 }
