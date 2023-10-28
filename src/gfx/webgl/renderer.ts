@@ -359,4 +359,10 @@ export class WebGLRenderer implements Renderer {
 
         this.canvas.cloneToBufferBitmap();
     }
+
+
+    public createBitmapFromPixelData(pixels : Uint8Array, width : number, height : number) : Bitmap {
+
+        return new WebGLBitmap(this.gl, undefined, false, false, width, height, pixels);
+    }
 }

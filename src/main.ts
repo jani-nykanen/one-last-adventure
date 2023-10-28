@@ -4,6 +4,7 @@ import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
 import { AudioIntro } from "./game/audiointro.js";
 import { TitleScreen } from "./game/titlescreen.js";
+import { constructMapTexture } from "./game/maptexture.js";
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -34,6 +35,12 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.addLocalizationJSON("en-us", loc);
         event.setActiveLocalization("en-us");
     }
+
+    const islandMap = constructMapTexture("island", event);
+    const cavesMap = constructMapTexture("caves", event);
+
+    event.assets.addBitmap("island_map", islandMap);
+    event.assets.addBitmap("caves_map", cavesMap);
 }
 
 

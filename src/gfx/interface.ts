@@ -106,4 +106,6 @@ export interface Renderer {
     // in the redraw event since this messes up with 
     // active framebuffers
     cloneCanvasToBufferBitmap() : void;
+
+    createBitmapFromPixelData(pixels : Uint8Array, width : number, height : number) : Bitmap;
 }       

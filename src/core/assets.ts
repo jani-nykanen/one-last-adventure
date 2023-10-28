@@ -164,6 +164,15 @@ export class Assets {
     }
 
 
+    public addBitmap(key : string, bmp : Bitmap | undefined) : void {
+
+        if (bmp === undefined)
+            return;
+
+        this.bitmaps.set(key, bmp);
+    }
+
+
     public hasLoaded = () : boolean => this.loaded >= this.totalAssets;
 
 

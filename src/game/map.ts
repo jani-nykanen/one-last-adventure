@@ -1,6 +1,7 @@
-import { Canvas, Bitmap } from "../gfx/interface.js";
+import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 import { Camera } from "./camera.js";
+import { getMapName } from "./mapnames.js";
 
 
 export const enum MapArea {
@@ -71,6 +72,9 @@ export class GameMap {
         if (!this.active)
             return;
 
+        const name = getMapName(this.area);
+        const mapTexture = canvas.getBitmap(name + "_map"); 
+
         canvas.setColor(0, 0, 0, DARKEN_ALPHA);
         canvas.fillRect();
 
@@ -79,6 +83,12 @@ export class GameMap {
 
         const cornerx = canvas.width/2 - dw/2;
         const cornery = canvas.height/2 - dh/2;
+
+        canvas.setColor(255, 182, 146);
+        canvas.fillRect(cornerx, cornery, dw, dh);
+
+        canvas.setColor();
+        canvas.drawBitmap(mapTexture, Flip.None, cornerx, cornery);
 
         let dx : number;
         let dy : number;
@@ -90,15 +100,10 @@ export class GameMap {
                 dx = cornerx + x*this.roomWidth;
                 dy = cornery + y*this.roomHeight;
 
-                if (this.visited[this.area][y*this.width + x]) {
+                if (this.visited[this.area][y*this.width + x]) 
+                    continue;
 
-                    canvas.setColor(255, 182, 146);
-                }
-                else {
-
-                    canvas.setColor(146, 73, 0);
-                }
-
+                canvas.setColor(146, 73, 0);
                 canvas.fillRect(dx, dy, this.roomWidth, this.roomHeight);
             }
         }

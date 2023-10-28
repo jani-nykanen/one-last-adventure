@@ -295,4 +295,33 @@ export class MapLayer {
             }
         }
     }
+
+
+    public toImageData() : Uint8Array {
+
+        const target = (new Array<number> (this.width*this.height*4)).fill(0);
+
+        let baseIndex : number;
+        let tileID : number;
+
+        for (let y = 0; y < this.height; ++ y) {
+
+            for (let x = 0; x < this.width; ++ x) {
+
+                baseIndex = y*this.width + x;
+                
+                for (let j = 0; j < this.layers.length; ++ j) {
+
+                    tileID = this.layers[j][baseIndex];
+                    if ((this.collisionData[tileID - 1] & 0b1111) != 0) {
+
+                        target[baseIndex*4 + 3] = 255;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return new Uint8Array(target);
+    }
 }

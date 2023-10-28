@@ -10,7 +10,7 @@
 
 
 import { AudioPlayer } from "../audio/audioplayer.js";
-import { Canvas, Renderer } from "../gfx/interface.js";
+import { Bitmap, Canvas, Renderer } from "../gfx/interface.js";
 import { Assets } from "./assets.js";
 import { Input } from "./input.js";
 import { SceneManager } from "./scenemanager.js";
@@ -86,5 +86,11 @@ export class ProgramEvent {
             });
         }
         this.renderer.cloneCanvasToBufferBitmap();
+    }
+
+
+    public createBitmapFromPixelData(pixels : Uint8Array, width : number, height : number) : Bitmap {
+
+        return this.renderer.createBitmapFromPixelData(pixels, width, height);
     }
 }

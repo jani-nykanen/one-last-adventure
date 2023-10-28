@@ -23,8 +23,9 @@ export class WebGLBitmap implements Bitmap {
 
 
     constructor(gl : WebGLRenderingContext, 
-        image : HTMLImageElement | undefined, linearFilter = false,
-        makeFramebuffer = false, width = 256, height = 256) {
+        image : HTMLImageElement | undefined, linearFilter : boolean = false,
+        makeFramebuffer : boolean = false, width : number = 256, height : number = 256,
+        pixeldata : Uint8Array | undefined = undefined) {
 
         this.texture = gl.createTexture();
 
@@ -45,6 +46,15 @@ export class WebGLBitmap implements Bitmap {
 
             this.width = image.width;
             this.height = image.height;
+        }
+        else if (pixeldata !== undefined) {
+
+            gl.texImage2D(gl.TEXTURE_2D, 
+                0, gl.RGBA, width, height, 0, 
+                gl.RGBA, gl.UNSIGNED_BYTE, pixeldata);
+
+            this.width = width;
+            this.height = height;
         }
         else {
 
