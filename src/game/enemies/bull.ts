@@ -22,6 +22,8 @@ export class Bull extends Enemy {
         this.friction.x = 0.10;
         this.friction.y = 0.15;
         this.weight = 1.0;
+
+        this.dropProbability = 0.85;
     }
 
 

@@ -69,7 +69,7 @@ export class TitleScreen implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent): void {
         
-        const MUSIC_VOLUME : number = 0.50;
+        const MUSIC_VOLUME : number = 0.70;
 
         const text = event.localization?.getItem("titlescreen") ?? [];
         const errors = event.localization?.getItem("save_result") ?? [];

@@ -26,6 +26,8 @@ export class Ball extends Enemy {
         this.dir = even ? 1 : -1;
 
         this.weight = 1.10;
+
+        this.dropProbability = 0.60;
     }
 
 

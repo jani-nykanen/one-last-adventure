@@ -33,6 +33,8 @@ export class GiantBat extends Enemy {
 
         this.friction.x = 0.025;
         this.friction.y = 0.025;
+
+        this.dropProbability = 0.75;
     }
 
 

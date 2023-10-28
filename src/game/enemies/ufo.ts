@@ -37,6 +37,8 @@ export class Ufo extends Enemy {
         this.disableCollisions = true;
 
         this.specialTimer = Math.random()*Math.PI*2;
+
+        this.dropProbability = 1.0;
     }
 
 

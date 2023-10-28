@@ -106,6 +106,12 @@
         "It will automatically map\nthe area you have\nvisited."
     ],
 
+    
+    "item9": [
+        "You obtain a HAPPY BAG\nOF MONEY MONEY MONEY!",
+        "It contains no children\nand three money. And 27\nmore money, total thirty\nmoney. Yay!"
+    ],
+
 
     "story_intro": [
 
@@ -162,6 +168,18 @@
         
         "These caves are in a\ndifferent plane of\nexistence than the rest\nof the island.",
         "I have no idea what do\nthese words mean, this\nis just the official\nexplanation we were given."
+    ],
+
+
+    "npc9": [
+
+        "My grandfather was paid to\nhide these chests all\naround this island. They\nnever told him why, though."
+    ],
+
+
+    "npc10": [
+
+        "I put my life savings\ninside that chest. You can\ntake them, I am already\ndead."
     ],
 
 

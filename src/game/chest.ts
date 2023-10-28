@@ -98,6 +98,11 @@ export class Chest extends ActivableObject {
                 case ChestType.Item:
 
                     this.textbox.addText(event.localization?.getItem(itemIDStr) ?? []);
+
+                    if (this.id == 9) {
+
+                        player.addCoins(30);
+                    }
                     break;
 
                 case ChestType.Gem:
