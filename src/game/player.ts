@@ -570,7 +570,7 @@ export class Player extends CollisionObject {
 
     private computeStats() : void {
 
-        this.maxHealth = 5;
+        this.maxHealth = 5 + this.progress.getProperty("life_containers");
         if (this.progress.getProperty("shopitem1")) {
 
             ++ this.maxHealth;
@@ -598,7 +598,7 @@ export class Player extends CollisionObject {
             ++ this.armor;
         }
 
-        this.magicPower = 2;
+        this.magicPower = 2  + this.progress.getProperty("magic_containers");;
         if (this.progress.getProperty("shopitem4")) {
 
             ++ this.magicPower;

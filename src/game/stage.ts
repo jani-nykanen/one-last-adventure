@@ -162,6 +162,13 @@ export class Stage {
             objects.addChest(x, y, ChestType.Gem, modifier);
             break;
 
+        // Life & magic chest
+        case 49:
+        case 50:
+
+            objects.addChest(x, y, ChestType.Life + (tileID - 49), modifier);
+            break;
+
         default:
 
             if (tileID >= 17 && tileID <= 32) {

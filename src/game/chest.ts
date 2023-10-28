@@ -80,6 +80,11 @@ export class Chest extends ActivableObject {
         let itemSpriteID = this.id;
         if (this.type == ChestType.Gem)
             itemSpriteID = 7;
+        else if (this.type == ChestType.Life) 
+            itemSpriteID = 17;
+        else if (this.type == ChestType.Magic)
+            itemSpriteID = 18;
+
 
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, itemSpriteID,
             (event : ProgramEvent) => {
@@ -99,7 +104,18 @@ export class Chest extends ActivableObject {
 
                     this.textbox.addText(event.localization?.getItem("gem") ?? []);
                     player.progress.updateProperty("gems", 1);
+                    break;
 
+                case ChestType.Life:
+
+                    this.textbox.addText(event.localization?.getItem("shopitem1") ?? []);
+                    player.progress.updateProperty("life_containers", 1);
+                    break;
+
+                case ChestType.Magic:
+
+                    this.textbox.addText(event.localization?.getItem("shopitem2") ?? []);
+                    player.progress.updateProperty("magic_containers", 1);
                     break;
 
                 default:

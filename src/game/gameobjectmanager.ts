@@ -482,8 +482,11 @@ export class GameObjectManager {
 
     public addChest(x : number, y : number, type : ChestType, id : number) : void {
 
+        // TODO: Use a lookup array instead
         if ((type == ChestType.Item && this.progress.getProperty("item" + String(id), 0) != 0) ||
-            (type == ChestType.Gem && this.progress.getProperty("gem" + String(id), 0) != 0) )
+            (type == ChestType.Gem && this.progress.getProperty("gem" + String(id), 0) != 0) ||
+            (type == ChestType.Life && this.progress.getProperty("life" + String(id), 0) != 0) ||
+            (type == ChestType.Magic && this.progress.getProperty("magic" + String(id), 0) != 0) )
             return;
 
         this.activableObjects.push(
