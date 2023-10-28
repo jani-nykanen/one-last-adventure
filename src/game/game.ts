@@ -400,7 +400,7 @@ export class Game implements Scene {
             return;
         }
 
-        this.map?.update(this.camera);
+        this.map?.update(this.camera, event);
         if (this.map?.isActive()) {
 
             if (event.input.isAnyPressed()) {
@@ -477,7 +477,7 @@ export class Game implements Scene {
         this.shop?.draw(canvas);
         this.genericTextbox?.draw(canvas, 0, canvas.height/2 - (this.genericTextbox.getHeight() + 1)/2*12);
         this.pause?.draw(canvas);
-        this.map?.draw(canvas);
+        this.map?.draw(canvas, this.objects.getPlayerPosition());
     }
 
 

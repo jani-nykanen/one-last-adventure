@@ -15,7 +15,6 @@ export const enum BackgroundType {
 };
 
 
-
 export class Background {
 
 

@@ -114,7 +114,9 @@ export class Player extends CollisionObject {
         this.projectiles = projectiles;
         this.progress = progress;
 
-        this.maxHealth = this.progress.getProperty("maxHealth", 5);
+        this.maxHealth = 5 ; //this.progress.getProperty("maxHealth", 5);
+            
+        this.computeStats();
         this.health = this.maxHealth;
         
         this.maxMagic = this.progress.getProperty("maxMagic", 3.0);
@@ -307,8 +309,8 @@ export class Player extends CollisionObject {
 
     private updateAttacking(event : ProgramEvent) : boolean {
 
-        const SWORDHIT_WIDTH = [14, 18];
-        const SWORDHIT_HEIGHT = [16, 20];
+        const SWORDHIT_WIDTH = [16, 18];
+        const SWORDHIT_HEIGHT = [18, 22];
 
         const FRAME_TIME : number = 4;
 
@@ -352,7 +354,7 @@ export class Player extends CollisionObject {
     private updateDownAttack() : void {
 
         const SWORDHIT_WIDTH : number = 8;
-        const SWORDHIT_HEIGHT : number = 12;
+        const SWORDHIT_HEIGHT : number = 14;
 
         const DOWN_ATTACK_FRICTION : number = 0.50;
         const DOWN_ATTACK_GRAVITY : number = 8.0;

@@ -1,7 +1,9 @@
+import { ProgramEvent } from "../core/event.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 import { Camera } from "./camera.js";
 import { getMapName } from "./mapnames.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
 export const enum MapArea {
@@ -31,6 +33,8 @@ export class GameMap {
 
     private area : MapArea = MapArea.Uncharted;
 
+    private flickerTimer : number = 0.0;
+
 
     constructor(width : number, height : number, roomWidth : number, roomHeight : number) {
 
@@ -51,7 +55,9 @@ export class GameMap {
     }
 
 
-    public update(camera : Camera) : void {
+    public update(camera : Camera, event : ProgramEvent) : void {
+
+        const FLICKER_SPEED : number = 1.0/30.0;
 
         if (this.area < 1 || this.area > 2)
             return;
@@ -61,11 +67,13 @@ export class GameMap {
         this.cpos.x |= 0;
         this.cpos.y |= 0;
 
-        this.visited[this.area][this.cpos.y*this.width + this.cpos.x] = true;
+        this.visited[this.area - 1][this.cpos.y*this.width + this.cpos.x] = true;
+
+        this.flickerTimer = (this.flickerTimer + FLICKER_SPEED*event.tick) % 1.0;
     }
 
 
-    public draw(canvas : Canvas) : void {
+    public draw(canvas : Canvas, playerPos : Vector) : void {
 
         const DARKEN_ALPHA : number = 0.50;
 
@@ -84,9 +92,16 @@ export class GameMap {
         const cornerx = canvas.width/2 - dw/2;
         const cornery = canvas.height/2 - dh/2;
 
+        canvas.setColor(255, 255, 255);
+        canvas.fillRect(cornerx - 2, cornery - 2, dw + 4, dh + 4);
+
+        canvas.setColor(0, 0, 0);
+        canvas.fillRect(cornerx - 1, cornery - 1, dw + 2, dh + 2);
+
         canvas.setColor(255, 182, 146);
         canvas.fillRect(cornerx, cornery, dw, dh);
 
+        // Map topology (topography?)
         canvas.setColor();
         canvas.drawBitmap(mapTexture, Flip.None, cornerx, cornery);
 
@@ -100,7 +115,7 @@ export class GameMap {
                 dx = cornerx + x*this.roomWidth;
                 dy = cornery + y*this.roomHeight;
 
-                if (this.visited[this.area][y*this.width + x]) 
+                if (this.visited[this.area - 1][y*this.width + x]) 
                     continue;
 
                 canvas.setColor(146, 73, 0);
@@ -118,6 +133,15 @@ export class GameMap {
         canvas.fillRect(dx, dy, 1, this.roomHeight);
         canvas.fillRect(dx + this.roomWidth, dy, 1, this.roomHeight + 1);
 
+        if (this.flickerTimer <= 0.5) {
+
+            canvas.setColor(255, 0, 0);
+            canvas.fillRect(
+                cornerx + ((playerPos.x/TILE_WIDTH) | 0) - 1, 
+                cornery + ((playerPos.y/TILE_HEIGHT) | 0) - 1,
+                3, 3);
+        }
+
         canvas.setColor();
     }
 
@@ -125,6 +149,7 @@ export class GameMap {
     public activate() : void {
 
         this.active = true;
+        this.flickerTimer = 0.0;
     }
 
 

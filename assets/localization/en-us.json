@@ -72,8 +72,8 @@
 
 
     "item2": [
-        "You obtain the TOME OF\nUNBELIEVABLE MAGIC!",
-        "The book teaches you how\nto throw purple fireballs.\nOrange fireballs requires\nmore advanced magic."
+        "You obtain the TOME OF\nPURPLE FIREBALLS!",
+        "This book teaches you how\nto cast purple fireballs.\nOrange fireballs require\nmore advanced magic."
     ],
 
     "item3": [
@@ -144,6 +144,20 @@
     ],
 
 
+    "npc6": [
+        
+        "This world is not real.\nIn fact, this world is\ntotally disconnected\nfrom the reality. Whatever\nhappens here, stays here.",
+        "This is pure nonsense, of\ncourse, but tourists feel\nmore comfortable when\nthey think that they\ncan do anything."
+    ],
+
+
+    "npc7": [
+        
+        "See that hut over there?\nA great engineer used to\nlive there. She invented\na lot of great but totally\nuseless inventions.",
+        "An island-wide air\ncirculation system is one\nof them. We disabled it\nlong time ago because it\nwas making too much noise."
+    ],
+
+
     "shop_menu": [
 
         "Life Container",
@@ -152,7 +166,7 @@
         "Magic Beans",
         "Shiny Armor",
         "Broken Watch",
-        "Liver Oil",
+        "Snake Oil",
         "Cancel"
     ],
 
@@ -212,13 +226,13 @@
 
 
     "shopitem7": [
-        "You obtain a bottle of\nLIVER OIL!", 
-        "Cod liver? You wish.\nIt increases your vitality,\nmaking certain pick up\nitems more efficient."
+        "You obtain a bottle of\nSNAKE OIL!", 
+        "Believe it or not, this...\nstuff increases your\nvitality, making hearts\nand magic bottles more\nefficient."
     ],
 
 
     "gem": [
-        "You obtain a CRIMSON GEM!",
+        "You obtain a MAGIC GEM!",
         "What an odd item to hide\ninside a purple chest."
     ]
 

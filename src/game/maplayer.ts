@@ -180,7 +180,7 @@ export class MapLayer {
                     // Walls
                     if ((collisionID & Collision.Top) != 0) {
 
-                        o.verticalCollision(dx, dy, TILE_WIDTH, 1, event);
+                        o.verticalCollision(dx + 1, dy, TILE_WIDTH - 2, 1, event);
                     }
                     if ((collisionID & Collision.Bottom) != 0) {
 

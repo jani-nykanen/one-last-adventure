@@ -32,6 +32,8 @@ export class Bee extends Enemy {
         this.disableCollisions = true;
 
         this.specialTimer = Math.random()*Math.PI*2;
+
+        this.dropProbability = 0.40;
     }
 
 

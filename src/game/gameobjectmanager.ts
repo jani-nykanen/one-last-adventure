@@ -650,6 +650,9 @@ export class GameObjectManager {
     }
 
 
+    public getPlayerPosition = () : Vector => this.player?.getPosition().clone() ?? new Vector();
+
+
     public centerCameraToPlayer(camera : Camera) : void {
 
         if (this.player === undefined)

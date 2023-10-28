@@ -22,6 +22,8 @@ export class Miner extends Enemy {
         this.specialTimer = THROW_TIME/2 + ((Math.random()*THROW_TIME/2) | 0);
 
         this.weight = 1.0;
+
+        this.dropProbability = 0.25;
     }
 
 

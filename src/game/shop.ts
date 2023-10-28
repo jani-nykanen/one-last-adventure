@@ -12,12 +12,12 @@ import { ProgressManager } from "./progress.js";
 
 const ITEM_PRICES : number[] = [
 
-    25, // Health up
-    25, // Magic up
-    50, // Attack up
-    50, // Magic attack up
+    30, // Health up
+    30, // Magic up
+    75, // Attack up
+    75, // Magic attack up
     100, // Armor 
-    50, // Rapid attack
+    75, // Rapid attack
     50, // Better pick ups
 ];
 
@@ -65,6 +65,8 @@ export class Shop {
                 this.playerRef.addCoins(-price);
 
                 const id = this.menu.getCursorPos() + 1;
+
+                event.audio.pauseMusic();
 
                 this.deactivate();
                 this.progress.setProperty("shopitem" + String(id), 1);
