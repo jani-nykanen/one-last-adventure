@@ -53,6 +53,7 @@ export class GameObjectManager {
     private purpleBlockCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private teleporterCallback : ((x : number, y : number, id : number, event : ProgramEvent) => void) | undefined = undefined;
     private shakeCallback : ((amount : number, time : number) => void) | undefined = undefined;
+    private giantDoorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -68,7 +69,8 @@ export class GameObjectManager {
         doorCallback? : (event : ProgramEvent) => void,
         purpleBlockCallback? : (event : ProgramEvent) => void,
         teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void,
-        shakeCallback? : (amount : number, time : number) => void) {
+        shakeCallback? : (amount : number, time : number) => void,
+        giantDoorCallback? : (event : ProgramEvent) => void,) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -92,6 +94,7 @@ export class GameObjectManager {
         this.purpleBlockCallback = purpleBlockCallback;
         this.teleporterCallback = teleporterCallback;
         this.shakeCallback = shakeCallback;
+        this.giantDoorCallback = giantDoorCallback;
     }
 
 
@@ -440,7 +443,7 @@ export class GameObjectManager {
     }
 
 
-    public addPlayer(x : number, y : number) : void {
+    public addPlayer(x : number, y : number, makeStand : boolean = false) : void {
 
         if (this.player !== undefined) {
 
@@ -456,6 +459,11 @@ export class GameObjectManager {
         this.player = new Player(
             (x + 0.5)*TILE_WIDTH, (y + 0.5)*TILE_HEIGHT, 
             this.progress, this.flyingMessages, this.projectiles);
+
+        if (makeStand) {
+            
+            this.player.setFrame(3, 2);
+        }
     }
 
 
@@ -529,7 +537,7 @@ export class GameObjectManager {
             new GiantDoor(
                 (x + 0.5)*TILE_WIDTH, 
                 (y + 0.5)*TILE_HEIGHT,
-                undefined, // TODO: Add callback
+                this.giantDoorCallback,
                 this.textbox,
                 this.progress,));
     }

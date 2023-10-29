@@ -74,23 +74,8 @@ export class GiantDoor extends ActivableObject{
         event.audio.stopMusic();
         event.audio.playSample(event.assets.getSample("door"), 0.45);
 
-        /*
-        const ppos = player.getPosition();
-        player.setCheckpoint(ppos.x, ppos.y);
-
         event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
             (event : ProgramEvent) => this.cb?.(event), new RGBA(0, 0, 0));
-
-        if (camera !== undefined) {
-
-            event.transition.setCenter(
-                new Vector(
-                    ppos.x % camera.width,
-                    ppos.y % camera.height
-                )
-            );
-        }
-        */
     }
 
 

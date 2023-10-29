@@ -317,6 +317,13 @@ export class Stage {
                     objects.addGiantDoor(x, y);
                     break;
 
+                // Special player spawn
+                case 52:
+
+                    objects.addPlayer(x, y, true);
+                    objects.addGiantDoor(x, y);
+                    break;
+
                 default:
                     break;
                 }

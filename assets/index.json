@@ -31,6 +31,7 @@
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},
+        {"name": "tileset_castle", "path": "tileset_castle.png"},
         {"name": "tileset_void", "path": "tileset_void.png"}
     ],
 
@@ -40,9 +41,11 @@
         {"name": "void", "path": "void.tmx"},
         {"name": "island", "path": "island.tmx"},
         {"name": "caves", "path": "caves.tmx"},
+        {"name": "castle", "path": "castle.tmx"},
 
         {"name": "collisions_void", "path": "collisions_void.tmx"},
         {"name": "collisions_caves", "path": "collisions_caves.tmx"},
+        {"name": "collisions_castle", "path": "collisions_castle.tmx"},
         {"name": "collisions_island", "path": "collisions_island.tmx"}
     ],
 

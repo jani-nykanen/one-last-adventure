@@ -253,6 +253,12 @@ export class Game implements Scene {
     }
 
 
+    private giantDoorTransition(event : ProgramEvent) : void {
+        
+        this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true);
+    }
+
+
     private createMap(event : ProgramEvent) : void {
 
         const baseMap = event.assets.getTilemap("island");
@@ -309,7 +315,7 @@ export class Game implements Scene {
         this.objects = new GameObjectManager(
             this.progress, this.genericTextbox, this.shop,
             () => this.pause.activate(true),
-            (event : ProgramEvent) => {
+            (event : ProgramEvent) : void => {
 
                 event.transition.deactivate();
                 this.changeMap(1, event);
@@ -317,19 +323,20 @@ export class Game implements Scene {
                 event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
                     undefined, new RGBA(255, 255, 255));
             },
-            (event : ProgramEvent) => {
+            (event : ProgramEvent) : void => {
                 
                 this.stageIndex = this.stageIndex == 1 ? 2 : 1;
                 this.changeMap(this.stageIndex, event, false);
 
                 this.objects.setPlayerFrame(3, 2);
             },
-            (event : ProgramEvent) => {
+            (event : ProgramEvent) : void => {
 
                 this.stage.togglePurpleBlocks(this.camera);
             },
-            (x : number, y : number, id : number, event : ProgramEvent) => this.teleport(x, y, id, event),
-            (amount : number, time : number) => this.camera.shake(amount, time)
+            (x : number, y : number, id : number, event : ProgramEvent) : void => this.teleport(x, y, id, event),
+            (amount : number, time : number) : void => this.camera.shake(amount, time),
+            (event : ProgramEvent) : void => this.giantDoorTransition(event)
             );
         if (param === 1) {
 
