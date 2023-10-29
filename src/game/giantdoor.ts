@@ -18,6 +18,8 @@ export class GiantDoor extends ActivableObject{
     private locked : boolean = false;
     private gemCount : number = 0;
 
+    private insideCastle : boolean = false
+
 
     private cb : ((event : ProgramEvent) => void) | undefined = undefined;
 
@@ -27,7 +29,8 @@ export class GiantDoor extends ActivableObject{
     constructor(x : number, y : number, 
         useCb : ((event : ProgramEvent) => void) | undefined,
         textbox : TextBox,
-        progress : ProgressManager) {
+        progress : ProgressManager,
+        insideCastle : boolean = false) {
 
         super(x, y);
 
@@ -43,14 +46,16 @@ export class GiantDoor extends ActivableObject{
         this.inCamera = true;
 
         this.gemCount = progress.getProperty("gems");
-        this.locked = this.gemCount < REQUIRED_GEM_COUNT;
+        this.locked = !this.insideCastle && this.gemCount < REQUIRED_GEM_COUNT;
+
+        this.insideCastle = insideCastle;
     }
 
 
     protected generalPlayerEvent(player : Player, event : ProgramEvent): void {
         
         this.gemCount = player.progress.getProperty("gems");
-        this.locked = this.gemCount < REQUIRED_GEM_COUNT;
+        this.locked = !this.insideCastle && this.gemCount < REQUIRED_GEM_COUNT;
     }
 
 
@@ -81,7 +86,7 @@ export class GiantDoor extends ActivableObject{
 
     public draw(canvas: Canvas) : void {
         
-        if (!this.exist || !this.inCamera)
+        if (!this.exist || !this.inCamera || this.insideCastle)
             return;
 
         const bmp = canvas.getBitmap("locked_door");
@@ -92,6 +97,7 @@ export class GiantDoor extends ActivableObject{
         // Gems
         let shifty : number;
         let sy : number;
+        
         // NOTE: This only works for fixed gem count...
         for (let i = 0; i < REQUIRED_GEM_COUNT; ++ i) {
 

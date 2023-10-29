@@ -66,7 +66,7 @@ export class Assets {
 
 
     private loadItems(jsonData : any,
-        func : (name : string, path : string, extraParam? : string) => void, 
+        func : (name : string, path : string, alias? : string) => void, 
         basePathName : string, arrayName : string) : void {
         
         const path : string | undefined = jsonData[basePathName];
@@ -76,7 +76,7 @@ export class Assets {
                     
             for (let o of objects) {
 
-                func(o["name"], path + o["path"]);
+                func(o["name"], path + o["path"], o["alias"]);
             }
         }
     }
@@ -90,7 +90,9 @@ export class Assets {
         image.onload = (_ : Event) => {
 
             ++ this.loaded;
-            this.bitmaps.set(name, this.renderer.createBitmap(image));
+
+            const bmp = this.renderer.createBitmap(image);
+            this.bitmaps.set(name, bmp);
         }
         image.src = path;
     }
@@ -108,7 +110,7 @@ export class Assets {
     }
 
 
-    public loadSample(name : string, path : string) : void {
+    public loadSample(name : string, path : string, alias? : string) : void {
 
         ++ this.totalAssets;
 
@@ -123,6 +125,11 @@ export class Assets {
                     
                     ++ this.loaded;
                     this.samples.set(name, sample);
+
+                    if (alias !== undefined) {
+
+                        this.samples.set(alias, sample);
+                    }
                 });
             }
         }
@@ -145,7 +152,7 @@ export class Assets {
 
             const data = JSON.parse(s);
 
-            this.loadItems(data, (name : string, path : string) => {
+            this.loadItems(data, (name : string, path : string, alias? : string) => {
                 this.loadBitmap(name, path);
             }, "bitmapPath", "bitmaps");
 
@@ -153,8 +160,8 @@ export class Assets {
                 this.loadTilemap(name, path);
             }, "tilemapPath", "tilemaps");
 
-            this.loadItems(data, (name : string, path : string) => {
-                this.loadSample(name, path);
+            this.loadItems(data, (name : string, path : string, alias? : string) => {
+                this.loadSample(name, path, alias);
             }, "samplePath", "samples");
 
             this.loadItems(data, (name : string, path : string) => {

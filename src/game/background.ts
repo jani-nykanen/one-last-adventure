@@ -1,5 +1,5 @@
 import { ProgramEvent } from "../core/event.js";
-import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
+import { Bitmap, Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { RGBA } from "../math/rgba.js";
 import { negMod } from "../math/utility.js";
 import { Camera } from "./camera.js";
@@ -12,6 +12,7 @@ export const enum BackgroundType {
     Void = 1,
     IslandDay = 2,
     Caves = 3,
+    Castle = 4,
 };
 
 
@@ -24,7 +25,7 @@ export class Background {
     private timers : number[];
 
 
-    constructor(type : BackgroundType, event? : ProgramEvent | undefined) {
+    constructor(type : BackgroundType, event? : ProgramEvent) {
 
         const COUNT = [0, 1, 1];
 
@@ -32,7 +33,9 @@ export class Background {
 
         this.timers = (new Array<number> (COUNT[type])).fill(0);
 
-        if (type == BackgroundType.Void && event !== undefined) {
+        if (event !== undefined && 
+            (type == BackgroundType.Void ||
+            type == BackgroundType.Castle)) {
 
             this.snowflakes = new SnowflakeGenerator(event);
         }
@@ -89,21 +92,23 @@ export class Background {
     }
 
 
-    private drawCave(canvas : Canvas, shiftx : number, shifty : number) : void {
+    private drawRepeatingBackground(canvas : Canvas, bmp : Bitmap | undefined,
+        shiftx : number, shifty : number) : void {
 
-        const bmpBackground = canvas.getBitmap("cave_background");
+        const bw = bmp?.width ?? 32;
+        const bh = bmp?.height ?? 32;
 
-        const w = (canvas.width/32) | 0;
-        const h = (canvas.height/32) | 0;
+        const w = (canvas.width/bw) | 0;
+        const h = (canvas.height/bh) | 0;
 
-        let sx = shiftx % 32;
-        let sy = shifty % 32;
-
+        let sx = shiftx % bw;
+        let sy = shifty % bh;
+            
         for (let y = -1; y < h + 2; ++ y) {
 
             for (let x = -1; x < w + 2; ++ x) {
 
-                canvas.drawBitmap(bmpBackground, Flip.None, x*32 + sx, y*32 + sy);
+                canvas.drawBitmap(bmp, Flip.None, x*bw + sx, y*bh + sy);
             }
         }
     }
@@ -114,14 +119,15 @@ export class Background {
         const VORTEX_SPEED : number = Math.PI*2 / 600;
         const CLOUD_SPEED : number = 0.5;
 
+        if (camera !== undefined) {
+            
+            this.snowflakes?.update(camera, event);
+        }
+
         switch (this.type) {
 
         case BackgroundType.Void:
 
-            if (camera !== undefined) {
-
-                this.snowflakes?.update(camera, event);
-            }
             this.timers[0] = (this.timers[0] + VORTEX_SPEED*event.tick) % (Math.PI*2);
             break;
 
@@ -152,9 +158,14 @@ export class Background {
 
         case BackgroundType.Caves:
 
-            this.drawCave(canvas, shiftx, shifty);
+            this.drawRepeatingBackground(canvas, canvas.getBitmap("cave_background"), shiftx, shifty);
             break;
     
+        case BackgroundType.Castle:
+
+            this.drawRepeatingBackground(canvas, canvas.getBitmap("castle_background"), shiftx, shifty);
+            break;
+
         default:
             break;
         }
@@ -169,6 +180,11 @@ export class Background {
 
             this.snowflakes?.draw(canvas, new RGBA(0, 0, 0), 0.50);
             break;
+
+        case BackgroundType.Castle:
+
+            this.snowflakes?.draw(canvas, new RGBA(255, 255, 255), 0.50);
+            break;    
     
         default:
             break;

@@ -23,6 +23,7 @@
         {"name": "npc", "path": "npc.png"},
         {"name": "shopkeeper", "path": "shopkeeper.png"},
         {"name": "cave_background", "path": "cave_background.png"},
+        {"name": "castle_background", "path": "castle_background.png"},
         {"name": "projectiles", "path": "projectiles.png"},
         {"name": "fan", "path": "fan.png"},
         {"name": "switch", "path": "switch.png"},
@@ -83,7 +84,7 @@
         {"name": "theme_title", "path": "theme_title.ogg"},
         {"name": "theme_island", "path": "theme_island.ogg"},
         {"name": "theme_caves", "path": "theme_caves.ogg"},
-        {"name": "theme_void", "path": "theme_void.ogg"}
+        {"name": "theme_void", "alias": "theme_castle", "path": "theme_void.ogg"}
     ],
 
     "documentPath": "assets/localization/",

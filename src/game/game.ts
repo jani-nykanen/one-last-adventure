@@ -55,7 +55,7 @@ export class Game implements Scene {
     }
 
 
-    private reset(event : ProgramEvent, newStage : boolean = false) : void {
+    private reset(event : ProgramEvent, newStage : boolean = false, exitCastle : boolean = false) : void {
         
         this.objects.togglePlayerRelocation(newStage);
         if (!newStage) {
@@ -64,7 +64,7 @@ export class Game implements Scene {
         }
 
         this.objects.reset();
-        this.stage.createInitialObjects(this.objects);
+        this.stage.createInitialObjects(this.objects, exitCastle);
         this.objects.centerCameraToPlayer(this.camera);
         this.stage.cameraCheck(this.camera, this.objects, event);
 
@@ -94,7 +94,8 @@ export class Game implements Scene {
     }
 
 
-    private changeMap(index : number, event : ProgramEvent, recreatePlayer : boolean = true) : void {
+    private changeMap(index : number, event : ProgramEvent, 
+        recreatePlayer : boolean = true, exitCastle : boolean = false) : void {
 
         this.stageIndex = index;
 
@@ -105,7 +106,7 @@ export class Game implements Scene {
 
         const oldHealth = this.objects?.getPlayerHealth() ?? 1;
 
-        this.reset(event, recreatePlayer);
+        this.reset(event, recreatePlayer, exitCastle);
         this.setMapArea();
 
         this.objects?.setPlayerHealth(oldHealth);
@@ -255,7 +256,9 @@ export class Game implements Scene {
 
     private giantDoorTransition(event : ProgramEvent) : void {
         
-        this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true);
+        this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true, true);
+
+        this.objects.setPlayerFrame(3, 2);
     }
 
 
@@ -427,7 +430,8 @@ export class Game implements Scene {
 
         if (event.input.getAction("map") == InputState.Pressed) {
 
-            if (this.progress.getProperty("item8") == 0) {
+            if (this.stageIndex < 1 || this.stageIndex > 2 ||
+                this.progress.getProperty("item8") == 0) {
 
                 event.audio.playSample(event.assets.getSample("reject"), 0.50);
             }

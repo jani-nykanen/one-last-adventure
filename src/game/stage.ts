@@ -16,7 +16,7 @@ const OBJECT_LAYER_START = 256;
 
 
 const getBackgroundType = (id : number) : BackgroundType =>
-    [BackgroundType.Void, BackgroundType.IslandDay, BackgroundType.Caves ][id] ?? BackgroundType.Unknown;
+    [BackgroundType.Void, BackgroundType.IslandDay, BackgroundType.Caves, BackgroundType.Castle][id] ?? BackgroundType.Unknown;
 
 
 export class Stage {
@@ -277,7 +277,7 @@ export class Stage {
     }
 
 
-    public createInitialObjects(objects : GameObjectManager) : void {
+    public createInitialObjects(objects : GameObjectManager, exitCastle : boolean = false) : void {
 
         if (this.objectLayer === undefined)
             return;
@@ -302,7 +302,10 @@ export class Stage {
                 // Player
                 case 1:
 
-                    objects.addPlayer(x, y);
+                    if (!exitCastle) {
+
+                        objects.addPlayer(x, y);
+                    }
                     break;
 
                 // Portal
@@ -315,13 +318,17 @@ export class Stage {
                 case 51:
 
                     objects.addGiantDoor(x, y);
+                    if (exitCastle) {
+
+                        objects.addPlayer(x, y, true);
+                    }
                     break;
 
                 // Special player spawn
                 case 52:
 
                     objects.addPlayer(x, y, true);
-                    objects.addGiantDoor(x, y);
+                    objects.addGiantDoor(x, y, true);
                     break;
 
                 default:

@@ -531,7 +531,7 @@ export class GameObjectManager {
     }
 
 
-    public addGiantDoor(x : number, y : number) : void {
+    public addGiantDoor(x : number, y : number, inside : boolean = false) : void {
 
         this.activableObjects.push(
             new GiantDoor(
@@ -539,7 +539,8 @@ export class GameObjectManager {
                 (y + 0.5)*TILE_HEIGHT,
                 this.giantDoorCallback,
                 this.textbox,
-                this.progress,));
+                this.progress,
+                inside));
     }
 
 
