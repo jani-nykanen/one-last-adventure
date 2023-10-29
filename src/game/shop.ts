@@ -14,11 +14,11 @@ const ITEM_PRICES : number[] = [
 
     30, // Health up
     30, // Magic up
-    75, // Attack up
-    75, // Magic attack up
-    100, // Armor 
-    75, // Rapid attack
-    50, // Better pick ups
+    60, // Attack up
+    60, // Magic attack up
+    90, // Armor 
+    60, // Rapid attack
+    45, // Better pick ups
 ];
 
 

@@ -202,6 +202,7 @@ export class Game implements Scene {
         if (gems <= 0)
             return;
 
+        // Gems
         const gemStr = "*" + String(gems); 
 
         dx = canvas.width - ((gemStr.length)*11 + 12) - 2;
