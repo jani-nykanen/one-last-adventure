@@ -44,8 +44,8 @@ export class Star extends Enemy {
 
         this.distance = Math.min(MAX_DISTANCE, this.distance + DISTANCE_DELTA*event.tick);
 
-        this.pos.x = this.initialPos.x + Math.cos(this.angle)*this.distance;
-        this.pos.y = this.initialPos.y + Math.sin(this.angle)*this.distance;
+        this.pos.x = this.initialPos.x + this.dir*Math.cos(this.angle)*this.distance;
+        this.pos.y = this.initialPos.y + this.dir*Math.sin(this.angle)*this.distance;
 
         this.angle = (this.angle + ROTATION_SPEED*event.tick) % (Math.PI*2);
     }
@@ -75,8 +75,8 @@ export class Star extends Enemy {
 
             distance = distDelta*i;
 
-            chainx = Math.round(this.initialPos.x + c*distance);
-            chainy = Math.round(this.initialPos.y + s*distance);
+            chainx = Math.round(this.initialPos.x + this.dir*c*distance);
+            chainy = Math.round(this.initialPos.y + this.dir*s*distance);
 
             canvas.drawBitmap(bmp, Flip.None, chainx - 8, chainy - 8, 32, 224, 16, 16);
         }

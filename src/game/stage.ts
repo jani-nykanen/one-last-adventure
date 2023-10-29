@@ -66,7 +66,7 @@ export class Stage {
         return this.objectLayer.map( (v : number) : boolean => {
             
             const i = v - OBJECT_LAYER_START;
-            return (CREATABLE_OBJECTS.includes(i) || (i >= 17 && i <= 32));
+            return (CREATABLE_OBJECTS.includes(i) || (i >= 17 && i <= 48));
         });
     }
 
@@ -171,7 +171,7 @@ export class Stage {
 
         default:
 
-            if (tileID >= 17 && tileID <= 32) {
+            if (tileID >= 17 && tileID <= 48) {
 
                 objects.addEnemy(x, y, y*this.width + x, tileID - 16);
             }

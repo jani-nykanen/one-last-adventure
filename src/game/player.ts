@@ -785,7 +785,7 @@ export class Player extends CollisionObject {
 
         const Y_OFFSET : number = -18;
 
-        if (!this.isActive() || !this.showIcon)
+        if (!this.isActive() || !this.showIcon || this.knockbackTimer > 0)
             return;
 
         const dx = Math.round(this.pos.x) - 8;

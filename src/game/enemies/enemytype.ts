@@ -15,9 +15,11 @@ import { Bull } from "./bull.js";
 import { Star } from "./star.js";
 import { GiantBat } from "./giantbat.js";
 import { Ufo } from "./ufo.js";
+import { Flame } from "./flame.js";
 
 
-const ENEMY_TYPES : Function[] = [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee, Brick, Ball, Plant, Bull, Star, GiantBat, Ufo];
+const ENEMY_TYPES : Function[] = 
+    [Slime, Rabbit, Caterpillar, Turtle, Apple, Miner, Bat, PinkThing, Bee, Brick, Ball, Plant, Bull, Star, GiantBat, Ufo, Flame];
 
 
 export const getEnemyType = (id : number) => ENEMY_TYPES[clamp(id, 0, ENEMY_TYPES.length-1)];
