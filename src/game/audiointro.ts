@@ -1,7 +1,10 @@
 import { ProgramEvent } from "../core/event.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { Canvas, TransformTarget } from "../gfx/interface.js";
+import { drawUIBox } from "../ui/box.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
+import { Menu } from "../ui/menu.js";
+import { MenuButton } from "../ui/menubutton.js";
 
 
 const INFO_TEXT = 
@@ -16,7 +19,7 @@ Press ENTER to confirm.`;
 export class AudioIntro implements Scene {
 
 
-    private yesNoMenu : ConfirmationBox;
+    private yesNoMenu : Menu;
 
     private textWidth : number;
     private textHeight : number;
@@ -27,18 +30,23 @@ export class AudioIntro implements Scene {
         const strYes = event.localization?.getItem("yes")?.[0] ?? "null";
         const strNo = event.localization?.getItem("no")?.[0] ?? "null";
 
-        this.yesNoMenu = new ConfirmationBox(
-            [strYes, strNo], "",
-            (event : ProgramEvent) => {
 
-                this.goToNextScene(true, event);
-            },
-            (event : ProgramEvent) => {
 
-                this.goToNextScene(false, event);
-            });
+        this.yesNoMenu = new Menu(
+            [
+            new MenuButton(strYes, 
+                (event : ProgramEvent) => {
 
-        this.yesNoMenu.activate(0);
+                    this.goToNextScene(true, event);
+                }),
+            
+            new MenuButton(strNo, 
+                (event : ProgramEvent) => {
+    
+                    this.goToNextScene(false, event);
+                })
+        ], true);
+        // this.yesNoMenu.activate(0);
 
         const lines = INFO_TEXT.split("\n");
         this.textWidth = Math.max(...lines.map(s => s.length));
@@ -77,14 +85,18 @@ export class AudioIntro implements Scene {
         const font = canvas.getBitmap("font");
 
         canvas.setColor();
+
+        const dx = canvas.width/2 - this.textWidth*4;
+
+        drawUIBox(canvas, dx - 4, TEXT_YOFF - 5, (this.textWidth+1)*8, (this.textHeight+1)*10);
+
         canvas.drawText(font, INFO_TEXT, 
             canvas.width/2 - this.textWidth*4,
             TEXT_YOFF, 0, 2);
 
-        // TODO: The number above is not even based on anything
-        const menuShift = (TEXT_YOFF + this.textHeight*16) - canvas.height/2; 
+        const menuShift = (TEXT_YOFF + this.textHeight*16) - canvas.height/2 + 24; 
 
-        this.yesNoMenu.draw(canvas, false, 0, menuShift/2 + BOX_OFF);
+        this.yesNoMenu.draw(canvas, 0, menuShift/2 + BOX_OFF, 12, true);
     }
 
 

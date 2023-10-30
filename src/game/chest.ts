@@ -14,11 +14,12 @@ export const enum ChestType {
     Item = 0,
     Gem = 1,
     Life = 2,
-    Magic = 3
+    Magic = 3,
+    Boss = 4,
 };
 
 
-const TYPE_NAMES : string[] = ["item", "gem", "life", "magic"];
+const TYPE_NAMES : string[] = ["item", "gem", "life", "magic", ""];
 
 
 export class Chest extends ActivableObject {
@@ -84,14 +85,18 @@ export class Chest extends ActivableObject {
             itemSpriteID = 17;
         else if (this.type == ChestType.Magic)
             itemSpriteID = 18;
-
+        else if (this.type == ChestType.Boss)
+            itemSpriteID = -1;
 
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, itemSpriteID,
             (event : ProgramEvent) => {
 
                 const itemIDStr = TYPE_NAMES[this.type] + String(this.id);
 
-                player.progress.setProperty(itemIDStr, 1);
+                if (this.type != ChestType.Boss) {
+
+                    player.progress.setProperty(itemIDStr, 1);
+                }
 
                 switch (this.type) {
 
@@ -121,6 +126,11 @@ export class Chest extends ActivableObject {
 
                     this.textbox.addText(event.localization?.getItem("shopitem2") ?? []);
                     player.progress.updateProperty("magic_containers", 1);
+                    break;
+
+                case ChestType.Boss:
+
+                    this.textbox.addText(event.localization?.getItem("boss_chest") ?? []);
                     break;
 
                 default:

@@ -767,7 +767,7 @@ export class Player extends CollisionObject {
         }
 
         let bmpItems : Bitmap | undefined;
-        if (this.showObtainedItem) {
+        if (this.showObtainedItem && this.specialAnimationParam >= 1) {
 
             bmpItems = canvas.getBitmap("items");
 

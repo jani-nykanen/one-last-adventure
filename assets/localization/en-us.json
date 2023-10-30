@@ -259,6 +259,12 @@
     "gem": [
         "You obtain a MAGIC GEM!",
         "It is so full of magic it\nalmost looks like an\nordinary gem."
+    ],
+
+
+    "boss_chest": [
+        "You obtain the FINAL BOSS!",
+        "Wait, what?"
     ]
 
 }
