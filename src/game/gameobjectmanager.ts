@@ -349,6 +349,7 @@ export class GameObjectManager {
             this.finalBossTransitionCallback?.(event);
 
             this.finalBossRef?.shift(0, -camera.height);
+            this.finalBossRef?.setInitialHandPositions(camera);
             this.player?.shift(0, -camera.height);
             this.player?.setKnockBack(30);
 
