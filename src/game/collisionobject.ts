@@ -154,4 +154,13 @@ export class CollisionObject extends GameObject {
 
 
     public isClimbing?() : boolean;
+
+
+    public shift(deltax : number, deltay : number) : void {
+
+        this.pos.x += deltax;
+        this.pos.y += deltay;
+
+        this.oldPos = this.pos.clone();
+    }
 }

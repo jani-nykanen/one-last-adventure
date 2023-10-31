@@ -18,6 +18,7 @@ import { getMapName } from "./mapnames.js";
 import { Shop } from "./shop.js";
 import { updateSpeedAxis } from "./utility.js";
 import { GameMap, MapArea } from "./map.js";
+import { BackgroundType } from "./background.js";
 
 
 export class Game implements Scene {
@@ -339,7 +340,8 @@ export class Game implements Scene {
             },
             (x : number, y : number, id : number, event : ProgramEvent) : void => this.teleport(x, y, id, event),
             (amount : number, time : number) : void => this.camera.shake(amount, time),
-            (event : ProgramEvent) : void => this.giantDoorTransition(event)
+            (event : ProgramEvent) : void => this.giantDoorTransition(event),
+            (event : ProgramEvent) : void => this.stage.changeBackground(BackgroundType.FinalBoss)
             );
         if (param === 1) {
 
@@ -473,7 +475,10 @@ export class Game implements Scene {
 
         this.camera.use(canvas);
 
-        this.stage?.draw(canvas, this.camera);
+        if (!this.objects.isFinalBossActive()) {
+            
+            this.stage?.draw(canvas, this.camera);
+        }
         this.objects?.draw(canvas);
 
         canvas.transform.setTarget(TransformTarget.Camera);

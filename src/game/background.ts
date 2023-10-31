@@ -13,11 +13,14 @@ export const enum BackgroundType {
     IslandDay = 2,
     Caves = 3,
     Castle = 4,
+    FinalBoss = 5,
 };
 
 
 export class Background {
 
+
+    private originalType : BackgroundType;
 
     private type : BackgroundType;
     private snowflakes : SnowflakeGenerator | undefined = undefined;
@@ -30,6 +33,7 @@ export class Background {
         const COUNT = [0, 1, 1];
 
         this.type = type;
+        this.originalType = type;
 
         this.timers = (new Array<number> (COUNT[type])).fill(0);
 
@@ -42,12 +46,10 @@ export class Background {
     }
 
 
-    private drawVoid(canvas : Canvas) : void {
+    private drawVortex(canvas : Canvas) : void {
 
         const bmpVortex = canvas.getBitmap("vortex");
         const t = canvas.transform;
-
-        canvas.clear(255, 255, 255);
 
         t.setTarget(TransformTarget.Model);
         t.push();
@@ -55,13 +57,21 @@ export class Background {
         t.scale(1, 0.60);
         t.rotate(this.timers[0]);
         canvas.applyTransform();
-
-        canvas.setColor(219, 219, 219);
+        
         canvas.drawBitmap(bmpVortex, Flip.None, -(bmpVortex?.width ?? 0)/2, -(bmpVortex?.height ?? 0)/2);
 
         t.pop();
         canvas.applyTransform();
         canvas.setColor();
+    }
+
+
+    private drawVoid(canvas : Canvas) : void {
+
+        canvas.clear(255, 255, 255);
+
+        canvas.setColor(219, 219, 219);
+        this.drawVortex(canvas);
     }
 
 
@@ -114,9 +124,19 @@ export class Background {
     }
 
 
+    private drawFinalBossBackground(canvas : Canvas) : void {
+
+        canvas.clear(73, 0, 73);
+
+        canvas.setColor(109, 36, 109);
+        this.drawVortex(canvas);
+    }
+
+
     public update(camera : Camera | undefined = undefined, event : ProgramEvent) : void {
 
-        const VORTEX_SPEED : number = Math.PI*2 / 600;
+        const VORTEX_SPEED : number = Math.PI*2/600;
+        const FINAL_VORTEX_SPEED : number = Math.PI*2/300;
         const CLOUD_SPEED : number = 0.5;
 
         if (camera !== undefined) {
@@ -134,6 +154,11 @@ export class Background {
         case BackgroundType.IslandDay:
 
             this.timers[0] = (this.timers[0] + CLOUD_SPEED*event.tick) % 128;
+            break;
+
+        case BackgroundType.FinalBoss:
+
+            this.timers[0] = (this.timers[0] + FINAL_VORTEX_SPEED*event.tick) % (Math.PI*2);
             break;
 
         default:
@@ -166,6 +191,11 @@ export class Background {
             this.drawRepeatingBackground(canvas, canvas.getBitmap("castle_background"), shiftx, shifty);
             break;
 
+        case BackgroundType.FinalBoss:
+
+            this.drawFinalBossBackground(canvas);
+            break;
+
         default:
             break;
         }
@@ -189,5 +219,19 @@ export class Background {
         default:
             break;
         }
+    }
+
+
+    public changeType(newType : BackgroundType) : void {
+        
+        this.type = newType;
+
+        this.timers[0] = 0;
+    }
+
+
+    public restore() : void {
+
+        this.type = this.originalType;
     }
 }

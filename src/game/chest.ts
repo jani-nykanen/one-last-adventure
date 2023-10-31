@@ -33,10 +33,12 @@ export class Chest extends ActivableObject {
     private spr : Sprite;
 
     private hintCb : (x : number, y : number, id : number, event : ProgramEvent) => void;
+    private finallBossCb : (x : number, y : number) => void;
 
 
     constructor(x : number, y : number, id : number, type : ChestType, textbox : TextBox,
-        createHintCb : (x : number, y : number, id : number, event : ProgramEvent) => void) {
+        createHintCb : (x : number, y : number, id : number, event : ProgramEvent) => void,
+        finallBossCb : (x : number, y : number) => void) {
 
         super(x, y);
 
@@ -55,6 +57,7 @@ export class Chest extends ActivableObject {
         this.cameraCheckArea = new Vector(32, 32);
 
         this.hintCb = createHintCb;
+        this.finallBossCb = finallBossCb;
 
         this.inCamera = true;
     }
@@ -75,9 +78,6 @@ export class Chest extends ActivableObject {
         this.dying = true;
         this.spr.setFrame(0, this.type*2 + 1);
 
-        event.audio.pauseMusic();
-        event.audio.playSample(event.assets.getSample("item"), 0.80);
-
         let itemSpriteID = this.id;
         if (this.type == ChestType.Gem)
             itemSpriteID = 7;
@@ -87,6 +87,19 @@ export class Chest extends ActivableObject {
             itemSpriteID = 18;
         else if (this.type == ChestType.Boss)
             itemSpriteID = -1;
+
+        if (this.type == ChestType.Boss) {
+
+            player.setPosition(this.pos.x, this.pos.y, false);
+            this.finallBossCb(this.pos.x, this.pos.y - 40);
+
+            event.audio.stopMusic();
+        }
+        else {
+
+            event.audio.pauseMusic();
+        }
+        event.audio.playSample(event.assets.getSample("item"), 0.80);
 
         player.toggleSpecialAnimation(SpecialPlayerAnimationType.HoldItem, itemSpriteID,
             (event : ProgramEvent) => {

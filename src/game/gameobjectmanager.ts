@@ -27,6 +27,7 @@ import { Fan } from "./fan.js";
 import { Switch } from "./switch.js";
 import { GiantDoor } from "./giantdoor.js";
 import { Teleporter } from "./teleporter.js";
+import { FinalBoss } from "./enemies/finalboss.js";
 
 
 export class GameObjectManager {
@@ -54,8 +55,13 @@ export class GameObjectManager {
     private teleporterCallback : ((x : number, y : number, id : number, event : ProgramEvent) => void) | undefined = undefined;
     private shakeCallback : ((amount : number, time : number) => void) | undefined = undefined;
     private giantDoorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private finalBossTransitionCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
+
+    private finalBossActive : boolean = false;
+    private finalBossRef : FinalBoss | undefined = undefined;
+    private finalBossActivated : boolean = false;
 
     private readonly progress : ProgressManager;
     private readonly textbox : TextBox;
@@ -70,7 +76,8 @@ export class GameObjectManager {
         purpleBlockCallback? : (event : ProgramEvent) => void,
         teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void,
         shakeCallback? : (amount : number, time : number) => void,
-        giantDoorCallback? : (event : ProgramEvent) => void,) {
+        giantDoorCallback? : (event : ProgramEvent) => void,
+        finalBossTransitionCallback? : ((event : ProgramEvent) => void)) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -95,6 +102,21 @@ export class GameObjectManager {
         this.teleporterCallback = teleporterCallback;
         this.shakeCallback = shakeCallback;
         this.giantDoorCallback = giantDoorCallback;
+        this.finalBossTransitionCallback = finalBossTransitionCallback;
+    }
+
+
+    private createFinalBoss(x : number, y : number) : void {
+        
+        this.finalBossRef = new FinalBoss(
+            x, y, 0,
+            this.flyingMessages, this.collectibles, this.projectiles,
+            this.shakeCallback);
+
+        this.enemies.push(this.finalBossRef);
+
+        this.finalBossActive = true;
+        this.finalBossActivated = false;
     }
 
 
@@ -320,6 +342,34 @@ export class GameObjectManager {
     }
 
 
+    private updateFinalBoss(camera : Camera | undefined, event : ProgramEvent) : void {
+
+        if (!this.finalBossActivated) {
+
+            this.finalBossTransitionCallback?.(event);
+
+            this.finalBossRef?.shift(0, -camera.height);
+            this.player?.shift(0, -camera.height);
+            this.player?.setKnockBack(30);
+
+            camera?.forceShift(0, 0);
+            camera?.shake(4, 30);
+
+            event.audio.playSample(event.assets.getSample("finalboss"), 0.60);
+
+            this.finalBossActivated = true;
+        }
+
+        const cpos = camera.getTopCorner();
+
+        this.player?.verticalCollision(cpos.x, cpos.y + camera.height - 16, camera.width, 1, event);
+        this.player?.verticalCollision(cpos.x, cpos.y, camera.width, -1, event);
+
+        this.player?.horizontalCollision(cpos.x, cpos.y, camera.height, -1, event);
+        this.player?.horizontalCollision(cpos.x + camera.width, cpos.y, camera.height, 1, event);
+    }
+
+
     public update(camera : Camera | undefined, stage : Stage | undefined, event : ProgramEvent) : void {
 
         if (camera === undefined || stage === undefined)
@@ -343,6 +393,11 @@ export class GameObjectManager {
         this.player?.updateCollisionFlags();
         this.player?.cameraCollision(camera, event);
         stage?.objectCollision(this.player, event);
+
+        if (this.finalBossActive) {
+
+            this.updateFinalBoss(camera, event);
+        }
 
         this.updateCrates(camera, stage, event);
         this.updateEnemies(camera, stage, event);
@@ -503,7 +558,8 @@ export class GameObjectManager {
                 (y + 0.5)*TILE_HEIGHT, 
                 id, type,
                 this.textbox,
-                (x : number, y : number, id : number, event : ProgramEvent) => this.createItemHint(x, y, id, event)));
+                (x : number, y : number, id : number, event : ProgramEvent) => this.createItemHint(x, y, id, event),
+                (x : number, y : number) => this.createFinalBoss(x, y)));
     }
 
 
@@ -634,6 +690,10 @@ export class GameObjectManager {
 
         this.overridingHint = undefined;
 
+        this.finalBossActive = false;
+        this.finalBossRef = undefined;
+        this.finalBossActivated = false;
+
         // TODO: No need to recreate these, really
         this.activableObjects = new Array<ActivableObject> ();
 
@@ -703,4 +763,7 @@ export class GameObjectManager {
 
 
     public setPlayerHealth = (amount : number) : void => this.player?.setHealth(amount);
+
+
+    public isFinalBossActive = () : boolean => this.finalBossActivated;
 }

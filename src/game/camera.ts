@@ -167,4 +167,19 @@ export class Camera {
         this.shakeAmount = amount;
         this.shakeTimer = time;
     }
+
+
+    public forceShift(x : number, y : number) : void {
+
+        this.pos.x = x;
+        this.pos.y = y;
+
+        this.target = this.pos.clone();
+
+        this.moving = false;
+
+        this.interpolatedPos = new Vector(
+            (this.target.x*this.width) | 0, 
+            (this.target.y*this.height) | 0);
+    }
 }

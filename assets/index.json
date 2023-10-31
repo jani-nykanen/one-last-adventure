@@ -29,6 +29,7 @@
         {"name": "switch", "path": "switch.png"},
         {"name": "locked_door", "path": "locked_door.png"},
         {"name": "teleporter", "path": "teleporter.png"},
+        {"name": "final_boss", "path": "final_boss.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},
@@ -79,6 +80,7 @@
         {"name": "switch", "path": "switch.wav"},
         {"name": "quake", "path": "quake.wav"},
         {"name": "unlock", "path": "unlock.wav"},
+        {"name": "finalboss", "path": "finalboss.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_title", "path": "theme_title.ogg"},

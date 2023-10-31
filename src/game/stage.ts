@@ -354,6 +354,7 @@ export class Stage {
     public reset() : void {
 
         this.objectCreationWaiting = this.computeCreationWaitingArray();
+        this.background.restore();
     }
 
 
@@ -395,5 +396,11 @@ export class Stage {
         }
 
         return new Vector(startx, starty);
+    }
+
+
+    public changeBackground(newType : BackgroundType) : void {
+
+        this.background.changeType(newType);
     }
 }

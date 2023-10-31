@@ -1225,4 +1225,10 @@ export class Player extends CollisionObject {
 
         this.health = amount;
     }
+
+
+    public setKnockBack(time : number) : void {
+
+        this.knockbackTimer = time;
+    }
 }
