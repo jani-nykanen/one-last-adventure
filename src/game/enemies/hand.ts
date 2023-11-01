@@ -2,8 +2,21 @@ import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Rectangle } from "../../math/rectangle.js";
 import { Vector } from "../../math/vector.js";
+import { Player } from "../player.js";
 import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
+
+
+
+const enum AttackType {
+
+    Rush = 0,
+    Shoot = 1
+};
+
+
+const ATTACK_START_WAIT : number = 120;
+const ATTACK_READY_WAIT : number = 60;
 
 
 export class Hand extends Enemy {
@@ -11,6 +24,16 @@ export class Hand extends Enemy {
 
     private posRef : Vector | undefined = undefined;
     private distance : number = 0;
+
+    private attackWait : number = 0;
+    private attackReady : number = 0;
+    private attackType : AttackType = AttackType.Rush;
+    private attacking : boolean = false;
+
+    private rushing : boolean = false;
+    private rushTarget : Vector = new Vector();
+
+    private frame : number = 0;
 
 
     protected init() : void {
@@ -35,6 +58,28 @@ export class Hand extends Enemy {
     }
 
 
+    private rush(event : ProgramEvent) : void {
+
+        const MIN_DIST : number = 4;
+
+        const dist = Vector.distance(this.pos, this.rushTarget);
+
+        if (this.rushing && dist < MIN_DIST) {
+
+            this.rushing = false;
+        }
+    }
+
+
+    protected playerEvent(player : Player, event : ProgramEvent): void {
+        
+        if (this.attacking)
+            return;
+
+        this.rushTarget = player.getPosition();
+    }
+
+
     protected updateAI(event : ProgramEvent) : void {
 
         const TARGET_Y : number = 0.25;
@@ -44,6 +89,45 @@ export class Hand extends Enemy {
         this.pos.x = (this.posRef?.x ?? 0) + this.distance*this.dir;
 
         this.target.y = ydir*TARGET_Y;
+
+        if (this.attacking) {
+
+            switch (this.attackType) {
+
+            case AttackType.Rush:
+
+                this.rush(event);
+                break;
+
+            default:
+                break;
+            }
+
+            return;
+        }
+
+        if (this.attackReady > 0) {
+
+            this.attackReady -= event.tick;
+            if (this.attackReady <= 0) {
+
+                this.attacking = true;
+                this.rushing = true;
+
+                this.speed.zeros();
+            }
+        }
+        else {
+
+            this.frame = 0;
+
+            this.attackWait -= event.tick;
+            if (this.attackWait <= 0) {
+
+                this.attackReady = ATTACK_READY_WAIT;
+                this.attackWait = ATTACK_START_WAIT;
+            }
+        }
     }
 
 
@@ -57,7 +141,14 @@ export class Hand extends Enemy {
 
         const bmp = canvas.getBitmap("final_boss");
 
-        canvas.drawBitmap(bmp, this.flip, dx, dy, 64, 0, 32, 32);
+        if (this.attackReady > 0 && Math.floor(this.attackReady/4) % 2 == 0) {
+
+            canvas.setColor(255, 73, 73);
+        }
+
+        canvas.drawBitmap(bmp, this.flip, dx, dy, 64, this.frame*32, 32, 32);
+
+        canvas.setColor();
     }
 
 
@@ -68,5 +159,9 @@ export class Hand extends Enemy {
         this.flip = flip;
 
         this.dir = dir;
+
+        this.attackType = dir == 1 ? AttackType.Shoot : AttackType.Rush;
+        this.attackWait = ATTACK_START_WAIT + ((dir + 1)/2)*ATTACK_READY_WAIT*2;
+        this.attackReady = 0;
     }
 }
