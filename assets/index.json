@@ -81,6 +81,7 @@
         {"name": "quake", "path": "quake.wav"},
         {"name": "unlock", "path": "unlock.wav"},
         {"name": "finalboss", "path": "finalboss.wav"},
+        {"name": "prepare", "path": "prepare.wav"},
 
         {"name": "item", "path": "item.ogg"},
         {"name": "theme_title", "path": "theme_title.ogg"},

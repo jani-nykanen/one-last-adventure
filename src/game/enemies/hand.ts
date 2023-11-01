@@ -15,8 +15,8 @@ const enum AttackType {
 };
 
 
-const ATTACK_START_WAIT : number = 60;
-const ATTACK_READY_WAIT : number = 30;
+const ATTACK_START_WAIT : number = 120;
+const ATTACK_READY_WAIT : number = 60;
 
 
 export class Hand extends Enemy {
@@ -81,6 +81,8 @@ export class Hand extends Enemy {
         this.frame = 0;
         this.swapAttackType();
 
+        event.audio.playSample(event.assets.getSample("throw"), 0.60);
+
         if (this.dir < 0) {
 
             dir = Vector.direction(this.pos, this.rushTarget);
@@ -134,6 +136,8 @@ export class Hand extends Enemy {
                 
                 this.rushing = false;
                 this.rushWait = RUSH_WAIT;
+
+                event.audio.playSample(event.assets.getSample("magic_hit"), 0.50);
             }
             else {
 
@@ -212,6 +216,8 @@ export class Hand extends Enemy {
 
                 this.attackReady = ATTACK_READY_WAIT;
                 this.attackWait = ATTACK_START_WAIT;
+
+                event.audio.playSample(event.assets.getSample("prepare"), 0.80);
             }
         }
     }
