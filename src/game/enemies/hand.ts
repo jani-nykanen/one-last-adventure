@@ -15,8 +15,8 @@ const enum AttackType {
 };
 
 
-const ATTACK_START_WAIT : number = 120;
-const ATTACK_READY_WAIT : number = 60;
+const ATTACK_START_WAIT : number = 60;
+const ATTACK_READY_WAIT : number = 30;
 
 
 export class Hand extends Enemy {
@@ -30,8 +30,10 @@ export class Hand extends Enemy {
     private attackType : AttackType = AttackType.Rush;
     private attacking : boolean = false;
 
+    private rushWait : number = 0;
     private rushing : boolean = false;
     private rushTarget : Vector = new Vector();
+    private basePos : Vector = new Vector();
 
     private frame : number = 0;
 
@@ -58,16 +60,91 @@ export class Hand extends Enemy {
     }
 
 
+    private swapAttackType() : void {
+
+        this.attackType = Number(!Boolean(this.attackType)) as AttackType;
+    }
+
+
+    private shootBullets(event : ProgramEvent) : void {
+
+        const BASE_SHOOT_SPEED : number = 2.0;
+        const SHOOT_DIF : number = Math.PI/8;
+
+        const ALT_SHOOT_SPEED_X : number = 0.5;
+        const ALT_SHOOT_SPEED_Y : number = -3.0;
+
+        let dir : Vector;
+        let angle : number;
+
+        this.attacking = false;
+        this.frame = 0;
+        this.swapAttackType();
+
+        if (this.dir < 0) {
+
+            dir = Vector.direction(this.pos, this.rushTarget);
+            angle = Math.atan2(dir.y, dir.x);
+
+            for (let i = -1; i <= 1; ++ i) {
+
+                dir.x = Math.cos(angle + i*SHOOT_DIF);
+                dir.y = Math.sin(angle + i*SHOOT_DIF);
+
+                this.projectiles.spawn(this.pos.x, this.pos.y,
+                    dir.x*BASE_SHOOT_SPEED, dir.y*BASE_SHOOT_SPEED, 2, 2, false, false, false);
+            }
+            return;
+        }
+
+        for (let i = -2; i <= 2; ++ i) {
+
+            this.projectiles.spawn(this.pos.x, this.pos.y,
+                ALT_SHOOT_SPEED_X*i, ALT_SHOOT_SPEED_Y, 2, 2, false, true);
+        }
+    }
+
+
     private rush(event : ProgramEvent) : void {
 
         const MIN_DIST : number = 4;
+        const RUSH_SPEED : number = 2.0;
+        const RETURN_SPEED : number = 1.0;
+        const RUSH_WAIT : number = 30;
 
-        const dist = Vector.distance(this.pos, this.rushTarget);
+        if (this.rushWait > 0) {
 
-        if (this.rushing && dist < MIN_DIST) {
-
-            this.rushing = false;
+            this.rushWait -= event.tick;
+            this.speed.zeros();
+            return;
         }
+
+        const target = this.rushing ? this.rushTarget : this.basePos;
+
+        const dist = Vector.distance(this.pos, target);
+        const dir = Vector.direction(this.pos, target);
+        const speed = this.rushing ? RUSH_SPEED : RETURN_SPEED;
+
+        this.speed.x = dir.x*speed;
+        this.speed.y = dir.y*speed;
+
+        if (dist < MIN_DIST) {
+
+            if (this.rushing) {
+                
+                this.rushing = false;
+                this.rushWait = RUSH_WAIT;
+            }
+            else {
+
+                this.attacking = false;
+                this.swapAttackType();
+
+                this.pos = this.basePos.clone();
+            }
+        }
+
+        this.frame = this.rushing ? 0 : 1;
     }
 
 
@@ -84,11 +161,8 @@ export class Hand extends Enemy {
 
         const TARGET_Y : number = 0.25;
 
-        const ydir = Math.sign((this.posRef?.y ?? 0) - this.pos.y);
-        
-        this.pos.x = (this.posRef?.x ?? 0) + this.distance*this.dir;
-
-        this.target.y = ydir*TARGET_Y;
+        this.basePos.x = this.posRef.x + this.dir*this.distance;
+        this.basePos.y = this.posRef.y;
 
         if (this.attacking) {
 
@@ -99,6 +173,11 @@ export class Hand extends Enemy {
                 this.rush(event);
                 break;
 
+            case AttackType.Shoot:
+
+                this.shootBullets(event);
+                break;
+
             default:
                 break;
             }
@@ -106,7 +185,14 @@ export class Hand extends Enemy {
             return;
         }
 
+        this.pos.x = (this.posRef?.x ?? 0) + this.distance*this.dir;
+
+        const ydir = Math.sign((this.posRef?.y ?? 0) - this.pos.y);
+        this.target.y = ydir*TARGET_Y;
+
         if (this.attackReady > 0) {
+
+            this.frame = this.attackType;
 
             this.attackReady -= event.tick;
             if (this.attackReady <= 0) {

@@ -62,12 +62,17 @@ export class FinalBoss extends Enemy {
                 i == 0 ? Flip.None : Flip.Horizontal,
                 i == 0 ? -1 : 1);
         }
+
+        this.harmful = false;
     }
 
 
     protected playerEvent(player : Player, event : ProgramEvent): void {
         
-        // ...
+        for (let h of this.hands) {
+
+            h.playerCollision(player, event);
+        }
     }
 
 

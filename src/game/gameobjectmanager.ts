@@ -392,7 +392,11 @@ export class GameObjectManager {
 
         this.player?.update(event);
         this.player?.updateCollisionFlags();
-        this.player?.cameraCollision(camera, event);
+
+        if (!this.finalBossActive) {
+            
+            this.player?.cameraCollision(camera, event);
+        }
         stage?.objectCollision(this.player, event);
 
         if (this.finalBossActive) {

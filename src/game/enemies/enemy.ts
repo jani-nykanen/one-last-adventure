@@ -28,6 +28,7 @@ export class Enemy extends CollisionObject {
     protected swordHitId : number = -1;
 
     protected canBeHurt : boolean = true;
+    protected harmful : boolean = true;
     protected hurtTimer : number = 0;
 
     protected weight : number = 1.0;
@@ -208,7 +209,7 @@ export class Enemy extends CollisionObject {
             }
         }
 
-        if (this.overlay(player)) {
+        if (this.harmful && this.overlay(player)) {
 
             player.hurt(-dir.x, this.damage, event);
         }
