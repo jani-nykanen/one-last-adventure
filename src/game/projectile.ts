@@ -24,6 +24,8 @@ export class Projectile extends CollisionObject {
 
     private damage : number = 1;
 
+    private targetObject : CollisionObject | undefined = undefined;
+
 
     constructor() {
 
@@ -38,6 +40,20 @@ export class Projectile extends CollisionObject {
 
         this.friction.x = 0.10;
         this.friction.y = 0.10;
+    }
+
+
+    private moveTowardsTarget(event : ProgramEvent) : void {
+
+        const MOVE_SPEED : number = 2.0;
+
+        if (this.targetObject === undefined)
+            return;
+
+        const dir = Vector.direction(this.pos, this.targetObject.getPosition());
+
+        this.target.x = dir.x*MOVE_SPEED;
+        this.target.y = dir.y*MOVE_SPEED;
     }
 
 
@@ -80,6 +96,11 @@ export class Projectile extends CollisionObject {
         if (this.id == 3 || this.id == 4)
             return;
 
+        if (this.id == 5) {
+
+            this.moveTowardsTarget(event);
+        }
+
         this.spr.animate(this.id, 0, LAST_FRAME[this.id] ?? 3, ANIM_SPEED[this.id] ?? 4, event.tick);
     }
 
@@ -104,6 +125,9 @@ export class Projectile extends CollisionObject {
         this.exist = true;
         this.inCamera = true;
 
+        this.friction.x = 0.10;
+        this.friction.y = 0.10;
+
         this.spr.setFrame(0, this.id);
         if (this.id == 3) {
 
@@ -112,6 +136,11 @@ export class Projectile extends CollisionObject {
         else if (this.id == 4) {
 
             this.spr.setFrame(3, this.id);
+        }
+        else if (this.id == 5) {
+
+            this.friction.x = 0.025;
+            this.friction.y = 0.025;
         }
 
         this.hitbox.w = PROJECTILE_WIDTH[this.id] ?? 8;
@@ -149,6 +178,12 @@ export class Projectile extends CollisionObject {
         this.spr.setFrame(4, this.id);
 
         event.audio.playSample(event.assets.getSample("magic_hit"), 0.50);
+    }
+
+
+    public setTargetObject(o : CollisionObject) : void {
+
+        this.targetObject = o;
     }
 
 

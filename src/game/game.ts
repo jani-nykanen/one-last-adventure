@@ -40,6 +40,7 @@ export class Game implements Scene {
     private stageIndex : number = 0;
 
     private oldMagic : number = 0;
+    private oldFinalBossHealth : number = 1.0;
 
 
     constructor() {
@@ -121,7 +122,9 @@ export class Game implements Scene {
 
 
     private drawMagicBar(canvas : Canvas, cannotUse : boolean,
-        t : number, dx : number, dy : number, dw : number, dh : number) : void {
+        t : number, dx : number, dy : number, dw : number, dh : number,
+        color1 : number[] = [219, 36, 182],
+        color2 : number[] = [255, 146, 255]) : void {
 
         // Backround
         canvas.setColor(0, 0, 0);
@@ -140,7 +143,7 @@ export class Game implements Scene {
         }
         else {
 
-            canvas.setColor(219, 36, 182);
+            canvas.setColor(...color1);
         }
         canvas.fillRect(dx + 1, dy + 1, w, dh - 2);
 
@@ -148,11 +151,11 @@ export class Game implements Scene {
 
             if (cannotUse) {
 
-                canvas.setColor(219, 36, 182);
+                canvas.setColor(...color1);
             }
             else {
 
-                canvas.setColor(255, 146, 255);
+                canvas.setColor(...color2);
             }
 
             canvas.fillRect(dx + 1, dy +1, w - 1, dh - 3);
@@ -161,7 +164,7 @@ export class Game implements Scene {
         canvas.setColor();
     }
 
-    
+
 
     private drawHUD(canvas : Canvas) : void {
 
@@ -177,6 +180,8 @@ export class Game implements Scene {
 
         const magic = this.objects.getPlayerMagic();
         const maxMagic = this.objects.getPlayerMaxMagic();
+
+        const finalBossHealth = this.objects.getFinalBossRelativeHealth();
 
         let dx : number;
 
@@ -217,6 +222,13 @@ export class Game implements Scene {
         canvas.drawText(bmpFont, gemStr, dx + 12, canvas.height - 14, -7);
 
         canvas.drawBitmap(bmp, Flip.None, dx + 3, canvas.height - 14, 64, 0, 16, 16);
+
+        if (this.objects.isFinalBossActive()) {
+
+            this.drawMagicBar(canvas, false, this.oldFinalBossHealth, 
+                canvas.width/2 - 48, canvas.height - 10, 96, 8,
+                [146, 36, 0], [255, 109, 0]);
+        }
     }
 
 
@@ -235,8 +247,15 @@ export class Game implements Scene {
     private updateHUD(event : ProgramEvent) : void {
 
         const BAR_UPDATE_SPEED : number = 1.0/10.0;
+        const FINAL_BAR_UPDATE_SPEED : number = 1.0/192.0;
 
         this.oldMagic = updateSpeedAxis(this.oldMagic, this.objects.getPlayerMagic() ?? 3.0, BAR_UPDATE_SPEED*event.tick);
+
+        let t = this.objects?.getFinalBossRelativeHealth();
+        if (t !== undefined) {
+
+            this.oldFinalBossHealth = updateSpeedAxis(this.oldFinalBossHealth, t, FINAL_BAR_UPDATE_SPEED*event.tick);
+        }
     }
 
 
@@ -348,6 +367,8 @@ export class Game implements Scene {
             (amount : number, time : number) : void => this.camera.shake(amount, time),
             (event : ProgramEvent) : void => this.giantDoorTransition(event),
             (event : ProgramEvent) : void => {
+
+                this.oldFinalBossHealth = 1.0;
 
                 event.audio.playMusic(event.assets.getSample("theme_boss"), FinalBossMusicVolume);
                 this.stage.changeBackground(BackgroundType.FinalBoss);

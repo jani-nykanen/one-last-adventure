@@ -771,4 +771,7 @@ export class GameObjectManager {
 
 
     public isFinalBossActive = () : boolean => this.finalBossActivated;
+
+
+    public getFinalBossRelativeHealth = () : number | undefined => this.finalBossRef?.getRelativeHealth();
 }

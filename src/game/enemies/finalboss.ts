@@ -7,6 +7,7 @@ import { Camera } from "../camera.js";
 import { CollectibleGenerator } from "../collectiblegenerator.js";
 import { FlyingMessageGenerator } from "../flyingmessagegenerator.js";
 import { Player } from "../player.js";
+import { Projectile } from "../projectile.js";
 import { ProjectileGenerator } from "../projectilegenerator.js";
 import { Enemy } from "./enemy.js";
 import { Hand } from "./hand.js";
@@ -84,12 +85,14 @@ export class FinalBoss extends Enemy {
     }
 
 
-    private updateShooting(event : ProgramEvent) : void {
+    private updateShooting(player : Player, event : ProgramEvent) : void {
 
         const SHOOT_TIME : number = 240;
         const PREPARE_TIME : number = 60;
         const SHOOT_SPEED : number = 1.0;
         const MOUTH_TIME : number = 30;
+
+        let p : Projectile;
 
         if (this.preparing) {
 
@@ -101,9 +104,11 @@ export class FinalBoss extends Enemy {
 
                 event.audio.playSample(event.assets.getSample("throw"), 0.60);
                 
-                this.projectiles.spawn(this.pos.x, this.pos.y + 16,
+                p = this.projectiles.spawn(this.pos.x, this.pos.y + 16,
                     this.shootDir.x*SHOOT_SPEED, this.shootDir.y*SHOOT_SPEED, 
                     5, 3, false, false, true);
+
+                p.setTargetObject(player);
 
                 this.mouthTimer = MOUTH_TIME;
             }
@@ -132,6 +137,11 @@ export class FinalBoss extends Enemy {
         if (this.preparing) {
 
             this.shootDir = Vector.direction(this.pos, player.getPosition());
+        }
+
+        if (this.droolTimer < DROOL_TIME) {
+
+            this.updateShooting(player, event);
         }
     }
 
@@ -171,6 +181,9 @@ export class FinalBoss extends Enemy {
             return;
         }
 
+        if (this.preparing)
+            return;
+
         this.droolTimer += event.tick;
         if (this.droolTimer >= DROOL_TIME) {
 
@@ -187,10 +200,6 @@ export class FinalBoss extends Enemy {
 
                 this.sprDrool.setFrame(0, 4);
             }
-        }
-        else {
-
-            this.updateShooting(event);
         }
     }
 
@@ -251,4 +260,7 @@ export class FinalBoss extends Enemy {
             h.shift(0, -camera.height*2)
         }
     }
+
+
+    public getRelativeHealth = () : number => this.health/this.maxHealth;
 }
