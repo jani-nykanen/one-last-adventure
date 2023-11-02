@@ -475,10 +475,9 @@ export class Game implements Scene {
 
         this.camera.use(canvas);
 
-        if (!this.objects.isFinalBossActive()) {
-            
-            this.stage?.draw(canvas, this.camera);
-        }
+        // if (!this.objects.isFinalBossActive()) { 
+        this.stage?.draw(canvas, this.camera);
+        // }
         this.objects?.draw(canvas);
 
         canvas.transform.setTarget(TransformTarget.Camera);

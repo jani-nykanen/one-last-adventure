@@ -11,7 +11,7 @@ import { Enemy } from "./enemy.js";
 import { Hand } from "./hand.js";
 
 
-const HAND_DISTANCE : number = 52;
+const HAND_DISTANCE : number = 48;
 
 
 export class FinalBoss extends Enemy {
@@ -99,6 +99,10 @@ export class FinalBoss extends Enemy {
         for (let h of this.hands) {
 
             h.update(event);
+            if (this.health <= this.maxHealth/2) {
+
+                h.activateSecondPhase();
+            }
         }
     }
 
@@ -131,7 +135,7 @@ export class FinalBoss extends Enemy {
 
         for (let h of this.hands) {
 
-            h.shift(0, -camera.height)
+            h.shift(0, -camera.height*2)
         }
     }
 }

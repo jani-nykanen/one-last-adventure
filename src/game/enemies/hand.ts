@@ -22,13 +22,16 @@ const ATTACK_READY_WAIT : number = 60;
 export class Hand extends Enemy {
 
 
-    private posRef : Vector | undefined = undefined;
+    private posRef : Vector = new Vector();
     private distance : number = 0;
 
     private attackWait : number = 0;
     private attackReady : number = 0;
     private attackType : AttackType = AttackType.Rush;
     private attacking : boolean = false;
+
+    private phase : number = 0;
+    private angle : number = 0;
 
     private rushWait : number = 0;
     private rushing : boolean = false;
@@ -46,8 +49,8 @@ export class Hand extends Enemy {
 
         this.hitbox = new Rectangle(0, 0, 16, 16);
 
-        this.friction.x = 0;
-        this.friction.y = 0.025;
+        this.friction.x = 0.25;
+        this.friction.y = 0.25;
 
         this.weight = 0;
 
@@ -72,7 +75,8 @@ export class Hand extends Enemy {
         const SHOOT_DIF : number = Math.PI/8;
 
         const ALT_SHOOT_SPEED_X : number = 0.5;
-        const ALT_SHOOT_SPEED_Y : number = -3.0;
+        const ALT_SHOOT_SPEED_Y : number = -3.5;
+        const ALT_SHOOT_DELTA_Y : number = 0.25;
 
         let dir : Vector;
         let angle : number;
@@ -102,7 +106,9 @@ export class Hand extends Enemy {
         for (let i = -2; i <= 2; ++ i) {
 
             this.projectiles.spawn(this.pos.x, this.pos.y,
-                ALT_SHOOT_SPEED_X*i, ALT_SHOOT_SPEED_Y, 2, 2, false, true);
+                ALT_SHOOT_SPEED_X*i, 
+                ALT_SHOOT_SPEED_Y + ALT_SHOOT_DELTA_Y*Math.sqrt(Math.abs(i)), 
+                2, 2, false, true);
         }
     }
 
@@ -110,8 +116,8 @@ export class Hand extends Enemy {
     private rush(event : ProgramEvent) : void {
 
         const MIN_DIST : number = 4;
-        const RUSH_SPEED : number = 2.0;
-        const RETURN_SPEED : number = 1.0;
+        const RUSH_SPEED : number = 3.0;
+        const RETURN_SPEED : number = 2.0;
         const RUSH_WAIT : number = 30;
 
         if (this.rushWait > 0) {
@@ -152,6 +158,84 @@ export class Hand extends Enemy {
     }
 
 
+    private stomp(event : ProgramEvent) : void {
+
+        const GRAVITY_TARGET : number = 8.0;
+        const BOTTOM_DIF : number = 24;
+        const STOMP_WAIT : number = 30;
+        const RETURN_SPEED : number = 2.0;
+        const MIN_DIST : number = 4;
+
+        this.flip = Flip.Horizontal | Flip.Vertical;
+
+        this.frame = 1;
+
+        if (this.rushWait > 0) {
+
+            this.rushWait -= event.tick;
+            this.speed.zeros();
+            return;
+        }
+
+        if (this.rushing) {
+
+            this.friction.y = 0.5;
+            this.target.y = GRAVITY_TARGET;
+
+            if (this.pos.y >= event.screenHeight - BOTTOM_DIF) {
+
+                this.pos.y = event.screenHeight - BOTTOM_DIF;
+                this.speed.y = 0;
+                this.rushWait = STOMP_WAIT;
+
+                this.shakeCallback(4, 30);
+
+                event.audio.playSample(event.assets.getSample("quake"), 0.55);
+
+                this.rushing = false;
+
+                for (let i = -2; i <= 2; ++ i) {
+
+                    this.projectiles.spawn(this.pos.x, this.pos.y + 8,
+                        i*1.0, -4.0 + Math.sqrt(Math.abs(i))*0.5, 
+                        3, 2, false, true);
+                }
+            }
+            return;
+        }
+       
+        const dist = Vector.distance(this.pos, this.basePos);
+        const dir = Vector.direction(this.pos, this.basePos);
+
+        this.speed.x = dir.x*RETURN_SPEED;
+        this.speed.y = dir.y*RETURN_SPEED;
+
+        if (dist < MIN_DIST) {
+            
+            this.attacking = false;
+            this.swapAttackType();
+
+            this.pos = this.basePos.clone();
+
+            this.flip = Flip.Horizontal;
+        }
+    }
+
+
+    private computeBasePos() : void {
+
+        if (this.phase == 0) {
+
+            this.basePos.x = this.posRef.x + this.distance*this.dir;
+            this.basePos.y = this.posRef.y + Math.sin(this.angle)*24;
+            return;
+        }
+
+        this.basePos.x = this.posRef.x - Math.cos(this.angle)*this.distance;
+        this.basePos.y = this.posRef.y - Math.sin(this.angle)*this.distance;
+    }
+
+
     protected playerEvent(player : Player, event : ProgramEvent): void {
         
         if (this.attacking)
@@ -163,10 +247,13 @@ export class Hand extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
 
-        const TARGET_Y : number = 0.25;
+        const APPROACH_SPEED : number = 2.0;
+        const ROTATION_SPEED : number = Math.PI*2/240;
+        const MIN_DIST : number = 4.0;
 
-        this.basePos.x = this.posRef.x + this.dir*this.distance;
-        this.basePos.y = this.posRef.y;
+        this.angle = (this.angle + ROTATION_SPEED*event.tick) % (Math.PI*2);
+
+        this.computeBasePos();
 
         if (this.attacking) {
 
@@ -174,7 +261,11 @@ export class Hand extends Enemy {
 
             case AttackType.Rush:
 
-                this.rush(event);
+                if (this.dir < 0)
+                    this.rush(event);
+                else 
+                    this.stomp(event);
+
                 break;
 
             case AttackType.Shoot:
@@ -189,10 +280,24 @@ export class Hand extends Enemy {
             return;
         }
 
-        this.pos.x = (this.posRef?.x ?? 0) + this.distance*this.dir;
+        let dir : Vector;
+        let dist = Vector.distance(this.pos, this.basePos);
 
-        const ydir = Math.sign((this.posRef?.y ?? 0) - this.pos.y);
-        this.target.y = ydir*TARGET_Y;
+        if (dist < MIN_DIST) {
+
+            this.pos.x = this.basePos.x;
+            this.pos.y = this.basePos.y;
+
+            this.target.zeros();
+            this.speed.zeros();
+        }
+        else {
+            
+            dir = Vector.direction(this.pos, this.basePos);
+
+            this.target.x = dir.x*APPROACH_SPEED;
+            this.target.y = dir.y*APPROACH_SPEED;
+        }
 
         if (this.attackReady > 0) {
 
@@ -205,6 +310,11 @@ export class Hand extends Enemy {
                 this.rushing = true;
 
                 this.speed.zeros();
+
+                if (this.attackType == AttackType.Rush) {
+
+                    event.audio.playSample(event.assets.getSample("enemy_jump"), 0.50);
+                }
             }
         }
         else {
@@ -255,5 +365,13 @@ export class Hand extends Enemy {
         this.attackType = dir == 1 ? AttackType.Shoot : AttackType.Rush;
         this.attackWait = ATTACK_START_WAIT + ((dir + 1)/2)*ATTACK_READY_WAIT*2;
         this.attackReady = 0;
+
+        this.angle = (dir + 1)/2.0*Math.PI;
+    }
+
+
+    public activateSecondPhase() : void {
+
+        this.phase = 1;
     }
 }
