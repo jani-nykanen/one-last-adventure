@@ -11,7 +11,7 @@ import { PauseMenu } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
 import { LOCAL_STORAGE_MAP_KEY, LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
 import { TextBox } from "../ui/textbox.js";
-import { MusicVolume } from "./musicvolume.js";
+import { FinalBossMusicVolume, MusicVolume } from "./musicvolume.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Story } from "./story.js";
 import { getMapName } from "./mapnames.js";
@@ -49,6 +49,12 @@ export class Game implements Scene {
 
 
     private playMusic(event : ProgramEvent) : void {
+
+        if (this.objects?.isFinalBossActive()) {
+
+            event.audio.playMusic(event.assets.getSample("theme_boss"), FinalBossMusicVolume);
+            return;
+        }
 
         const name = getMapName(this.stageIndex);
 
@@ -341,7 +347,11 @@ export class Game implements Scene {
             (x : number, y : number, id : number, event : ProgramEvent) : void => this.teleport(x, y, id, event),
             (amount : number, time : number) : void => this.camera.shake(amount, time),
             (event : ProgramEvent) : void => this.giantDoorTransition(event),
-            (event : ProgramEvent) : void => this.stage.changeBackground(BackgroundType.FinalBoss)
+            (event : ProgramEvent) : void => {
+
+                event.audio.playMusic(event.assets.getSample("theme_boss"), FinalBossMusicVolume);
+                this.stage.changeBackground(BackgroundType.FinalBoss);
+            }
             );
         if (param === 1) {
 

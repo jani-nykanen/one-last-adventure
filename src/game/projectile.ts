@@ -10,8 +10,8 @@ import { Sprite } from "../gfx/sprite.js";
 // const DAMAGE : number[] = [2];
 
 
-const PROJECTILE_WIDTH : number[] = [10, 6, 8, 8];
-const PROJECTILE_HEIGHT : number[] = [10, 6, 8, 8];
+const PROJECTILE_WIDTH : number[] = [10, 6, 8, 8, 4, 12];
+const PROJECTILE_HEIGHT : number[] = [10, 6, 8, 8, 12, 12];
 
 
 export class Projectile extends CollisionObject {
@@ -74,10 +74,10 @@ export class Projectile extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent): void {
 
-        const LAST_FRAME : number[] = [2, 3, 2];
-        const ANIM_SPEED : number[] = [4, 5, 4];
+        const LAST_FRAME : number[] = [2, 3, 2, -1, -1, 3];
+        const ANIM_SPEED : number[] = [4, 5, 4, -1, -1, 4];
 
-        if (this.id == 3)
+        if (this.id == 3 || this.id == 4)
             return;
 
         this.spr.animate(this.id, 0, LAST_FRAME[this.id] ?? 3, ANIM_SPEED[this.id] ?? 4, event.tick);
@@ -109,6 +109,10 @@ export class Projectile extends CollisionObject {
 
             this.spr.setFrame((Math.random()*4) | 0, this.id);
         }
+        else if (this.id == 4) {
+
+            this.spr.setFrame(3, this.id);
+        }
 
         this.hitbox.w = PROJECTILE_WIDTH[this.id] ?? 8;
         this.hitbox.h = PROJECTILE_HEIGHT[this.id] ?? 8;
@@ -130,7 +134,7 @@ export class Projectile extends CollisionObject {
         const dx = Math.round(this.pos.x) - this.spr.width/2;
         const dy = Math.round(this.pos.y) - this.spr.height/2;
 
-        const flip = this.dying || this.speed.x < 0 ? Flip.None : Flip.Horizontal;
+        const flip = this.id == 4 || this.dying || this.speed.x < 0 ? Flip.None : Flip.Horizontal;
 
         this.spr.draw(canvas, bmp, dx, dy, flip);
     }

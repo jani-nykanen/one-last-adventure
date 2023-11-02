@@ -1,5 +1,6 @@
 import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
+import { Sprite } from "../../gfx/sprite.js";
 import { Rectangle } from "../../math/rectangle.js";
 import { Vector } from "../../math/vector.js";
 import { Camera } from "../camera.js";
@@ -12,6 +13,7 @@ import { Hand } from "./hand.js";
 
 
 const HAND_DISTANCE : number = 48;
+const DROOL_TIME : number = 120;
 
 
 export class FinalBoss extends Enemy {
@@ -19,7 +21,18 @@ export class FinalBoss extends Enemy {
 
     private waveTimer : number = 0.0;
 
+    private droolTimer : number = 0.0;
+    private sprDrool : Sprite;
+
     private hands : Array<Hand>;
+
+    // TODO: Too many different timers?
+    private shootWait : number = 0;
+    private preparing : boolean = false;
+    private shootPrepareTimer : number = 0;
+    private mouthTimer : number = 0;
+
+    private shootDir : Vector;
 
 
     constructor(x : number, y : number, 
@@ -42,7 +55,7 @@ export class FinalBoss extends Enemy {
         this.dropProbability = 0.0;
 
         this.collisionBox = new Rectangle(0, 0, 32, 32);
-        this.hitbox = new Rectangle(0, 0, 40, 32);
+        this.hitbox = new Rectangle(0, 0, 48, 48);
 
         this.getGravity = false;
 
@@ -64,6 +77,48 @@ export class FinalBoss extends Enemy {
         }
 
         this.harmful = false;
+
+        this.sprDrool = new Sprite(16, 16);
+
+        this.shootDir = new Vector();
+    }
+
+
+    private updateShooting(event : ProgramEvent) : void {
+
+        const SHOOT_TIME : number = 240;
+        const PREPARE_TIME : number = 60;
+        const SHOOT_SPEED : number = 1.0;
+        const MOUTH_TIME : number = 30;
+
+        if (this.preparing) {
+
+            this.shootPrepareTimer += event.tick;
+            if (this.shootPrepareTimer >= PREPARE_TIME) {
+
+                this.shootPrepareTimer = 0;
+                this.preparing = false;
+
+                event.audio.playSample(event.assets.getSample("throw"), 0.60);
+                
+                this.projectiles.spawn(this.pos.x, this.pos.y + 16,
+                    this.shootDir.x*SHOOT_SPEED, this.shootDir.y*SHOOT_SPEED, 
+                    5, 3, false, false, true);
+
+                this.mouthTimer = MOUTH_TIME;
+            }
+        }   
+        else {
+
+            this.shootWait += event.tick;
+            if (this.shootWait >= SHOOT_TIME) {
+
+                event.audio.playSample(event.assets.getSample("prepare"), 0.80);
+                this.preparing = true;
+                this.shootWait = 0;
+                this.shootPrepareTimer = 0;
+            }
+        }
     }
 
 
@@ -73,6 +128,11 @@ export class FinalBoss extends Enemy {
 
             h.playerCollision(player, event);
         }
+
+        if (this.preparing) {
+
+            this.shootDir = Vector.direction(this.pos, player.getPosition());
+        }
     }
 
 
@@ -80,8 +140,8 @@ export class FinalBoss extends Enemy {
         
         const MOVE_TARGET : number = 0.25;
         const WAVE_AMPLITUDE : number = 0.5;
-        const WAVE_SPEED : number = Math.PI*2/240.0;
-
+        const WAVE_SPEED : number = Math.PI*2/270.0;
+        
         this.target.x = this.dir*MOVE_TARGET;
 
         if ( (this.dir > 0 && this.pos.x > event.screenWidth - 32) ||
@@ -104,6 +164,34 @@ export class FinalBoss extends Enemy {
                 h.activateSecondPhase();
             }
         }
+
+        if (this.mouthTimer > 0) {
+
+            this.mouthTimer -= event.tick;
+            return;
+        }
+
+        this.droolTimer += event.tick;
+        if (this.droolTimer >= DROOL_TIME) {
+
+            this.sprDrool.animate(4, 0, 3, 10, event.tick);
+            if (this.sprDrool.getColumn() == 3) {
+
+                event.audio.playSample(event.assets.getSample("drop"), 0.70);
+
+                this.droolTimer = 0;
+                this.projectiles.spawn(
+                    this.pos.x, this.pos.y + 24, 
+                    0, this.speed.y, 
+                    4, 2, false, true);
+
+                this.sprDrool.setFrame(0, 4);
+            }
+        }
+        else {
+
+            this.updateShooting(event);
+        }
     }
 
 
@@ -112,22 +200,47 @@ export class FinalBoss extends Enemy {
         if (!this.exist)
             return;
 
-        if (this.hurtTimer > 0 && Math.floor(this.hurtTimer/4) % 2 == 0)
-            return;
-
         const bmp = canvas.getBitmap("final_boss");
+        const bmpProjectile = canvas.getBitmap("projectiles");
 
         const dx = Math.round(this.pos.x) - 32;
         const dy = Math.round(this.pos.y) - 32;
 
-        // Body
-        canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, 0, 64, 64);
+        let frame : number = 0;
 
-        // Hands (temporarily here?)
+        if (this.hurtTimer <= 0 || Math.floor(this.hurtTimer/4) % 2 != 0) {
+
+            if (this.preparing && Math.floor(this.shootPrepareTimer/4) % 2 == 0) {
+
+                canvas.setColor(255, 73, 73);
+            }
+
+            if (this.preparing) {
+
+                frame = 1;
+            }
+            else if (this.mouthTimer > 0) {
+
+                frame = 2;
+            }
+
+            // Body
+            canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, frame*64, 64, 64);
+
+            if (this.droolTimer >= DROOL_TIME) {
+
+                this.sprDrool.draw(canvas, bmpProjectile, dx + 24, dy + 48);
+            }
+
+            canvas.setColor();
+        }
+
+        // Hands 
         for (let h of this.hands) {
 
             h.draw(canvas);
         }
+        
     }
 
 

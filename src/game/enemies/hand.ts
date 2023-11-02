@@ -98,7 +98,7 @@ export class Hand extends Enemy {
                 dir.y = Math.sin(angle + i*SHOOT_DIF);
 
                 this.projectiles.spawn(this.pos.x, this.pos.y,
-                    dir.x*BASE_SHOOT_SPEED, dir.y*BASE_SHOOT_SPEED, 2, 2, false, false, false);
+                    dir.x*BASE_SHOOT_SPEED, dir.y*BASE_SHOOT_SPEED, 2, 2, false, false);
             }
             return;
         }
@@ -161,7 +161,7 @@ export class Hand extends Enemy {
     private stomp(event : ProgramEvent) : void {
 
         const GRAVITY_TARGET : number = 8.0;
-        const BOTTOM_DIF : number = 24;
+        const BOTTOM_DIF : number = 32;
         const STOMP_WAIT : number = 30;
         const RETURN_SPEED : number = 2.0;
         const MIN_DIST : number = 4;
@@ -224,9 +224,11 @@ export class Hand extends Enemy {
 
     private computeBasePos() : void {
 
+        const HAND_SHIFT : number = 8;
+
         if (this.phase == 0) {
 
-            this.basePos.x = this.posRef.x + this.distance*this.dir;
+            this.basePos.x = this.posRef.x + (this.distance - Math.abs(Math.sin(this.angle))*HAND_SHIFT)*this.dir ;
             this.basePos.y = this.posRef.y + Math.sin(this.angle)*24;
             return;
         }
