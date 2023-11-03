@@ -1,7 +1,7 @@
 import { ProgramEvent } from "../core/event.js";
 import { Canvas } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
-import { Player } from "./player.js";
+import { Player, SpecialPlayerAnimationType } from "./player.js";
 import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Crate } from "./crate.js";
@@ -56,6 +56,7 @@ export class GameObjectManager {
     private shakeCallback : ((amount : number, time : number) => void) | undefined = undefined;
     private giantDoorCallback : ((event : ProgramEvent) => void) | undefined = undefined;
     private finalBossTransitionCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+    private endingCallback : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private relocatePlayer : boolean = false;
 
@@ -77,7 +78,8 @@ export class GameObjectManager {
         teleporterCallback?  : (x : number, y : number, id : number, event : ProgramEvent) => void,
         shakeCallback? : (amount : number, time : number) => void,
         giantDoorCallback? : (event : ProgramEvent) => void,
-        finalBossTransitionCallback? : ((event : ProgramEvent) => void)) {
+        finalBossTransitionCallback? : ((event : ProgramEvent) => void),
+        endingCallback? : (event : ProgramEvent) => void) {
 
         this.crates = new Array<Crate> ();
         this.enemies = new Array<Enemy> ();
@@ -103,6 +105,7 @@ export class GameObjectManager {
         this.shakeCallback = shakeCallback;
         this.giantDoorCallback = giantDoorCallback;
         this.finalBossTransitionCallback = finalBossTransitionCallback;
+        this.endingCallback = endingCallback;
     }
 
 
@@ -111,7 +114,7 @@ export class GameObjectManager {
         this.finalBossRef = new FinalBoss(
             x, y, 0,
             this.flyingMessages, this.collectibles, this.projectiles,
-            this.shakeCallback);
+            this.shakeCallback, this.endingCallback);
 
         this.enemies.push(this.finalBossRef);
 
@@ -386,6 +389,11 @@ export class GameObjectManager {
 
         if (this.player?.isSpecialAnimationActive()) {
 
+            if (this.finalBossActivated) {
+
+                this.finalBossRef?.update(event);
+            }
+
             this.player?.updateSpecialAnimation(event);
             return;
         }
@@ -419,6 +427,12 @@ export class GameObjectManager {
 
         this.updateActivableObjects(camera, event);
         this.updateHints(camera, event);
+
+        if (this.finalBossRef?.isDying()) {
+
+            this.player?.toggleSpecialAnimation(SpecialPlayerAnimationType.Frozen, -1, () => {});
+            this.projectiles.clear();
+        }
     }
 
 
@@ -771,6 +785,9 @@ export class GameObjectManager {
 
 
     public isFinalBossActive = () : boolean => this.finalBossActivated;
+    
+
+    public isFinalBossDying = () : boolean => this.finalBossRef?.isDying() ?? false;
 
 
     public getFinalBossRelativeHealth = () : number | undefined => this.finalBossRef?.getRelativeHealth();

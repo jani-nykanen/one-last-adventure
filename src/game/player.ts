@@ -25,6 +25,7 @@ export const enum SpecialPlayerAnimationType {
     None = 0,
     HoldItem = 1,
     Use = 2,
+    Frozen = 3,
 };
 
 
@@ -1106,7 +1107,7 @@ export class Player extends CollisionObject {
 
         const ANIM_SPEED : number[] = [0, 1.0/90.0, 1.0/45.0];
 
-        if (this.specialAnimationTimer <= 0)
+        if (this.specialAnimationTimer <= 0 || this.specialAnimationType == SpecialPlayerAnimationType.Frozen)
             return;
 
         this.specialAnimationTimer -= ANIM_SPEED[this.specialAnimationType]*event.tick;
@@ -1145,6 +1146,13 @@ export class Player extends CollisionObject {
         this.showObtainedItem = type == SpecialPlayerAnimationType.HoldItem;
 
         this.specialAnimationCallback = cb;
+
+        if (type != SpecialPlayerAnimationType.Frozen) {
+            
+            this.attacking = false;
+            this.downAttacking = false;
+            this.climbing = false;
+        }
     } 
 
 

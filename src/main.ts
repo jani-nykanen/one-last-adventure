@@ -1,7 +1,8 @@
-import { ProgramEvent } from "./core/event";
+import { ProgramEvent } from "./core/event.js";
 import { Program } from "./core/program.js";
 import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
+import { Ending } from "./game/ending.js";
 import { AudioIntro } from "./game/audiointro.js";
 import { TitleScreen } from "./game/titlescreen.js";
 import { constructMapTexture } from "./game/maptexture.js";
@@ -11,6 +12,7 @@ const initialEvent = (event : ProgramEvent) : void => {
 
     event.scenes.addScene("game", new Game(), false);
     event.scenes.addScene("titlescreen", new TitleScreen(), false);
+    event.scenes.addScene("ending", new Ending(), false);
     event.scenes.addScene("audiointro", new AudioIntro(), true);
 
     event.assets.parseIndexFile("assets/index.json");

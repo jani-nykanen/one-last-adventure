@@ -1,4 +1,5 @@
 import { ProgramEvent } from "../core/event.js";
+import { constructMapTexture } from "../game/maptexture.js";
 import { Canvas, Flip } from "../gfx/interface.js";
 import { RGBA } from "../math/rgba.js";
 import { drawUIBox } from "./box.js";
@@ -61,7 +62,7 @@ export class TextBox {
         if (this.textBuffer.length == 0)
             return;
 
-        this.activeText = this.textBuffer.shift();
+        this.activeText = this.textBuffer.shift() ?? "";
 
         if (!this.fixedSize) {
 

@@ -1,7 +1,9 @@
 import { ProgramEvent } from "../../core/event.js";
+import { TransitionType } from "../../core/transition.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Sprite } from "../../gfx/sprite.js";
 import { Rectangle } from "../../math/rectangle.js";
+import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
 import { Camera } from "../camera.js";
 import { CollectibleGenerator } from "../collectiblegenerator.js";
@@ -45,13 +47,19 @@ export class FinalBoss extends Enemy {
 
     private healthRatio : number = 1.0;
 
+    private deathEventTriggered : boolean = false;
+    private waitForShakeTimer : number = 0;
+
+    private endingCallback : ((event : ProgramEvent) => void) | undefined = undefined;
+
 
     constructor(x : number, y : number, 
         stageTileIndex : number,
         messages : FlyingMessageGenerator,
         collectibles : CollectibleGenerator,
         projectiles : ProjectileGenerator,
-        shakeCallback : ((amount : number, time : number) => void) | undefined = undefined) {
+        shakeCallback? : (amount : number, time : number) => void,
+        endingCallback? : (event : ProgramEvent) => void) {
 
         super(x, y, stageTileIndex, messages, collectibles, projectiles, shakeCallback);
 
@@ -60,7 +68,7 @@ export class FinalBoss extends Enemy {
 
         this.damage = 2;
 
-        this.maxHealth = 128;
+        this.maxHealth = 100;
         this.health = this.maxHealth;
 
         this.dropProbability = 0.0;
@@ -92,6 +100,8 @@ export class FinalBoss extends Enemy {
         this.sprDrool = new Sprite(16, 16);
 
         this.shootDir = new Vector();
+
+        this.endingCallback = endingCallback;
     }
 
 
@@ -211,6 +221,37 @@ export class FinalBoss extends Enemy {
     }
 
 
+    protected die(event : ProgramEvent) : boolean {
+
+        const SHAKE_WAIT : number = 60;
+
+        if (!this.deathEventTriggered) {
+
+            event.audio.stopMusic();
+            event.audio.playSample(event.assets.getSample("finalboss_dead"), 0.50);
+
+            this.deathEventTriggered = true;
+        }
+
+        if (this.waitForShakeTimer < SHAKE_WAIT) {
+
+            this.waitForShakeTimer += event.tick;
+            if (this.waitForShakeTimer >= SHAKE_WAIT) {
+
+                event.audio.playSample(event.assets.getSample("teleport"), 0.35);
+
+                this.shakeCallback(16, 180);
+
+                event.transition.activate(true, TransitionType.Fade, 1.0/120.0, event, 
+                    this.endingCallback, new RGBA(255, 255, 255));
+            }
+        }
+
+        // Final bosses never die!
+        return false;
+    }
+
+
     protected updateAI(event : ProgramEvent) : void {
         
         const MOVE_TARGET : number = 0.25;
@@ -290,9 +331,13 @@ export class FinalBoss extends Enemy {
 
         let frame : number = 0;
 
-        if (this.hurtTimer <= 0 || Math.floor(this.hurtTimer/4) % 2 != 0) {
+        if (this.dying || 
+            this.hurtTimer <= 0 || 
+            Math.floor(this.hurtTimer/4) % 2 != 0) {
 
-            if (this.preparing && Math.floor(this.shootPrepareTimer/4) % 2 == 0) {
+            if (!this.dying &&
+                this.preparing && 
+                Math.floor(this.shootPrepareTimer/4) % 2 == 0) {
 
                 if (this.attackType == AttackType.BlueBall) {
 
@@ -304,7 +349,11 @@ export class FinalBoss extends Enemy {
                 }
             }
 
-            if (this.preparing) {
+            if (this.dying) {
+
+                frame = 3;
+            }
+            else if (this.preparing) {
 
                 frame = 1;
             }
@@ -316,7 +365,7 @@ export class FinalBoss extends Enemy {
             // Body
             canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, frame*64, 64, 64);
 
-            if (this.droolTimer >= DROOL_TIME) {
+            if (!this.dying && this.droolTimer >= DROOL_TIME) {
 
                 this.sprDrool.draw(canvas, bmpProjectile, dx + 24, dy + 48);
             }

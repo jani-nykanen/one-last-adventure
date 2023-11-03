@@ -121,6 +121,94 @@ export class Game implements Scene {
     }
 
 
+    private createInitialPlayer() : void {
+
+        const cx = this.progress.getProperty("checkpointx", -1);
+        const cy = this.progress.getProperty("checkpointy", -1)
+
+        if (cx != -1 && cy != -1) {
+
+            this.objects.addPlayer((cx/TILE_WIDTH) | 0, (cy/TILE_HEIGHT) | 0);
+        }
+    } 
+
+
+    private updateHUD(event : ProgramEvent) : void {
+
+        const BAR_UPDATE_SPEED : number = 1.0/10.0;
+        const FINAL_BAR_UPDATE_SPEED : number = 1.0/192.0;
+
+        this.oldMagic = updateSpeedAxis(this.oldMagic, this.objects.getPlayerMagic() ?? 3.0, BAR_UPDATE_SPEED*event.tick);
+
+        let t = this.objects?.getFinalBossRelativeHealth();
+        if (t !== undefined) {
+
+            this.oldFinalBossHealth = updateSpeedAxis(this.oldFinalBossHealth, t, FINAL_BAR_UPDATE_SPEED*event.tick);
+        }
+    }
+
+
+    private teleport(x : number, y : number, id : number, event : ProgramEvent) : void {
+
+        const newPos = this.stage.findTeleporter(id, x, y);
+
+        event.transition.deactivate();
+
+        this.objects.setPlayerFrame(3, 2);
+        this.objects.setPlayerPosition(newPos.x, newPos.y, true);
+        this.objects.centerCameraToPlayer(this.camera);
+        
+        this.stage.cameraCheck(this.camera, this.objects, event);
+        this.objects.initialCameraCheck(this.camera, event);
+        this.objects.initialActivableObjectCheck(this.camera, event);
+
+        event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
+            undefined, new RGBA(255, 255, 255));
+
+        event.audio.resumeMusic();
+    }
+
+
+    private giantDoorTransition(event : ProgramEvent) : void {
+        
+        this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true, true);
+
+        this.objects.setPlayerFrame(3, 2); 
+    }
+
+
+    private createMap(event : ProgramEvent) : void {
+
+        const baseMap = event.assets.getTilemap("island");
+        if (baseMap === undefined) {
+
+            console.warn("Missing the island tilemap, could not create a game map!");
+            return;
+        }
+
+        const roomWidth = (event.screenWidth/TILE_WIDTH) | 0;
+        const roomHeight = (event.screenHeight/TILE_HEIGHT) | 0
+
+        const width = baseMap.width/roomWidth;
+        const height = baseMap.height/roomHeight;
+
+        this.map = new GameMap(width, height, roomWidth, roomHeight);
+    }
+
+
+    private save() : boolean {
+
+        return this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) &&
+               this.map.save(LOCAL_STORAGE_MAP_KEY);
+    }
+
+
+    private goToEnding(event : ProgramEvent) : void {
+
+        event.scenes.changeScene("ending", event);
+    }
+
+
     private drawMagicBar(canvas : Canvas, cannotUse : boolean,
         t : number, dx : number, dy : number, dw : number, dh : number,
         color1 : number[] = [219, 36, 182],
@@ -221,96 +309,13 @@ export class Game implements Scene {
 
         canvas.drawBitmap(bmp, Flip.None, dx + 3, canvas.height - 14, 64, 0, 16, 16);
 
-        if (this.objects.isFinalBossActive()) {
+        // Final boss health
+        if (this.objects.isFinalBossActive() && !this.objects.isFinalBossDying()) {
 
             this.drawMagicBar(canvas, false, Math.max(0, this.oldFinalBossHealth), 
                 canvas.width/2 - 48, canvas.height - 10, 96, 8,
                 [146, 36, 0], [255, 109, 0]);
         }
-    }
-
-
-    private createInitialPlayer() : void {
-
-        const cx = this.progress.getProperty("checkpointx", -1);
-        const cy = this.progress.getProperty("checkpointy", -1)
-
-        if (cx != -1 && cy != -1) {
-
-            this.objects.addPlayer((cx/TILE_WIDTH) | 0, (cy/TILE_HEIGHT) | 0);
-        }
-    } 
-
-
-    private updateHUD(event : ProgramEvent) : void {
-
-        const BAR_UPDATE_SPEED : number = 1.0/10.0;
-        const FINAL_BAR_UPDATE_SPEED : number = 1.0/192.0;
-
-        this.oldMagic = updateSpeedAxis(this.oldMagic, this.objects.getPlayerMagic() ?? 3.0, BAR_UPDATE_SPEED*event.tick);
-
-        let t = this.objects?.getFinalBossRelativeHealth();
-        if (t !== undefined) {
-
-            this.oldFinalBossHealth = updateSpeedAxis(this.oldFinalBossHealth, t, FINAL_BAR_UPDATE_SPEED*event.tick);
-        }
-    }
-
-
-    private teleport(x : number, y : number, id : number, event : ProgramEvent) : void {
-
-        const newPos = this.stage.findTeleporter(id, x, y);
-
-        event.transition.deactivate();
-
-        this.objects.setPlayerFrame(3, 2);
-        this.objects.setPlayerPosition(newPos.x, newPos.y, true);
-        this.objects.centerCameraToPlayer(this.camera);
-        
-        this.stage.cameraCheck(this.camera, this.objects, event);
-        this.objects.initialCameraCheck(this.camera, event);
-        this.objects.initialActivableObjectCheck(this.camera, event);
-
-        event.transition.activate(false, TransitionType.Waves, 1.0/120.0, event, 
-            undefined, new RGBA(255, 255, 255));
-
-        event.audio.resumeMusic();
-    }
-
-
-    private giantDoorTransition(event : ProgramEvent) : void {
-        
-        this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true, true);
-
-        this.objects.setPlayerFrame(3, 2);
-    
-        event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
-    }
-
-
-    private createMap(event : ProgramEvent) : void {
-
-        const baseMap = event.assets.getTilemap("island");
-        if (baseMap === undefined) {
-
-            console.warn("Missing the island tilemap, could not create a game map!");
-            return;
-        }
-
-        const roomWidth = (event.screenWidth/TILE_WIDTH) | 0;
-        const roomHeight = (event.screenHeight/TILE_HEIGHT) | 0
-
-        const width = baseMap.width/roomWidth;
-        const height = baseMap.height/roomHeight;
-
-        this.map = new GameMap(width, height, roomWidth, roomHeight);
-    }
-
-
-    private save() : boolean {
-
-        return this.progress.saveToLocalStorage(LOCAL_STORAGE_SAVE_KEY) &&
-               this.map.save(LOCAL_STORAGE_MAP_KEY);
     }
 
 
@@ -372,7 +377,8 @@ export class Game implements Scene {
 
                 event.audio.playMusic(event.assets.getSample("theme_boss"), FinalBossMusicVolume);
                 this.stage.changeBackground(BackgroundType.FinalBoss);
-            }
+            },
+            (event : ProgramEvent) : void => this.goToEnding(event)
             );
         if (param === 1) {
 
@@ -502,7 +508,14 @@ export class Game implements Scene {
         canvas.transform.loadIdentity();
         canvas.applyTransform();
         
-        this.stage?.drawBackground(canvas, this.camera);
+        if (this.objects.isFinalBossDying()) {
+
+            canvas.clear(255, 255, 255);
+        }
+        else {
+
+            this.stage?.drawBackground(canvas, this.camera);
+        }
 
         this.camera.use(canvas);
 

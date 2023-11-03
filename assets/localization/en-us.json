@@ -265,6 +265,20 @@
     "boss_chest": [
         "You obtain the FINAL BOSS!",
         "Wait, what?"
+    ],
+
+
+    "ending": [
+
+        "I am so sorry.",
+        "I tried to give you\none last great\nadventure.",
+        "There was supposed to\nbe an epic story\nwhere you are the\nhero.",
+        "There was supposed to\nbe an epic battle\nin the end.",
+        "But all the stories\nhad already been\ntold.",
+        "And all the final\nbosses had already\nbeen killed.",
+        "At least you can\nfinally sleep.",
+        "Sleep and never\nwake up.",
+        "Thank you, friend."
     ]
 
 }

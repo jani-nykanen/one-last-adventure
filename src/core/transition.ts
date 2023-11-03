@@ -164,4 +164,10 @@ export class Transition {
 
         this.center = pos;
     }
+
+
+    public changeSpeed(newSpeed : number) : void {
+
+        this.speed = newSpeed;
+    }
 }
