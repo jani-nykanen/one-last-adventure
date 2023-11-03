@@ -10,4 +10,4 @@ export const MusicVolume = {
 
 
 
-export const FinalBossMusicVolume : number = 0.50;
+export const FinalBossMusicVolume : number = 0.55;

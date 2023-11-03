@@ -181,8 +181,6 @@ export class Game implements Scene {
         const magic = this.objects.getPlayerMagic();
         const maxMagic = this.objects.getPlayerMaxMagic();
 
-        const finalBossHealth = this.objects.getFinalBossRelativeHealth();
-
         let dx : number;
 
         canvas.setColor();
@@ -225,7 +223,7 @@ export class Game implements Scene {
 
         if (this.objects.isFinalBossActive()) {
 
-            this.drawMagicBar(canvas, false, this.oldFinalBossHealth, 
+            this.drawMagicBar(canvas, false, Math.max(0, this.oldFinalBossHealth), 
                 canvas.width/2 - 48, canvas.height - 10, 96, 8,
                 [146, 36, 0], [255, 109, 0]);
         }
@@ -285,6 +283,8 @@ export class Game implements Scene {
         this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true, true);
 
         this.objects.setPlayerFrame(3, 2);
+    
+        event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
     }
 
 

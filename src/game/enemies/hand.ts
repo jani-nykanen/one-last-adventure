@@ -15,8 +15,10 @@ const enum AttackType {
 };
 
 
-const ATTACK_START_WAIT : number = 120;
+const ATTACK_START_WAIT : number = 240;
 const ATTACK_READY_WAIT : number = 60;
+
+const INITIAL_ATTACK_WAIT : number[] = [180, 360];
 
 
 export class Hand extends Enemy {
@@ -39,6 +41,9 @@ export class Hand extends Enemy {
     private basePos : Vector = new Vector();
 
     private frame : number = 0;
+
+    private canAttack : boolean = true;
+    private speedModifier : number = 0.0;
 
 
     protected init() : void {
@@ -75,8 +80,8 @@ export class Hand extends Enemy {
         const SHOOT_DIF : number = Math.PI/8;
 
         const ALT_SHOOT_SPEED_X : number = 0.5;
-        const ALT_SHOOT_SPEED_Y : number = -3.5;
-        const ALT_SHOOT_DELTA_Y : number = 0.25;
+        const ALT_SHOOT_SPEED_Y : number = -3.0;
+        const ALT_SHOOT_DELTA_Y : number = 1.0;
 
         let dir : Vector;
         let angle : number;
@@ -107,8 +112,8 @@ export class Hand extends Enemy {
 
             this.projectiles.spawn(this.pos.x, this.pos.y,
                 ALT_SHOOT_SPEED_X*i, 
-                ALT_SHOOT_SPEED_Y + ALT_SHOOT_DELTA_Y*Math.sqrt(Math.abs(i)), 
-                2, 2, false, true);
+                ALT_SHOOT_SPEED_Y - ALT_SHOOT_DELTA_Y*Math.cos(i*Math.PI/6), 
+                1, 2, false, true).enableSpecialCameraRange();
         }
     }
 
@@ -197,7 +202,7 @@ export class Hand extends Enemy {
                 for (let i = -2; i <= 2; ++ i) {
 
                     this.projectiles.spawn(this.pos.x, this.pos.y + 8,
-                        i*1.0, -4.0 + Math.sqrt(Math.abs(i))*0.5, 
+                        i*1.0, -3.0 - Math.cos(i*Math.PI/6)*1.0, 
                         3, 2, false, true);
                 }
             }
@@ -218,6 +223,7 @@ export class Hand extends Enemy {
             this.pos = this.basePos.clone();
 
             this.flip = Flip.Horizontal;
+            this.frame = 0;
         }
     }
 
@@ -319,11 +325,11 @@ export class Hand extends Enemy {
                 }
             }
         }
-        else {
+        else if (this.canAttack) {
 
             this.frame = 0;
 
-            this.attackWait -= event.tick;
+            this.attackWait -= (1.0 + this.speedModifier)*event.tick;
             if (this.attackWait <= 0) {
 
                 this.attackReady = ATTACK_READY_WAIT;
@@ -347,7 +353,14 @@ export class Hand extends Enemy {
 
         if (this.attackReady > 0 && Math.floor(this.attackReady/4) % 2 == 0) {
 
-            canvas.setColor(255, 73, 73);
+            if (this.attackType == AttackType.Shoot) {
+
+                canvas.setColor(255, 146, 73);
+            }
+            else {
+
+                canvas.setColor(73, 255, 146);
+            }
         }
 
         canvas.drawBitmap(bmp, this.flip, dx, dy, 64, this.frame*32, 32, 32);
@@ -365,7 +378,7 @@ export class Hand extends Enemy {
         this.dir = dir;
 
         this.attackType = dir == 1 ? AttackType.Shoot : AttackType.Rush;
-        this.attackWait = ATTACK_START_WAIT + ((dir + 1)/2)*ATTACK_READY_WAIT*2;
+        this.attackWait = INITIAL_ATTACK_WAIT[dir == -1 ? 0 : 1]
         this.attackReady = 0;
 
         this.angle = (dir + 1)/2.0*Math.PI;
@@ -375,5 +388,20 @@ export class Hand extends Enemy {
     public activateSecondPhase() : void {
 
         this.phase = 1;
+    }
+
+
+    public isFree = () : boolean => !this.canAttack || this.attackReady <= 0;
+
+
+    public toggleCanAttack(state : boolean) : void {
+
+        this.canAttack = state;
+    }
+
+
+    public setSpeedModifier(s : number) : void {
+
+        this.speedModifier = s;
     }
 }

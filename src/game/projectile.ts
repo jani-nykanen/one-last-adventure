@@ -10,8 +10,8 @@ import { Sprite } from "../gfx/sprite.js";
 // const DAMAGE : number[] = [2];
 
 
-const PROJECTILE_WIDTH : number[] = [10, 6, 8, 8, 4, 12];
-const PROJECTILE_HEIGHT : number[] = [10, 6, 8, 8, 12, 12];
+const PROJECTILE_WIDTH : number[] = [10, 6, 8, 8, 4, 12, 8];
+const PROJECTILE_HEIGHT : number[] = [10, 6, 8, 8, 12, 12, 8];
 
 
 export class Projectile extends CollisionObject {
@@ -90,8 +90,8 @@ export class Projectile extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent): void {
 
-        const LAST_FRAME : number[] = [2, 3, 2, -1, -1, 3];
-        const ANIM_SPEED : number[] = [4, 5, 4, -1, -1, 4];
+        const LAST_FRAME : number[] = [2, 3, 2, -1, -1, 3, 3];
+        const ANIM_SPEED : number[] = [4, 5, 4, -1, -1, 4, 4];
 
         if (this.id == 3 || this.id == 4)
             return;
@@ -128,6 +128,9 @@ export class Projectile extends CollisionObject {
         this.friction.x = 0.10;
         this.friction.y = 0.10;
 
+        this.collisionBox.w = 4;
+        this.collisionBox.h = 4;
+
         this.spr.setFrame(0, this.id);
         if (this.id == 3) {
 
@@ -139,8 +142,11 @@ export class Projectile extends CollisionObject {
         }
         else if (this.id == 5) {
 
-            this.friction.x = 0.025;
-            this.friction.y = 0.025;
+            this.friction.x = 0.020;
+            this.friction.y = 0.020;
+
+            this.collisionBox.w = 12;
+            this.collisionBox.h = 12;
         }
 
         this.hitbox.w = PROJECTILE_WIDTH[this.id] ?? 8;
@@ -152,6 +158,14 @@ export class Projectile extends CollisionObject {
         }
 
         this.disableCollisions = !getCollisions;
+
+        this.cameraCheckArea.y = 16;
+    }
+
+
+    public enableSpecialCameraRange() : void {
+
+        this.cameraCheckArea.y = 128;
     }
 
 

@@ -81,6 +81,17 @@ export class GiantDoor extends ActivableObject{
 
         event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
             (event : ProgramEvent) => this.cb?.(event), new RGBA(0, 0, 0));
+        
+        const ppos = player.getPosition();
+        if (camera !== undefined) {
+
+            event.transition.setCenter(
+                new Vector(
+                    ppos.x % camera.width,
+                    ppos.y % camera.height
+                )
+            );
+        }
     }
 
 

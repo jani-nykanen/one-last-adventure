@@ -17,6 +17,13 @@ const HAND_DISTANCE : number = 48;
 const DROOL_TIME : number = 120;
 
 
+const enum AttackType {
+
+    BlueBall = 0,
+    FireBalls = 1
+};
+
+
 export class FinalBoss extends Enemy {
 
 
@@ -32,8 +39,11 @@ export class FinalBoss extends Enemy {
     private preparing : boolean = false;
     private shootPrepareTimer : number = 0;
     private mouthTimer : number = 0;
+    private attackType : AttackType = AttackType.BlueBall;
 
     private shootDir : Vector;
+
+    private healthRatio : number = 1.0;
 
 
     constructor(x : number, y : number, 
@@ -85,16 +95,62 @@ export class FinalBoss extends Enemy {
     }
 
 
+    private shootBlueBall(player : Player) : void {
+
+        const SHOOT_SPEED : number = 1.0;
+
+        const p = this.projectiles.spawn(this.pos.x, this.pos.y + 16,
+            this.shootDir.x*SHOOT_SPEED, this.shootDir.y*SHOOT_SPEED, 
+            5, 3, false, false, true);
+        p.setTargetObject(player);
+    }
+
+
+    private shootFireballs() : void {
+
+        const COUNT : number = 8;
+        const SPEED : number = 2.0;
+
+        const angleStep = Math.PI*2/COUNT;
+
+        let angle : number;
+        for (let i = 0; i < COUNT; ++ i) {
+
+            angle = angleStep*i;
+
+            this.projectiles.spawn(this.pos.x, this.pos.y + 16,
+                Math.cos(angle)*SPEED, Math.sin(angle)*SPEED, 
+                6, 2, false, false, true);
+        }
+    }
+
+
+    private canAttack() : boolean {
+
+        for (let h of this.hands) {
+
+            if (!h.isFree()) {
+
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     private updateShooting(player : Player, event : ProgramEvent) : void {
 
-        const SHOOT_TIME : number = 240;
+        const SHOOT_WAIT_MODIFIER : number = 1.0;
+        const SHOOT_TIME : number = 300;
         const PREPARE_TIME : number = 60;
-        const SHOOT_SPEED : number = 1.0;
         const MOUTH_TIME : number = 30;
 
-        let p : Projectile;
-
         if (this.preparing) {
+
+            for (let h of this.hands) {
+
+                h.toggleCanAttack(false);
+            }
 
             this.shootPrepareTimer += event.tick;
             if (this.shootPrepareTimer >= PREPARE_TIME) {
@@ -104,18 +160,27 @@ export class FinalBoss extends Enemy {
 
                 event.audio.playSample(event.assets.getSample("throw"), 0.60);
                 
-                p = this.projectiles.spawn(this.pos.x, this.pos.y + 16,
-                    this.shootDir.x*SHOOT_SPEED, this.shootDir.y*SHOOT_SPEED, 
-                    5, 3, false, false, true);
+                if (this.attackType == AttackType.BlueBall) {
 
-                p.setTargetObject(player);
+                    this.shootBlueBall(player);
+                }
+                else {
+
+                    this.shootFireballs();
+                }
 
                 this.mouthTimer = MOUTH_TIME;
+                this.attackType = Number(!Boolean(this.attackType));
+
+                for (let h of this.hands) {
+
+                    h.toggleCanAttack(true);
+                }
             }
         }   
-        else {
+        else if (this.canAttack()) {
 
-            this.shootWait += event.tick;
+            this.shootWait += (1.0 + (1.0 - this.healthRatio)*SHOOT_WAIT_MODIFIER)*event.tick;
             if (this.shootWait >= SHOOT_TIME) {
 
                 event.audio.playSample(event.assets.getSample("prepare"), 0.80);
@@ -149,10 +214,15 @@ export class FinalBoss extends Enemy {
     protected updateAI(event : ProgramEvent) : void {
         
         const MOVE_TARGET : number = 0.25;
-        const WAVE_AMPLITUDE : number = 0.5;
-        const WAVE_SPEED : number = Math.PI*2/270.0;
-        
-        this.target.x = this.dir*MOVE_TARGET;
+        const MOVE_TARGET_EXTRA : number = 0.15;
+        const WAVE_AMPLITUDE_BASE : number = 0.5;
+        const WAVE_AMPLITUDE_EXTRA: number = 0.25;
+        const WAVE_SPEED_BASE : number = Math.PI*2/270.0;
+        const WAVE_SPEED_MODIFIER : number = 0.5;
+
+        this.healthRatio = this.health/this.maxHealth;
+
+        this.target.x = this.dir*(MOVE_TARGET + (1.0 - this.healthRatio)*MOVE_TARGET_EXTRA);
 
         if ( (this.dir > 0 && this.pos.x > event.screenWidth - 32) ||
              (this.dir < 0 && this.pos.x < 32) ) {
@@ -162,13 +232,16 @@ export class FinalBoss extends Enemy {
             this.target.x *= -1;
         }
 
-        this.waveTimer = (this.waveTimer + WAVE_SPEED*event.tick) % (Math.PI*2);
+        const waveSpeed = WAVE_SPEED_BASE*(1.0 + (1.0 - this.healthRatio)*WAVE_SPEED_MODIFIER);
+        this.waveTimer = (this.waveTimer + waveSpeed*event.tick) % (Math.PI*2);
 
-        this.target.y = Math.sin(this.waveTimer)*WAVE_AMPLITUDE;
+        const waveAmplitude = WAVE_AMPLITUDE_BASE + (1.0 - this.healthRatio)*WAVE_AMPLITUDE_EXTRA;
+        this.target.y = Math.sin(this.waveTimer)*waveAmplitude;
 
         for (let h of this.hands) {
 
             h.update(event);
+            h.setSpeedModifier(1.0 - this.healthRatio);
             if (this.health <= this.maxHealth/2) {
 
                 h.activateSecondPhase();
@@ -184,7 +257,7 @@ export class FinalBoss extends Enemy {
         if (this.preparing)
             return;
 
-        this.droolTimer += event.tick;
+        this.droolTimer += (2.0 - this.healthRatio)*event.tick;
         if (this.droolTimer >= DROOL_TIME) {
 
             this.sprDrool.animate(4, 0, 3, 10, event.tick);
@@ -221,7 +294,14 @@ export class FinalBoss extends Enemy {
 
             if (this.preparing && Math.floor(this.shootPrepareTimer/4) % 2 == 0) {
 
-                canvas.setColor(255, 73, 73);
+                if (this.attackType == AttackType.BlueBall) {
+
+                    canvas.setColor(73, 146, 255);
+                }
+                else {
+                    
+                    canvas.setColor(255, 146, 73);
+                }
             }
 
             if (this.preparing) {
