@@ -78,6 +78,9 @@ export interface Canvas {
     drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 
         amplitude : number, period : number, shift : number,
         dx? : number, dy? : number, flip? : Flip) : void;
+    drawVerticallyWavingBitmap(bmp : Bitmap,
+        dx : number, dy : number, period : number, amplitude : number,
+        shift : number) : void;
 
     setColor(r? : number, g? : number, b? : number, a? : number) : void;
 

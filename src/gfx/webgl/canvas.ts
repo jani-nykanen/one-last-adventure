@@ -249,6 +249,22 @@ export class WebGLCanvas implements Canvas {
     }
 
 
+    public drawVerticallyWavingBitmap(bmp : Bitmap,
+        dx : number, dy : number, period : number, amplitude : number,
+        shift : number) : void {
+
+        let y : number;
+        let t : number;
+        for (let x = 0; x < bmp.width; ++ x) {
+
+            t = shift + (x / bmp.width)*period;
+            y = Math.round(Math.sin(t)*amplitude);
+
+            this.drawBitmap(bmp, Flip.None, dx + x, dy + y, x, 0, 1, bmp.height);
+        }
+    }
+
+
     public setColor(r : number = 255, g : number = r, b : number = g, a : number = 1.0) : void {
 
         this.renderer.setColor(r/255.0, g/255.0, b/255.0, a);

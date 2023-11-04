@@ -6,6 +6,7 @@ import { Ending } from "./game/ending.js";
 import { AudioIntro } from "./game/audiointro.js";
 import { TitleScreen } from "./game/titlescreen.js";
 import { constructMapTexture } from "./game/maptexture.js";
+import { Intro } from "./game/intro.js";
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -13,6 +14,7 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.scenes.addScene("game", new Game(), false);
     event.scenes.addScene("titlescreen", new TitleScreen(), false);
     event.scenes.addScene("ending", new Ending(), false);
+    event.scenes.addScene("intro", new Intro(), false);
     event.scenes.addScene("audiointro", new AudioIntro(), true);
 
     event.assets.parseIndexFile("assets/index.json");

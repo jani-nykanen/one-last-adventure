@@ -1239,4 +1239,11 @@ export class Player extends CollisionObject {
 
         this.knockbackTimer = time;
     }
+
+
+    public refreshCheckpoint() : void {
+
+        this.progress.setProperty("checkpointx", this.pos.x);
+        this.progress.setProperty("checkpointy", this.pos.y);
+    }
 }

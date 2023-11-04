@@ -58,7 +58,7 @@ export class AudioIntro implements Scene {
 
         event.audio.toggle(toggleAudio);
 
-        event.scenes.changeScene("titlescreen", event);
+        event.scenes.changeScene("intro", event);
     }
 
 

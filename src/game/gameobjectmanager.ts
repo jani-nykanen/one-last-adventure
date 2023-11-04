@@ -791,4 +791,10 @@ export class GameObjectManager {
 
 
     public getFinalBossRelativeHealth = () : number | undefined => this.finalBossRef?.getRelativeHealth();
+
+
+    public updatePlayerCheckpoint() : void {
+
+        this.player?.refreshCheckpoint();
+    }
 }

@@ -1,7 +1,8 @@
 import { ProgramEvent } from "../core/event.js";
+import { InputState } from "../core/inputstate.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { TransitionType } from "../core/transition.js";
-import { Canvas, Flip, TransformTarget } from "../gfx/interface.js";
+import { Align, Canvas, Flip, TransformTarget } from "../gfx/interface.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
@@ -19,9 +20,11 @@ export class TitleScreen implements Scene {
 
     private loadGame : boolean = false;
 
-    private cloudPos : number = 0;
-
     private background : Background;
+
+    private phase : number = 0;
+    private enterTimer : number = 1.0;
+    private waveTimer : number = 0.0;
 
 
     constructor() {
@@ -126,6 +129,11 @@ export class TitleScreen implements Scene {
 
     public update(event : ProgramEvent): void {
         
+        const WAVE_SPEED : number = Math.PI*2.0/120;
+
+        this.background.update(undefined, event);
+        this.waveTimer = (this.waveTimer + WAVE_SPEED*event.tick) % (Math.PI*2);
+
         if (event.transition.isActive())
             return;
 
@@ -135,14 +143,28 @@ export class TitleScreen implements Scene {
             return;
         }
 
+        if (this.phase == 0) {
+
+            this.enterTimer = (this.enterTimer + 1.0/60.0*event.tick) % 1.0;
+
+            if (event.input.getAction("select") == InputState.DownOrPressed) {  
+
+                event.audio.playSample(event.assets.getSample("select"), 0.50);
+                ++ this.phase;
+            }
+
+            return;
+        }
         this.menu.update(event);
-        this.background.update(undefined, event);
+        
     }
 
 
     public redraw(canvas : Canvas): void {
         
         const bmpLogo = canvas.getBitmap("logo");
+        const bmpFont = canvas.getBitmap("font");
+        const bmpFontOutlines = canvas.getBitmap("font_outlines");
 
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
@@ -153,7 +175,29 @@ export class TitleScreen implements Scene {
 
         this.background.draw(canvas);
 
-        canvas.drawBitmap(bmpLogo, Flip.None, canvas.width/2 - (bmpLogo?.width ?? 0)/2, 24);
+        canvas.setColor(255, 255, 73);
+        canvas.drawText(bmpFont, "*2023 Jani Nyk@nen", 
+            canvas.width/2, canvas.height - 10, -1, 0, Align.Center);
+        canvas.setColor();
+
+        // canvas.drawBitmap(bmpLogo, Flip.None, canvas.width/2 - (bmpLogo?.width ?? 0)/2, 24);
+
+        if (bmpLogo !== undefined) {
+
+            canvas.drawVerticallyWavingBitmap(bmpLogo, canvas.width/2 - bmpLogo.width/2, 32, Math.PI*2, 8, this.waveTimer);
+        }
+
+        if (this.phase == 0) {
+
+            if (this.enterTimer <= 0.5) {
+
+                canvas.setColor(146, 255, 255);
+                canvas.drawText(bmpFontOutlines, "Press ENTER to start", 
+                    canvas.width/2, canvas.height - 48, -8, 0, Align.Center);
+                canvas.setColor();
+            }
+            return;
+        }
 
         this.menu.draw(canvas, 0, 32);
 

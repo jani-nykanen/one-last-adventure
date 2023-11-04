@@ -173,7 +173,8 @@ export class Game implements Scene {
         
         this.changeMap(this.stageIndex == 1 ? 3 : 1, event, true, true);
 
-        this.objects.setPlayerFrame(3, 2); 
+        this.objects?.setPlayerFrame(3, 2); 
+        this.objects?.updatePlayerCheckpoint();
     }
 
 
