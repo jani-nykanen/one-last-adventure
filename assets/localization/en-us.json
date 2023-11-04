@@ -67,7 +67,7 @@
 
     "item1": [
         "You obtain a TOY SWORD!", 
-        "It's a sword made of paper.\nIt might look harmless, but\nat least the risk of paper\ncuts is real."
+        "It is a cheap plastic toy,\nmanufactured in a country\nthat no longer exits."
     ],
 
 
@@ -117,30 +117,28 @@
 
         "A thousand times you\nhave died...",
         "A thousand times I\nhave brought you\nback...",
-        "Once again, I need\nyour help...",
+        "Once again, an epic\nquest awaits you...",
         "So wake up, it is\ntime for one last\nadventure!"
     ],
 
 
     "npc1": [
-        "Good morning, stranger! See\nthat ruined portal over \nthere? They say that it\nwill take you to another\nworld.",
-        "Or, at least it used to.\nIt was already broken when\nI came here, and that was\nat least a thousand years\nago."
+        "Welcome, great hero! Your\ngreat adventure begins\nhere.",
+        "We could not afford an epic\nstoryline, but there should\nbe a final boss waiting\nfor you somewhere."
     ],
 
     "npc2": [
-        "They say that the shop-\nkeeper is older than the\ntime itself. Sounds like\nnonsense, you might\nthink.",
-        "However, it is true, mostly\nbecause it was the shop-\nkeeper who invented time.\nI think that happened\nabout three years ago."
+        "The shopkeeper lives in\nthat hut. His only job is\nto stand there and wait for\nyour money."
     ],
 
     "npc3": [
-        "Travellers usually ask us\nif these caverns are\nnatural or built by the\nhumans.",
-        "They never believe me\nwhen I tell them that\nthese caverns were\nnaturally built by the\nhumans."
+        "These caves were supposed\nto be mines, but we could\nnot afford to buy proper\nprops.",
+        "We do have some violent\nminers ready to kill you.\nWe did not even have to pay\nthem!"
     ],
 
     "npc4": [
-        "See that teleporter over\nthere? It might still\nwork, at least if you\nfind a way to turn it on\nfirst.",
-        "We built the teleportation\nsystem long time ago.\nNowadays we have no use\nfor it since we have\nstopped travelling.",
-        "I mean, look at me: I have\nbeen standing here, in\nthe same spot, for the\nlast hundred years!"
+        "You can use those funky\nteleporters to travel\naround this world\ninstantly.",
+        "To make your life more\ninteresting, we decided to\ndisable them. Maybe there\nis a switch somewhere\nnearby?"
     ],
 
     "npc5": [
@@ -152,34 +150,55 @@
 
     "npc6": [
         
-        "This world is not real.\nIn fact, this world is\ntotally disconnected\nfrom the reality. Whatever\nhappens here, stays here.",
-        "This is pure nonsense, of\ncourse, but tourists feel\nmore comfortable when\nthey think that they\ncan do anything."
+        "We almost had minibosses\nhere. But then a global\npandemic hit and we could\nnot get any spare parts we\nneeded."
     ],
 
 
     "npc7": [
         
-        "See that hut over there?\nA great engineer used to\nlive there. She invented\na lot of great but totally\nuseless inventions.",
-        "An island-wide air\ncirculation system is one\nof them. We disabled it\nlong time ago because it\nwas making too much noise."
+        "See that hut? There should\nbe a switch that lets\nyou activate the island-\nwide air circulation\nsystem.",
+        "We wasted way too much\nmoney when building that,\nthough."
     ],
 
 
     "npc8": [
         
         "These caves are in a\ndifferent plane of\nexistence than the rest\nof the island.",
-        "I have no idea what do\nthese words mean, this\nis just the official\nexplanation we were given."
+        "I have no idea what do\nthese words mean, this\nis just the official\nexplanation I was given."
     ],
 
 
     "npc9": [
 
-        "My grandfather was paid to\nhide these chests all\naround this island. They\nnever told him why, though."
+        "It took us a long time to\nhide all these chests\naround the island, but it\nwould be dumb to give you\nall items in the beginning."
     ],
 
 
     "npc10": [
 
-        "I put my life savings\ninside that chest. You can\ntake them, I am already\ndead."
+        "I put my life savings\ninside that chest. You can\ntake them, I get more\nmoney once this nonsense\nis over."
+    ],
+
+
+    "npc11": [
+
+        "All the great stories had\nalready been told. They\nwere usually starred by\nyour previous in-\ncarnations.",
+        "This explains why the story\nyou experience here is...\npretty barebones. Hard\nto tell a story when\nthere is nothing to tell."
+    ],
+
+
+    "npc12": [
+
+        "There used to be thousands\nof final bosses roaming\non this island. Now, they\nare all dead, killed by\nyour predecessors.",
+        "Because of this, we had to\ncreate our own final boss.\nToo bad our budget was\npretty tight."
+    ],
+
+
+    "npc13": [
+
+        "I do not understand why\nshe expects us to do\nwhatever she says.",
+        "'Write an epic story,'\nshe says. 'Find an epic\nfinal boss,' she says.",
+        "I had nothing against you,\nthough, I just do not\nalways... undestand."
     ],
 
 
