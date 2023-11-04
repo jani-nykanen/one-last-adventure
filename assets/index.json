@@ -32,6 +32,7 @@
         {"name": "final_boss", "path": "final_boss.png"},
         {"name": "the_end", "path": "the_end.png"},
         {"name": "created_by", "path": "created_by.png"},
+        {"name": "title_corner", "path": "title_corner.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},

@@ -48,5 +48,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
 }
 
 
-window.onload = () => (new Program(240, 160, WebGLRenderer))
-    .run(initialEvent, onloadEvent);
+window.onload = () => {
+    
+    document.getElementById("div_initialize")?.remove();
+    (new Program(240, 160, WebGLRenderer)).run(initialEvent, onloadEvent);
+}

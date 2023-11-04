@@ -164,6 +164,7 @@ export class TitleScreen implements Scene {
         
         const bmpLogo = canvas.getBitmap("logo");
         const bmpFont = canvas.getBitmap("font");
+        const bmpCorner = canvas.getBitmap("title_corner");
         const bmpFontOutlines = canvas.getBitmap("font_outlines");
 
         canvas.transform.setTarget(TransformTarget.Camera);
@@ -185,6 +186,13 @@ export class TitleScreen implements Scene {
         if (bmpLogo !== undefined) {
 
             canvas.drawVerticallyWavingBitmap(bmpLogo, canvas.width/2 - bmpLogo.width/2, 32, Math.PI*2, 8, this.waveTimer);
+        }
+
+        if (bmpCorner !== undefined) {
+
+            canvas.drawBitmap(bmpCorner, Flip.None, 
+                canvas.width - bmpCorner.width, 
+                canvas.height - bmpCorner.height);
         }
 
         if (this.phase == 0) {
