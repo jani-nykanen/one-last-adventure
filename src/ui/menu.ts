@@ -153,4 +153,13 @@ export class Menu {
 
     public getCursorPos = () : number => this.cursorPos;
     public getButtonCount = () : number => this.buttons.length;
+
+
+    public callButtonEvent(index : number, event : ProgramEvent) : void {
+
+        if (index < 0 || index >= this.buttons.length)
+            return;
+
+        this.buttons[index].evaluateCallback(event);
+    }
 }

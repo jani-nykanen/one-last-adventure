@@ -500,6 +500,11 @@ export class GameObjectManager {
         this.projectiles.draw(canvas);
         this.player?.drawIcon(canvas);
 
+        for (let o of this.activableObjects) {
+
+            o.postDraw?.(canvas);
+        }
+
         this.flyingMessages.draw(canvas);
     }
 

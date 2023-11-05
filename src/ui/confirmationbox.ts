@@ -1,4 +1,5 @@
 import { ProgramEvent } from "../core/event.js";
+import { InputState } from "../core/inputstate.js";
 import { Canvas } from "../gfx/interface.js";
 import { RGBA } from "../math/rgba.js";
 import { drawUIBox } from "./box.js";
@@ -41,6 +42,16 @@ export class ConfirmationBox {
 
 
     public update(event : ProgramEvent) : void {
+
+        if (event.input.getAction("back") == InputState.Pressed) {
+
+            event.audio.playSample(event.assets.getSample("reject"), 0.50);
+
+            this.menu.callButtonEvent(1, event);
+            this.deactivate();
+
+            return;
+        }
 
         this.menu.update(event);
     }

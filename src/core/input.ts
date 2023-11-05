@@ -56,9 +56,19 @@ export class Input {
     }
 
 
-    public addAction(name : string, keys : Array<string>, gamepadButtons? : Array<number>) : void {
+    public addAction(name : string, 
+        keys : Array<string>, 
+        gamepadButtons? : Array<number>, 
+        prevent : boolean = true) : void {
 
         this.actions.set(name, new InputAction(keys, gamepadButtons ?? []));
+        if (prevent) {
+
+            for (let k of keys) {
+
+                this.keyboard.preventKey(k);
+            }
+        }
     }
 
 

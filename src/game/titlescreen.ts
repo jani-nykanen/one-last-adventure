@@ -9,7 +9,7 @@ import { MenuButton } from "../ui/menubutton.js";
 import { TextBox } from "../ui/textbox.js";
 import { Background, BackgroundType } from "./background.js";
 import { LOCAL_STORAGE_SAVE_KEY } from "./savekey.js";
-
+import { VERSION } from "./version.js";
 
 
 export class TitleScreen implements Scene {
@@ -177,8 +177,11 @@ export class TitleScreen implements Scene {
         this.background.draw(canvas);
 
         canvas.setColor(255, 255, 73);
+        // Copyright
         canvas.drawText(bmpFont, "*2023 Jani Nyk@nen", 
             canvas.width/2, canvas.height - 10, -1, 0, Align.Center);
+        // Version
+        canvas.drawText(bmpFont, VERSION, canvas.width - 2, 1, -1, 0, Align.Right);
         canvas.setColor();
 
         // canvas.drawBitmap(bmpLogo, Flip.None, canvas.width/2 - (bmpLogo?.width ?? 0)/2, 24);

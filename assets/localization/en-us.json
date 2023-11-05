@@ -51,7 +51,8 @@
         "Use UP and DOWN\nARROW to climb.",
         "Use UP ARROW to interact\nwith objects.",
         "Press DOWN + ATTACK\nto perform a\ndown attack.",
-        "Press UP at a savepoint\nto save your progress."
+        "Press UP at a checkpoint\ncrystal to save your\nprogress.",
+        "Press ENTER or ESCAPE\nto open the pause menu."
     ],
 
     "item_hints": [
@@ -183,7 +184,7 @@
 
     "npc10": [
 
-        "I put my life savings\ninside that chest. You can\ntake them, I get more\nmoney once this nonsense\nis over."
+        "I put my life savings\ninside that chest. You can\ntake them, if you want.\nIt is not real money,\nany way."
     ],
 
 

@@ -3,6 +3,7 @@ import { Rectangle } from "../math/rectangle.js";
 import { ProgramEvent } from "../core/event.js";
 import { Player } from "./player.js";
 import { Camera } from "./camera.js";
+import { Canvas } from "../gfx/interface.js";
 
 
 export class ActivableObject extends GameObject {
@@ -54,4 +55,7 @@ export class ActivableObject extends GameObject {
         }
         return false;
     }
+
+
+    public postDraw?(canvas : Canvas) : void;
 }

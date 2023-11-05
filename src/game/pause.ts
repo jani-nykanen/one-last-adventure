@@ -6,6 +6,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { TextBox } from "../ui/textbox.js";
 import { MusicVolume } from "./musicvolume.js";
 import { TransitionType } from "../core/transition.js";
+import { InputState } from "../core/inputstate.js";
 
 
 export class PauseMenu {
@@ -19,6 +20,9 @@ export class PauseMenu {
     private saveMessage : TextBox;
 
     private isSavingOnly : boolean = false;
+
+
+    private resumeEvent : (event : ProgramEvent) => void;
     
 
     constructor(event : ProgramEvent, 
@@ -114,6 +118,9 @@ export class PauseMenu {
             this.quitConfirmation.activate(1);
         }),
         ], false);
+
+
+        this.resumeEvent = resumeEvent;
     }
 
 
@@ -152,6 +159,16 @@ export class PauseMenu {
         if (this.respawnConfirmation.isActive()) {
 
             this.respawnConfirmation.update(event);
+            return;
+        }
+
+        if (event.input.getAction("back") == InputState.Pressed) {
+
+            event.audio.playSample(event.assets.getSample("reject"), 0.50);
+
+            this.deactivate();
+            this.resumeEvent(event);
+
             return;
         }
 

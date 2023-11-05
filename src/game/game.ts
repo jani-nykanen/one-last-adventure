@@ -448,7 +448,8 @@ export class Game implements Scene {
             return;
         }
 
-        if (event.input.getAction("pause") == InputState.Pressed) {
+        if (event.input.getAction("pause") == InputState.Pressed ||
+            event.input.getAction("pause_alt") == InputState.Pressed) {
 
             event.audio.playSample(event.assets.getSample("pause"), 0.40);
 
