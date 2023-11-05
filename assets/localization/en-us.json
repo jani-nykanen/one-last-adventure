@@ -50,7 +50,8 @@
         "Press SPACE or Z to jump.",
         "Use UP and DOWN\nARROW to climb.",
         "Use UP ARROW to interact\nwith objects.",
-        "Press DOWN + ATTACK\nto perform a\ndown attack."
+        "Press DOWN + ATTACK\nto perform a\ndown attack.",
+        "Press UP to activate\nsavepoints and\nsave your progress."
     ],
 
     "item_hints": [
