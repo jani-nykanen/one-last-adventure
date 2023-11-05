@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx/webgl
-// File: canvas.ts
-// Comment: a WebGL canvas
-//
-
-import { clamp } from "../../math/utility.js";
 import { Align, Bitmap, Canvas, Flip, Transform2D } from "../interface.js";
 import { WebGLBitmap } from "./bitmap.js";
 import { Mesh } from "./mesh.js";

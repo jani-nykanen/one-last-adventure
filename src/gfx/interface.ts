@@ -1,15 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx
-// File: interface.ts
-// Comment: an abstraction layer between the actual renderer
-// and the application (in the case that I also want to include
-// a html5 canvas rendering support)
-//
-
-
 export const enum Flip {
 
     None = 0,

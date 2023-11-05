@@ -48,8 +48,28 @@ const onloadEvent = (event : ProgramEvent) : void => {
 }
 
 
+const printError = (err : string) : void => {
+
+    document.getElementById("base_div")?.remove();
+
+    const textOut = document.createElement("b");
+    textOut.setAttribute("style", "color: rgb(224,73,73); font-size: 16px");
+    textOut.innerText = "Fatal error:\n\n " + err;
+
+    document.body.appendChild(textOut);
+}
+
+
 window.onload = () => {
     
-    document.getElementById("div_initialize")?.remove();
-    (new Program(240, 160, WebGLRenderer)).run(initialEvent, onloadEvent);
+    try {
+
+        document.getElementById("div_initialize")?.remove();
+        (new Program(240, 160, WebGLRenderer)).run(initialEvent, onloadEvent);
+    }
+    catch (e) {
+
+        printError(e.message);
+        console.error("Fatal error: " + e.message);
+    }
 }

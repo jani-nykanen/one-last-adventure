@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: keyboard.ts
-// Comment: keyboard manager
-//
-
-
 import { InputState } from "./inputstate.js";
 
 

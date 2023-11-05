@@ -1,12 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: math
-// File: vector.ts
-// Comment: a class for vectors with up to 4 components,
-// and some common vector operators
-//
 
 
 export class Vector {

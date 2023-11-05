@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx/webgl
-// File: mesh.ts
-// Comment: a WebGL "mesh", stores vertices, uv coordinates etc.
-//
 
 
 export class Mesh {

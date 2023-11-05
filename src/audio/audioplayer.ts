@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: audio
-// File: sample.ts
-// Comment: audio player
-//
-
-
 import { AudioSample } from "./sample.js";
 
 

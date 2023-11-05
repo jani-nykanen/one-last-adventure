@@ -1,14 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx/webgl
-// File: renderer.ts
-// Comment: a WebGL renderer, acts as a "bridge" between the application core
-// and the application itself
-//
-
-
 import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
 import { Bitmap, Canvas, Renderer, TransformTarget } from "../interface.js";
@@ -22,10 +11,11 @@ import { WebGLTransform } from "./transform.js";
 
 const createCanvasElement = (width : number, height : number) : [HTMLCanvasElement, WebGLRenderingContext | null] => {
 
-    let div = document.createElement("div");
+    const div = document.createElement("div");
+    div.id = "base_div";
     div.setAttribute("style", "position: absolute; top: 0; left: 0; z-index: -1;");
     
-    let canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas");
     canvas.setAttribute("style", "position: absolute; top: 0; left: 0; z-index: -1;");
 
     canvas.width = width;

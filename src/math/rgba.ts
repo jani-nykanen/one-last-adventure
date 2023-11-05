@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: math
-// File: rgba.ts
-// Comment: 4-component color
-//
 
 
 export class RGBA {

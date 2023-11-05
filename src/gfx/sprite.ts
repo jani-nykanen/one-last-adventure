@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx
-// File: sprite.ts
-// Comment: a class for animating simple sprites
-//
-
-
 import { Bitmap } from "./interface.js";
 import { Canvas, Flip } from "./interface.js";
 

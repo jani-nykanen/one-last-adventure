@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: inputstate.ts
-// Comment: input state
-//
 
 
 export const enum InputState {

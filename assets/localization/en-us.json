@@ -318,6 +318,9 @@
         "At least you can\nfinally sleep.",
         "Sleep and never\nwake up.",
         "Thank you, friend."
-    ]
+    ],
+
+
+    "audio_intro": "Would you like to enable\naudio? You can change\nthis later. (NOTE: Audio\ndoes not work on Safari!)\n\nPress ENTER to confirm."
 
 }

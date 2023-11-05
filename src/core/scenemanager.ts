@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: scenemanager.ts
-// Comment: manages different scenes
-//
-
-
 import { Canvas } from "../gfx/interface.js";
 import { ProgramEvent } from "./event.js";
 import { Scene } from "./scene.js";

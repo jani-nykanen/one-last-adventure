@@ -1,14 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: event.ts
-// Comment: I have no idea how to explain this thing
-// so I won't even try.
-//
-
-
 import { AudioPlayer } from "../audio/audioplayer.js";
 import { Bitmap, Canvas, Renderer } from "../gfx/interface.js";
 import { Assets } from "./assets.js";

@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx/webgl
-// File: transform.ts
-// Comment: 2D transformations. 
-// TODO: No reason to make this specific to webgl?
-//
-
 import { Matrix } from "../../math/matrix.js";
 import { Transform2D, TransformTarget } from "../interface.js";
 import { Shader } from "./shader.js";

@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: transition.ts
-// Comment: screen transition manager
-//
-
-
 import { RGBA } from "../math/rgba.js";
 import { Canvas, Flip } from "../gfx/interface.js";
 import { ProgramEvent } from "./event.js";

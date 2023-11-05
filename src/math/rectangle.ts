@@ -1,15 +1,5 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: math
-// File: rectangle.ts
-// Comment: another representation for 4-component vectors,
-// but component names with more suitable for representing
-// rectangles
-//
-
 import { Vector } from "./vector";
+
 
 export class Rectangle {
 

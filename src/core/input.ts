@@ -1,13 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: core
-// File: input.ts
-// Comment: a generic input manager
-//
-
-
 import { InputState } from "./inputstate.js";
 import { Keyboard } from "./keyboard.js";
 import { GamePad } from "./gamepad.js";

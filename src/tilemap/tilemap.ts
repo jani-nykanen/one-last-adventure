@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: tilemap
-// File: tilemap.ts
-// Comment: base tilemap type & parsing
-//
 
 
 export class Tilemap {

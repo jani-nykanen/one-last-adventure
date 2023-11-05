@@ -1,12 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: gfx/webgl
-// File: bitmap.ts
-// Comment: a WebGL bitmap
-//
-
 import { Bitmap } from "../interface.js";
 
 

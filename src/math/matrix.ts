@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: math
-// File: matrix.ts
-// Comment: a class for 4x4 square matrices
-//
 
 
 export class Matrix {

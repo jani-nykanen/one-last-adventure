@@ -1,11 +1,3 @@
-//
-// Project title: "A Tower for Nightmares"
-// Author: Jani Nykänen
-//
-// Module: math
-// File: utility.ts
-// Comment: some miscellaneous math functions 
-//
 
 
 export const negMod = (m : number, n : number) : number => {
