@@ -185,7 +185,9 @@ export class TitleScreen implements Scene {
 
         if (bmpLogo !== undefined) {
 
-            canvas.drawVerticallyWavingBitmap(bmpLogo, canvas.width/2 - bmpLogo.width/2, 32, Math.PI*2, 8, this.waveTimer);
+            canvas.drawVerticallyWavingBitmap(bmpLogo, 
+                canvas.width/2 - bmpLogo.width/2, 16, 
+                Math.PI*3, 4, this.waveTimer);
         }
 
         if (bmpCorner !== undefined) {
@@ -199,7 +201,7 @@ export class TitleScreen implements Scene {
 
             if (this.enterTimer <= 0.5) {
 
-                canvas.setColor(146, 255, 255);
+                canvas.setColor(146, 255, 73);
                 canvas.drawText(bmpFontOutlines, "Press ENTER to start", 
                     canvas.width/2, canvas.height - 48, -8, 0, Align.Center);
                 canvas.setColor();
