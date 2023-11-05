@@ -51,7 +51,7 @@
         "Use UP and DOWN\nARROW to climb.",
         "Use UP ARROW to interact\nwith objects.",
         "Press DOWN + ATTACK\nto perform a\ndown attack.",
-        "Press UP to activate\nsavepoints and\nsave your progress."
+        "Press UP at a savepoint\nto save your progress."
     ],
 
     "item_hints": [
