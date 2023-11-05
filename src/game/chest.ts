@@ -121,6 +121,10 @@ export class Chest extends ActivableObject {
 
                         player.addCoins(30);
                     }
+                    else if (this.id == 10) {
+
+                        player.addCoins(15);
+                    }
                     break;
 
                 case ChestType.Gem:

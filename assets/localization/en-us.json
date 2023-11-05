@@ -109,7 +109,13 @@
     
     "item9": [
         "You obtain a HAPPY BAG\nOF MONEY MONEY MONEY!",
-        "It contains no children\nand three money. And 27\nmore money, total thirty\nmoney. Yay!"
+        "It is a bag full of money.\nYou are rich! Kind of."
+    ],
+
+
+    "item10": [
+        "You obtain a SMALL BAG\nOF NOT SO MUCH MONEY!",
+        "It is a tiny leather bag\nthat barely contains\nany money at all.\nWhat a disappointment!"
     ],
 
 
@@ -199,6 +205,20 @@
         "I do not understand why\nshe expects us to do\nwhatever she says.",
         "'Write an epic story,'\nshe says. 'Find an epic\nfinal boss,' she says.",
         "I had nothing against you,\nthough, I just do not\nalways... undestand."
+    ],
+
+
+    "npc14": [
+
+        "I painted those planets.\nIt took me five weeks,\nbut I am really proud\nof the result.",
+        "Of course, one could ask\ndo we really need those\nplanets.",
+        "Well, this was supposed\nto be an interplanetary\nadventure, but we ran\nout of time."
+    ],
+
+
+    "npc15": [
+
+        "If you are going to kill\nthe final boss, please\nbe gentle. This is her\nfirst time as the final\nboss."
     ],
 
 
