@@ -16,7 +16,7 @@ import { Hand } from "./hand.js";
 
 
 const HAND_DISTANCE : number = 48;
-const DROOL_TIME : number = 120;
+const DROOL_TIME : number = 150;
 
 
 const enum AttackType {
@@ -151,7 +151,7 @@ export class FinalBoss extends Enemy {
     private updateShooting(player : Player, event : ProgramEvent) : void {
 
         const SHOOT_WAIT_MODIFIER : number = 1.0;
-        const SHOOT_TIME : number = 300;
+        const SHOOT_TIME : number = 360;
         const PREPARE_TIME : number = 60;
         const MOUTH_TIME : number = 30;
 

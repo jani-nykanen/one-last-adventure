@@ -14,6 +14,15 @@ export const enum MapArea {
 };
 
 
+export const enum MapMarker {
+
+    None = 0,
+    Chest = 1,
+    BossDoor = 2,
+    Teleporter = 3,
+};
+
+
 // Map is taken, obviously
 export class GameMap {
 
@@ -35,6 +44,8 @@ export class GameMap {
 
     private flickerTimer : number = 0.0;
 
+    private specialMarkers : Array<MapMarker>;
+
 
     constructor(width : number, height : number, roomWidth : number, roomHeight : number) {
 
@@ -52,6 +63,33 @@ export class GameMap {
         this.height = height;
 
         this.cpos = new Vector();
+
+        this.specialMarkers = (new Array<MapMarker> (width*height)).fill(MapMarker.None);
+    }
+
+
+    private drawMarkers(canvas : Canvas, bmpIcons : Bitmap | undefined,
+        cornerx : number, cornery : number) : void {
+
+        let marker : number;
+
+        for (let y = 0; y < this.height; ++ y) {
+
+            for (let x = 0; x < this.width; ++ x) {
+
+                if (!this.visited[this.area - 1][y*this.width + x]) 
+                    continue;
+
+                marker = this.specialMarkers[y*this.width + x] as number;
+                if (marker > 0) {
+
+                    canvas.drawBitmap(bmpIcons, Flip.None,
+                        cornerx + ((x + 0.5)*this.roomWidth - 4) | 0,
+                        cornery + ((y + 0.5)*this.roomHeight - 4) | 0,
+                        marker*8, 0, 8, 8);
+                }
+            }
+        }
     }
 
 
@@ -82,6 +120,7 @@ export class GameMap {
 
         const name = getMapName(this.area);
         const mapTexture = canvas.getBitmap(name + "_map"); 
+        const bmpIcons = canvas.getBitmap("map_icons");
 
         canvas.setColor(0, 0, 0, DARKEN_ALPHA);
         canvas.fillRect();
@@ -89,8 +128,8 @@ export class GameMap {
         const dw = this.width*this.roomWidth;
         const dh = this.height*this.roomHeight;
 
-        const cornerx = canvas.width/2 - dw/2;
-        const cornery = canvas.height/2 - dh/2;
+        const cornerx = (canvas.width/2 - dw/2) | 0;
+        const cornery = (canvas.height/2 - dh/2) | 0;
 
         canvas.setColor(255, 255, 255);
         canvas.fillRect(cornerx - 2, cornery - 2, dw + 4, dh + 4);
@@ -102,8 +141,9 @@ export class GameMap {
         canvas.fillRect(cornerx, cornery, dw, dh);
 
         // Map topology (topography?)
-        canvas.setColor();
+        canvas.setColor(0, 0, 0, 0.50);
         canvas.drawBitmap(mapTexture, Flip.None, cornerx, cornery);
+        canvas.setColor();
 
         let dx : number;
         let dy : number;
@@ -128,10 +168,13 @@ export class GameMap {
         dx = (cornerx + this.cpos.x*this.roomWidth) | 0;
         dy = (cornery + this.cpos.y*this.roomHeight) | 0;
 
-        canvas.fillRect(dx, dy, this.roomWidth, 1);
+        canvas.fillRect(dx - 1, dy - 1, this.roomWidth + 2, 1);
         canvas.fillRect(dx, dy + this.roomHeight, this.roomWidth, 1);
-        canvas.fillRect(dx, dy, 1, this.roomHeight);
+        canvas.fillRect(dx - 1, dy, 1, this.roomHeight + 1);
         canvas.fillRect(dx + this.roomWidth, dy, 1, this.roomHeight + 1);
+
+        canvas.setColor();
+        this.drawMarkers(canvas, bmpIcons, cornerx, cornery);
 
         if (this.flickerTimer <= 0.5) {
 
@@ -140,9 +183,8 @@ export class GameMap {
                 cornerx + ((playerPos.x/TILE_WIDTH) | 0) - 1, 
                 cornery + ((playerPos.y/TILE_HEIGHT) | 0) - 1,
                 3, 3);
+            canvas.setColor();
         }
-
-        canvas.setColor();
     }
 
 
@@ -208,5 +250,23 @@ export class GameMap {
         }
 
         return true;
+    }
+
+
+    public putSpecialMarker(x : number, y : number, marker : MapMarker) : void {
+
+        const dx = (x/this.roomWidth) | 0;
+        const dy = (y/this.roomHeight) | 0;
+
+        if (dx < 0 || dy < 0 || dx >= this.width || dy >= this.height)
+            return;
+
+        this.specialMarkers[dy*this.width + dx] = marker;
+    }
+
+
+    public clearMarkers() : void {
+
+        this.specialMarkers.fill(0);
     }
 }

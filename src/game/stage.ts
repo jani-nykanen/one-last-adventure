@@ -9,6 +9,8 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { getMapName } from "./mapnames.js";
 import { Vector } from "../math/vector.js";
 import { ChestType } from "./chest.js";
+import { GameMap, MapMarker } from "./map.js";
+import { ProgressManager } from "./progress.js";
 
 
 const CREATABLE_OBJECTS = [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 49, 50, 53];
@@ -335,6 +337,84 @@ export class Stage {
 
                     objects.addPlayer(x, y, true);
                     objects.addGiantDoor(x, y, true);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
+
+    public setMapMarkers(map : GameMap, progress : ProgressManager) : void {
+
+        if (this.objectLayer === undefined)
+            return;
+
+        let tileID : number;
+        let modifier : number;
+
+        for (let y = 0; y < this.mapLayer.height; ++ y) {
+
+            for (let x = 0; x < this.mapLayer.width; ++ x) {
+
+                tileID = this.objectLayer[y*this.width + x];
+                if (tileID <= OBJECT_LAYER_START)
+                    continue;
+
+                modifier = y == 0 ? -1 : (this.objectLayer[(y - 1)*this.width + x] - 368);;
+
+                tileID -= OBJECT_LAYER_START;
+
+                switch (tileID) {
+
+                // Chest (map marker only)
+                case 3:
+
+                    if (progress.getProperty("item" + String(modifier)) == 0) {
+
+                        map.putSpecialMarker(x, y, MapMarker.Chest);
+                    }
+                    break;
+
+                // Health chest (map marker only)
+                case 49:
+
+                    if (progress.getProperty("life" + String(modifier)) == 0) {
+
+                        map.putSpecialMarker(x, y, MapMarker.Chest);
+                    }
+                    break;
+
+                // Magic chest (map marker only)
+                case 50:
+
+                    if (progress.getProperty("magic" + String(modifier)) == 0) {
+
+                        map.putSpecialMarker(x, y, MapMarker.Chest);
+                    }
+                    break;
+
+                // Gem chest (map marker only)
+                case 16:
+
+                    if (progress.getProperty("gem" + String(modifier)) == 0) {
+
+                        map.putSpecialMarker(x, y, MapMarker.Chest);
+                    }
+                    break;
+
+                // Teleporter (map marker only)
+                case 15:
+
+                    map.putSpecialMarker(x, y, MapMarker.Teleporter);
+                    break;
+
+                // Giant door
+                case 51:
+
+                    map.putSpecialMarker(x, y, MapMarker.BossDoor);
                     break;
 
                 default:

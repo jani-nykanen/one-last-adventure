@@ -8,8 +8,8 @@ import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Vector } from "../math/vector.js";
 
 
-const CHECKPOINT_FLY_TIME : number = 20;
-const CHECKPOINT_WAIT_TIME : number = 30;
+const CHECKPOINT_FLY_TIME : number = 10;
+const CHECKPOINT_WAIT_TIME : number = 40;
 
 
 export class SavePoint extends ActivableObject {
@@ -103,7 +103,7 @@ export class SavePoint extends ActivableObject {
 
                 if (this.checkpointTimer >= CHECKPOINT_WAIT_TIME) {
 
-                    this.checkpointPos -= event.tick;
+                    this.checkpointPos -= 2*event.tick;
                 }
                 this.checkpointTimer -= event.tick;
             }

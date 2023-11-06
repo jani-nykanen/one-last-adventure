@@ -476,10 +476,14 @@ export class Game implements Scene {
 
                 event.audio.playSample(event.assets.getSample("reject"), 0.50);
             }
-            else {
+            else if (this.map !== undefined) {
             
                 event.audio.playSample(event.assets.getSample("pause"), 0.40);
-                this.map?.activate();
+
+                this.map.clearMarkers();
+                this.stage.setMapMarkers(this.map, this.progress);
+                this.map.activate();
+                
                 return;
             }
         }

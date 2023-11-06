@@ -15,7 +15,7 @@ const enum AttackType {
 };
 
 
-const ATTACK_START_WAIT : number = 240;
+const ATTACK_START_WAIT : number = 300;
 const ATTACK_READY_WAIT : number = 60;
 
 const INITIAL_ATTACK_WAIT : number[] = [180, 360];

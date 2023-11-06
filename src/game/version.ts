@@ -1,4 +1,4 @@
 
 
 
-export const VERSION : string = "v.0.9.1 (beta1)";
+export const VERSION : string = "v.1.0.0";

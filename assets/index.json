@@ -34,6 +34,7 @@
         {"name": "created_by", "path": "created_by.png"},
         {"name": "title_corner", "path": "title_corner.png"},
         {"name": "note", "path": "note.png"},
+        {"name": "map_icons", "path": "map_icons.png"},
 
         {"name": "tileset_caves", "path": "tileset_caves.png"},
         {"name": "tileset_island", "path": "tileset_island.png"},

@@ -12,13 +12,13 @@ import { ProgressManager } from "./progress.js";
 
 const ITEM_PRICES : number[] = [
 
-    30, // Health up
-    30, // Magic up
+    25, // Health up
+    25, // Magic up
     60, // Attack up
-    60, // Magic attack up
-    90, // Armor 
-    60, // Rapid attack
-    45, // Better pick ups
+    40, // Magic attack up
+    80, // Armor 
+    50, // Rapid attack
+    40, // Better pick ups
 ];
 
 

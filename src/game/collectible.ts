@@ -134,7 +134,7 @@ export class Collectible extends CollisionObject {
             case CollectibleType.MagicPotion:
 
                 event.audio.playSample(event.assets.getSample("potion"), 0.60);
-                player.recoverMagic(1.0);
+                player.recoverMagic(2.0);
                 break;
 
             default:
