@@ -34,9 +34,9 @@ There are also some other oddities I have forgotten. And a lot of "TODO"s I deci
 ## License
 
 - The source code, which includes all the `.ts`,`.html` and `makefile` files, is licensed under (*throws a die*) MIT license.
-- The music files, which contains all `.ogg` files **excluding `item.ogg`** are licensed under CC-BY-3.0. Use of these asset files should be attributed to H0dari
-- All the other asset files not contained in the previous item (that is, all art, level and sound effect files) are licensed under CC-BY-4.0, and should be attributed to Jani Nykänen.
+- The music files, which contains all `.ogg` files **excluding `item.ogg`** are licensed under CC BY-NC 4.0 DEED. Use of these asset files should be attributed to H0dari
+- All the other asset files not contained in the previous item (that is, all art, level and sound effect files) are licensed under CC BY-NC 4.0 DEED, and should be attributed to Jani Nykänen.
 
-In short: you can do almost everything with the code, even use it for commercial purposes without having to give a credit, but **the asset files cannot be used for commercial purposes (except music, as listed above) and givin a credit is mandatory if the work is derived**.
+In short: you can do almost everything with the code, even use it for commercial purposes without having to give a credit, but **the asset files cannot be used for commercial purposes and givin a credit is mandatory if the work is derived**.
 
 
