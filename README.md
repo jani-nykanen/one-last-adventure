@@ -1,7 +1,7 @@
 ![Blurp](https://img.itch.zone/aW1nLzEzOTU2NDQzLnBuZw==/original/fXAEWf.png)
 
 
-## [PLAY HERE](https://jani-nykanen.itch.io/one-last-adventure?secret=uCx6rqMbaLMlsDbOlYlJG0qyRbI) (secret link, not yet fully public)
+## [PLAY HERE](https://jani-nykanen.itch.io/one-last-adventure)
 
 
 **One Last Adventure** is a pixel-art metroidvania for web, created using standard web technologies including WebGL, WebAudio and whatever the gamepad API is known as. The game is written in TypeScript, because there is no way I would touch plain JavaScript any longer.
