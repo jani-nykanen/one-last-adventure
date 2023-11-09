@@ -18,6 +18,9 @@ That's all.
 To compile, run `tsc` on root. That's it. Running `make dist` will create a zip package for you. I might add Closure compiler support one day. 
 
 
+To run the game locally, you need to start a local server. If you have `make` and `python3` installed, you can just run `make server`, or if you have only `python3`, then `python3 -m http.server` will do the same trick. You can also use any other http server of your choice. 
+
+
 ------
 
 
