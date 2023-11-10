@@ -13,6 +13,7 @@
 The following tools are required:
 - Typescript compiler
 - Git LFS (to access the asset files)
+  
 That's all.
 
 
