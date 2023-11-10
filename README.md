@@ -12,6 +12,7 @@
 
 The following tools are required:
 - Typescript compiler
+- Git LFS (to access the asset files)
 That's all.
 
 
@@ -19,6 +20,9 @@ To compile, run `tsc` on root. That's it. Running `make dist` will create a zip 
 
 
 To run the game locally, you need to start a local server. If you have `make` and `python3` installed, you can just run `make server`, or if you have only `python3`, then `python3 -m http.server` will do the same trick. You can also use any other http server of your choice. Then type `localhost:8000` (or whatever port you choose) to the browser.
+
+
+Note that Git LFS (https://git-lfs.com/) is mandatory since the binary files (graphics and audio files) are stored using it.
 
 
 ------
